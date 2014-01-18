@@ -108,7 +108,6 @@ class Event(object):
             self.queue = [ self.JEvent(event) for event in self.eventQueue[0:self.eventNum] ]
             self.eventNum = 0
         else:
-#            pass
             queue = []      #0.23
             self.queue = []
             try:
@@ -135,16 +134,12 @@ class Event(object):
         Return an event from the queue, or NOEVENT if none present.
         """
         self._lock()
-#        try:
         if self.eventNum:
             evt = self.JEvent( self.eventQueue.pop(0) )
-#            evt = self.eventQueue.pop(0)
             self.eventNum -= 1
             self.eventQueue.append(None)
         else:
             evt = Const.NOEVENT
-#        except IndexError:
-#            evt = Const.NOEVENT
         self._unlock()
         return evt
 
@@ -154,16 +149,13 @@ class Event(object):
         """
         while True:
             if self.eventNum:
-#            try:
                 self._lock()
                 evt = self.JEvent( self.eventQueue.pop(0) )
-#                evt = self.eventQueue.pop(0)
                 self.eventNum -= 1
                 self.eventQueue.append(None)
                 self._unlock()
                 return evt
             else:
-#            except IndexError:
                 self._unlock()
                 Thread.sleep(10)
 
@@ -313,11 +305,11 @@ class Event(object):
 
         def __init__(self, event):
             """
-            Event object that wraps Java event, created when retrieving events from queue.
+            Event object wraps Java event, created when retrieving events from queue.
             
             Event object attributes:
             
-            * type: MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, KEYDOWN, or KEYUP
+            * type: MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, KEYDOWN, KEYUP
             * button: mouse button pressed (1/2/3)
             * pos: mouse position (x,y)
             * rel: mouse relative position change (x,y)
