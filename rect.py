@@ -174,13 +174,13 @@ class Rect(Rectangle):
             self.setLocation(self.x+int(x), self.y+int(y))
         return None
 
-    def inflate(self, x, y):    #center...
+    def inflate(self, x, y):
         """
         Return Rect at same position but size offset by x,y.
         """
-        return Rect(self.x, self.y, self.width+x, self.height+y)
+        return Rect(self.x-(x//2), self.y-(y//2), self.width+x, self.height+y)  #0.23
 
-    def inflate_ip(self, x, y):     #center...
+    def inflate_ip(self, x, y):
         """
         Change size of this rect offset by x,y.
         """
@@ -188,6 +188,7 @@ class Rect(Rectangle):
             self.setSize(self.width+x, self.height+y)
         except TypeError:
             self.setSize(self.width+int(x), self.height+int(y))
+        self.setLocation(self.x-(x//2), self.y-(y//2))      #0.23
         return None
 
     def clip(self, rect):
