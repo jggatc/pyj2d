@@ -31,7 +31,7 @@ class Rect(Rectangle):
         'right': lambda self,val: self.setLocation( val-self.width, self.y ),
         'topleft': lambda self,val: self.setLocation( val[0], val[1] ),
         'bottomleft': lambda self,val: self.setLocation( val[0], val[1]-self.height ),
-        'topright': lambda self,val: self.setLocation( val[0], val[1]-self.width ),
+        'topright': lambda self,val: self.setLocation( val[0]-self.width, val[1] ),
         'bottomright': lambda self,val: self.setLocation( val[0]-self.width, val[1]-self.height ),
         'midtop': lambda self,val: self.setLocation( val[0]-(self.width//2), val[1] ),
         'midleft': lambda self,val: self.setLocation( val[0], val[1]-(self.height//2) ),
@@ -61,7 +61,6 @@ class Rect(Rectangle):
         'midleft': lambda self: (self.x, self.y+(self.height//2)),
         'midbottom': lambda self: (self.x+(self.width//2), self.y+self.height),
         'midright': lambda self: (self.x+self.width, self.y+(self.height//2)),
-        'size': lambda self: (self.width, self.height),
         'w': lambda self: self.width,
         'h': lambda self: self.height
           }
