@@ -97,4 +97,8 @@ git development (https://github.com/jggatc/pyj2d)
 -updated Event.get to accept eventtype argument.
 -updated Event.poll and Event.wait to return JEvent object.
 -updated Event.poll noevent return.
+-updated Rect.clip return for non-overlap.
+-updated Rect attribute positioning.
+-updated Rect inflate/inflate_ip positioning.
+-added Rect equality and nonzero methods.
 

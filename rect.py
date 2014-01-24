@@ -148,6 +148,30 @@ class Rect(Rectangle):
         val = int(val)
         [lambda val: self.__setattr__("x", val), lambda val: self.__setattr__("y", val), lambda val: self.__setattr__("width", val), lambda val: self.__setattr__("height", val)][key](val)
 
+    def __nonzero__(self):      #0.23
+        """
+        Rect nonzero check.
+        """
+        return self.width and self.height
+
+    def __eq__(self, other):    #0.23
+        """
+        Rects equality check.
+        """
+        try:
+            return self.x==other.x and self.y==other.y and self.width==other.width and self.height==other.height
+        except AttributeError:
+            return self.x==other[0] and self.y==other[1] and self.width==other[2] and self.height==other[3]
+
+    def __ne__(self, other):    #0.23
+        """
+        Rects equality check.
+        """
+        try:
+            return self.x!=other.x or self.y!=other.y or self.width!=other.width or self.height!=other.height
+        except AttributeError:
+            return self.x!=other[0] or self.y!=other[1] or self.width!=other[2] or self.height!=other[3]
+
     def copy(self):
         """
         Returns Rect that is a copy of this rect.
