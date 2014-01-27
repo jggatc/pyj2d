@@ -101,4 +101,6 @@ git development (https://github.com/jggatc/pyj2d)
 -updated Rect attribute positioning.
 -updated Rect inflate/inflate_ip positioning.
 -added Rect equality and nonzero methods.
+-added Color object.
+-updated to use Color object.
 

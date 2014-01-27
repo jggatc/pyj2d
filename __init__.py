@@ -26,6 +26,7 @@ from key import Key
 from mouse import Mouse
 from transform import Transform
 from surfarray import Surfarray
+from color import Color     #0.23
 import time
 import mask
 import font

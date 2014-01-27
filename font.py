@@ -2,9 +2,10 @@
 
 from __future__ import division
 from java.awt import Font as JFont
-from java.awt import Color, BasicStroke, RenderingHints, GraphicsEnvironment
+from java.awt import BasicStroke, RenderingHints, GraphicsEnvironment   #0.23
 from java.awt.image import BufferedImage
 import surface
+from color import Color     #0.23
 
 __docformat__ = 'restructuredtext'
 
@@ -122,14 +123,12 @@ class Font(JFont):
         surf = surface.Surface((w,h), BufferedImage.TYPE_INT_ARGB)
         g2d = surf.createGraphics()
         if background:
-            R,G,B = background
-            g2d.setColor(Color(R,G,B))
+            g2d.setColor(Color(background))     #0.23
             g2d.fillRect(0,0,w,h)
         g2d.setFont(self.font)
         if antialias:
             g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
-        R,G,B = color
-        g2d.setColor(Color(R,G,B))
+        g2d.setColor(Color(color))      #0.23
         g2d.drawString(text,0,(h//2)+(self.fontMetrics.getAscent()//2))    #0.22
         if self.underline:
             g2d.setStroke(BasicStroke(1))

@@ -2,6 +2,7 @@
 
 from __future__ import division
 from java.util import BitSet
+from color import Color     #0.23
 
 __docformat__ = 'restructuredtext'
 
@@ -34,27 +35,31 @@ def from_threshold(surface, color, threshold=(0,0,0,255)):
     mask = Mask((surface.width, surface.height))
     pixels = surface.getRGB(0,0,surface.width,surface.height,None,0,surface.width)
     if threshold == (0,0,0,255):
+        color = Color(color)    #0.23
+        if color.a != 255:
+            color = Color(color.r,color.g,color.b,255)
+        icolor = color.getRGB()
         i = 0
         for y in range(surface.height):
             for x in range(surface.width):
-                if ((pixels[i]>>16) & 0xff) == color[0] and ((pixels[i]>>8) & 0xff) == color[1] and ((pixels[i]) & 0xff) == color[2] and ((pixels[i]>>24) & 0xff) >= threshold[3]:
+                if pixels[i] == icolor:
                     mask.set_at((x,y))
                 i += 1
     else:
-        col = []
-        for i in range(len(color)):
+        color = Color(color)    #0.23
+        col = {}
+        for i, c in enumerate(('r','g','b')):    #0.23
             if threshold[i]:
-                l = color[i] - threshold[i]
-                if l < 0: l = 0
-                h = color[i] + threshold[i]
-                if h > 255: h = 255
-                col.append( (l,h) )
+                col[c+'1'] = color[i] - threshold[i] - 1
+                col[c+'2'] = color[i] + threshold[i] + 1
             else:
-                col[i].append( (color[i],color[i]) )
+                col[c+'1'] = color[i] - 1
+                col[c+'2'] = color[i] + 1
+        col['a'] = threshold[3] - 1
         i = 0
         for y in range(surface.height):
             for x in range(surface.width):
-                if ( ((pixels[i]>>16) & 0xff) >= col[0][0] and ((pixels[i]>>16) & 0xff) <= col[0][1] ) and ( ((pixels[i]>>8) & 0xff) >= col[1][0] and ((pixels[i]>>8) & 0xff) <= col[1][1] ) and ( ((pixels[i]) & 0xff) >= col[2][0] and ((pixels[i]) & 0xff) <= col[2][1] ) and ( ((pixels[i]>>24) & 0xff) >= threshold[3] ):
+                if ( col['r1'] < ((pixels[i]>>16) & 0xff) < col['r2'] ) and ( col['g1'] < ((pixels[i]>>8) & 0xff) < col['g2'] ) and ( col['b1'] < ((pixels[i]) & 0xff) < col['b2'] ) and ( ((pixels[i]>>24) & 0xff) > col['a'] ):
                     mask.set_at((x,y))
                 i += 1
     return mask

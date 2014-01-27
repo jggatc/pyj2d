@@ -2,8 +2,9 @@
 
 from __future__ import division
 from math import pi
-from java.awt import Color, BasicStroke
+from java.awt import BasicStroke
 from rect import Rect
+from color import Color     #0.23
 
 __docformat__ = 'restructuredtext'
 
@@ -46,8 +47,7 @@ class Draw(object):
                 w,h = rect[1]
             rect = Rect(x,y,w,h)
         g = surface.createGraphics()
-        R,G,B = color
-        g.setColor(Color(R,G,B))       # *tuple unpack jythonc error
+        g.setColor(Color(color))    #0.23
         if width:
             g.setStroke(BasicStroke(width))
             g.drawRect(x,y,w,h)
@@ -65,8 +65,7 @@ class Draw(object):
         x, y = position
         w, h = 2*radius, 2*radius
         g = surface.createGraphics()
-        R,G,B = color
-        g.setColor(Color(R,G,B))
+        g.setColor(Color(color))    #0.23
         if width:
             g.setStroke(BasicStroke(width))
             g.drawOval(x-radius, y-radius, w, h)
@@ -95,8 +94,7 @@ class Draw(object):
         x -= w//8
         y -= h//8
         g = surface.createGraphics()
-        R,G,B = color
-        g.setColor(Color(R,G,B))
+        g.setColor(Color(color))    #0.23
         if width:
             g.setStroke(BasicStroke(width))
             g.drawArc(x, y, w, h, start_angle, stop_angle)
@@ -112,8 +110,7 @@ class Draw(object):
         Optional width argument of outline, which defaults to 0 for filled shape.
         """
         g = surface.createGraphics()
-        R,G,B = color
-        g.setColor(Color(R,G,B))
+        g.setColor(Color(color))    #0.23
         xpts = [pt[0] for pt in pointlist]
         ypts = [pt[1] for pt in pointlist]
         npts = len(pointlist)
@@ -138,8 +135,7 @@ class Draw(object):
         p1x, p1y = point1
         p2x, p2y = point2
         g = surface.createGraphics()
-        R,G,B = color
-        g.setColor(Color(R,G,B))
+        g.setColor(Color(color))    #0.23
         g.setStroke(BasicStroke(width))
         g.drawLine(p1x,p1y,p2x,p2y)
         g.dispose()
@@ -167,8 +163,7 @@ class Draw(object):
             ypoints.append(ypoint)
         npoints = len(xpoints)
         g = surface.createGraphics()
-        R,G,B = color
-        g.setColor(Color(R,G,B))
+        g.setColor(Color(color))    #0.23
         g.setStroke(BasicStroke(width))
         g.drawPolyline(xpoints, ypoints, npoints)
         g.dispose()

@@ -2,10 +2,10 @@
 
 from __future__ import division
 from java.awt.image import BufferedImage, RasterFormatException
-from java.awt import Color
 from java.util import Hashtable
 from java.lang import Thread
 from rect import Rect
+from color import Color     #0.23
 import locals as Const
 
 __docformat__ = 'restructuredtext'
@@ -246,33 +246,37 @@ class Surface(BufferedImage):
         Set surface colorkey.
         """
         if self._colorkey:
-            r,g,b = self._colorkey
+            r,g,b = self._colorkey.r,self._colorkey.g,self._colorkey.b      #0.23
             self.replace_color((r,g,b,0),(r,g,b,255))
             self._colorkey = None
         if color:
+            color = Color(color)    #0.23
             self._colorkey = color
-            self.replace_color(color)
+            self.replace_color((color.r,color.g,color.b))
         return None
 
     def get_colorkey(self):
         """
         Return surface colorkey.
         """
-        return self._colorkey
+        try:
+            return self._colorkey.r, self._colorkey.g, self._colorkey.b, 255
+        except AttributeError:
+            return None
 
     def replace_color(self, color, new_color=None):
         """
         Replace color with with new_color or with alpha.
         """
         pixels = self.getRGB(0,0,self.width,self.height,None,0,self.width)
-        r,g,b = color
+        color1 = Color(color)    #0.23
         if new_color:
-            r2,g2,b2,a2 = new_color
+            color2 = Color(new_color)
         else:
-            r2,g2,b2,a2 = color[0],color[1],color[2],0
+            color2 = Color(color1.r,color1.g,color1.b,0)
         for i, pixel in enumerate(pixels):
-            if pixel == Color(r,g,b).getRGB():
-                pixels[i] = Color(r2,g2,b2,a2).getRGB()
+            if pixel == color1.getRGB():
+                pixels[i] = color2.getRGB()
         self.setRGB(0,0,self.width,self.height,pixels,0,self.width)
         return None
 
@@ -286,16 +290,16 @@ class Surface(BufferedImage):
             color = Color(self.getRGB(x,y))
         except:     #ArrayOutOfBoundsException
             raise IndexError
-        return color.getRed(), color.getGreen(), color.getBlue()
+        return color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()  #0.23
 
     def set_at(self, pos, color):
         """
         Set color of a surface pixel.
         The arguments represent position x,y and color of pixel.
         """
-        R,G,B = color
+        color = Color(color)    #0.23
         try:
-            self.setRGB(pos[0],pos[1],Color(R,G,B))
+            self.setRGB(pos[0],pos[1],color.getRGB())  #0.23
         except:     #ArrayOutOfBoundsException
             raise IndexError
         return None
@@ -310,8 +314,8 @@ class Surface(BufferedImage):
         except AttributeError:
             g2d = self.createGraphics()
             surface_graphics = False
-        r,g,b = color
-        g2d.setColor(Color(r,g,b))
+        color = Color(color)    #0.23
+        g2d.setColor(color)
         if not rect:
             rect = Rect(0, 0, self.width, self.height)
             x,y,w,h = rect.x, rect.y, rect.width, rect.height
