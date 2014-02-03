@@ -2,7 +2,7 @@
 
 from __future__ import division
 from math import pi
-from java.awt import BasicStroke
+from java.awt import BasicStroke, RenderingHints    #0.23
 from rect import Rect
 from color import Color     #0.23
 
@@ -54,7 +54,7 @@ class Draw(object):
         else:
             g.fillRect(x,y,w,h)
         g.dispose()
-        return rect
+        return surface.get_rect().clip(rect)   #0.23
 
     def circle(self, surface, color, position, radius, width=0):
         """
@@ -62,17 +62,17 @@ class Draw(object):
         Argument include surface to draw, color, position and radius.
         Optional width argument of outline, which defaults to 0 for filled shape.
         """
-        x, y = position
-        w, h = 2*radius, 2*radius
+        rect = Rect(position[0]-radius, position[1]-radius, 2*radius, 2*radius)  #0.23
         g = surface.createGraphics()
         g.setColor(Color(color))    #0.23
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)      #0.23
         if width:
             g.setStroke(BasicStroke(width))
-            g.drawOval(x-radius, y-radius, w, h)
+            g.drawOval(rect.x, rect.y, rect.width, rect.height)
         else:
-            g.fillOval(x-radius, y-radius, w, h)
+            g.fillOval(rect.x, rect.y, rect.width, rect.height)
         g.dispose()
-        return Rect(x,y,w,h)
+        return surface.get_rect().clip(rect)   #0.23
 
     def arc(self, surface, color, rect, start_angle, stop_angle, width=1):
         """
@@ -95,13 +95,14 @@ class Draw(object):
         y -= h//8
         g = surface.createGraphics()
         g.setColor(Color(color))    #0.23
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)      #0.23
         if width:
             g.setStroke(BasicStroke(width))
             g.drawArc(x, y, w, h, start_angle, stop_angle)
         else:
             g.fillArc(x, y, w, h, start_angle, stop_angle)
         g.dispose()
-        return rect
+        return surface.get_rect().clip(rect)   #0.23
 
     def polygon(self, surface, color, pointlist, width=0):
         """
@@ -111,6 +112,7 @@ class Draw(object):
         """
         g = surface.createGraphics()
         g.setColor(Color(color))    #0.23
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)      #0.23
         xpts = [pt[0] for pt in pointlist]
         ypts = [pt[1] for pt in pointlist]
         npts = len(pointlist)
@@ -124,7 +126,8 @@ class Draw(object):
         else:
             g.fillPolygon(xpts,ypts,npts)
         g.dispose()
-        return Rect(xmin,ymin,xmax-xmin+1,ymax-ymin+1)
+        rect = Rect(xmin,ymin,xmax-xmin+1,ymax-ymin+1)
+        return surface.get_rect().clip(rect)   #0.23
 
     def line(self, surface, color, point1, point2, width=1):
         """
@@ -136,6 +139,7 @@ class Draw(object):
         p2x, p2y = point2
         g = surface.createGraphics()
         g.setColor(Color(color))    #0.23
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)      #0.23
         g.setStroke(BasicStroke(width))
         g.drawLine(p1x,p1y,p2x,p2y)
         g.dispose()
@@ -145,9 +149,8 @@ class Draw(object):
         xmax = max(xpts)
         ymin = min(ypts)
         ymax = max(ypts)
-        w = xmax-xmin
-        h = ymax-ymin
-        return Rect(xmin, ymin, w, h)
+        rect = Rect(xmin, ymin, xmax-xmin+1, ymax-ymin+1)
+        return surface.get_rect().clip(rect)   #0.23
 
     def lines(self, surface, color, closed, pointlist, width=1):
         """
@@ -164,6 +167,7 @@ class Draw(object):
         npoints = len(xpoints)
         g = surface.createGraphics()
         g.setColor(Color(color))    #0.23
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)      #0.23
         g.setStroke(BasicStroke(width))
         g.drawPolyline(xpoints, ypoints, npoints)
         g.dispose()
@@ -171,9 +175,8 @@ class Draw(object):
         xmax = max(xpoints)
         ymin = min(ypoints)
         ymax = max(ypoints)
-        w = xmax-xmin
-        h = ymax-ymin
-        return Rect(xmin, ymin, w, h)
+        rect = Rect(xmin, ymin, xmax-xmin+1, ymax-ymin+1)
+        return surface.get_rect().clip(rect)   #0.23
 
     def aaline(self, surface, color, point1, point2, blend=1):
         """

@@ -103,4 +103,5 @@ git development (https://github.com/jggatc/pyj2d)
 -added Rect equality and nonzero methods.
 -added Color object.
 -updated to use Color object.
+-updated draw methods with minor adjustments.
 
