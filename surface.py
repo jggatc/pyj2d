@@ -290,7 +290,7 @@ class Surface(BufferedImage):
             color = Color(self.getRGB(x,y))
         except:     #ArrayOutOfBoundsException
             raise IndexError
-        return color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()  #0.23
+        return color    #23
 
     def set_at(self, pos, color):
         """
