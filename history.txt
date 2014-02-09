@@ -104,4 +104,4 @@ git development (https://github.com/jggatc/pyj2d)
 -added Color object.
 -updated to use Color object.
 -updated draw methods with minor adjustments.
-
+-updated to use Rect object.

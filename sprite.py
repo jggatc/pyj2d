@@ -24,7 +24,6 @@ class Sprite(object):
         Optional argument inludes group(s) to place sprite.
         Sprite can have image and rect attributes.
         """
-        self._rect_pre = None
         self.x = None
         self.y = None
         self.image = None
@@ -225,19 +224,22 @@ class Group(object):
         for group in (self._removed_sprite, self._sprites.itervalues()):
             for sprite in group:
                 try:
-                    x,y,w,h = sprite._rect_pre.x, sprite._rect_pre.y, sprite._rect_pre.width, sprite._rect_pre.height
-                except AttributeError:
-                    sprite._rect_pre = sprite.rect.copy()
-                    continue
-                try:
                     subsurf = background.subarea
                 except AttributeError:
-                    background(surface,sprite._rect_pre)
-                    sprite._rect_pre = sprite.rect.copy()
+                    try:
+                        background(surface,sprite._rect_pre)
+                        sprite._rect_pre = Rect(sprite.rect)
+                        continue
+                    except AttributeError:
+                        sprite._rect_pre = Rect(sprite.rect)
+                        continue
+                try:
+                    subsurface, rect = subsurf(sprite._rect_pre)
+                except AttributeError:
+                    sprite._rect_pre = Rect(sprite.rect)
                     continue
-                subsurface, rect = subsurf((sprite._rect_pre.x, sprite._rect_pre.y, sprite._rect_pre.width, sprite._rect_pre.height))
                 self._surface_blits.append((subsurface,rect))
-                sprite._rect_pre = sprite.rect.copy()
+                sprite._rect_pre = Rect(sprite.rect)
         surface.blits(self._surface_blits)
         self._removed_sprite = []
 
@@ -254,7 +256,7 @@ class Group(object):
         """
         Update sprites in group by calling sprite.update.
         """
-        for sprite in self._sprites.itervalues():
+        for sprite in self._sprites.values():    #0.23
             sprite.update(*args, **kwargs)  #*tuple unpack jythonc error, fix by adding **kwargs
         return None
 
@@ -340,7 +342,10 @@ class RenderUpdates(Group):
         """
         if surface._display:
             for group in (self._removed_sprite, self._sprites.itervalues()):
-                self.changed_areas.extend([sprite._rect_pre for sprite in group if sprite._rect_pre])
+                try:    #0.23
+                    self.changed_areas.extend([sprite._rect_pre for sprite in group])
+                except AttributeError:
+                    continue
         Group.clear(self, surface, background)
         return None
 

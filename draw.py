@@ -37,22 +37,14 @@ class Draw(object):
         Argument include surface to draw, color, Rect.
         Optional width argument of outline, which defaults to 0 for filled shape.
         """
-        try:
-            x,y,w,h = rect.x, rect.y, rect.width, rect.height
-        except AttributeError:
-            try:
-                x,y,w,h = rect
-            except ValueError:
-                x,y = rect[0]
-                w,h = rect[1]
-            rect = Rect(x,y,w,h)
+        rect = Rect(rect)   #0.23
         g = surface.createGraphics()
         g.setColor(Color(color))    #0.23
         if width:
             g.setStroke(BasicStroke(width))
-            g.drawRect(x,y,w,h)
+            g.drawRect(rect.x, rect.y, rect.width, rect.height)
         else:
-            g.fillRect(x,y,w,h)
+            g.fillRect(rect.x, rect.y, rect.width, rect.height)
         g.dispose()
         return surface.get_rect().clip(rect)   #0.23
 
@@ -80,27 +72,17 @@ class Draw(object):
         Argument include surface to draw, color, rect, start_angle, stop_angle.
         Optional width argument of outline.
         """
-        try:
-            x,y,w,h = rect.x, rect.y, rect.width, rect.height
-        except AttributeError:
-            try:
-                x,y,w,h = rect
-            except ValueError:
-                x,y = rect[0]
-                w,h = rect[1]
-            rect = Rect(x,y,w,h)
+        rect = Rect(rect)   #0.23
         start_angle = int(start_angle * self.rad_deg)
         stop_angle = int(stop_angle * self.rad_deg)
-        x -= w//8
-        y -= h//8
         g = surface.createGraphics()
         g.setColor(Color(color))    #0.23
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)      #0.23
         if width:
             g.setStroke(BasicStroke(width))
-            g.drawArc(x, y, w, h, start_angle, stop_angle)
+            g.drawArc(rect.x-(rect.width//8), rect.y-(rect.height//8), rect.width, rect.height, start_angle, stop_angle)
         else:
-            g.fillArc(x, y, w, h, start_angle, stop_angle)
+            g.fillArc(rect.x-(rect.width//8), rect.y-(rect.height//8), rect.width, rect.height, start_angle, stop_angle)
         g.dispose()
         return surface.get_rect().clip(rect)   #0.23
 

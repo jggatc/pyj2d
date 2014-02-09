@@ -133,51 +133,41 @@ class Surface(BufferedImage):
             surface._colorkey = self._colorkey
         return surface
 
-    def subsurface(self, *rect):
+    def subsurface(self, rect):    #0.23
         """
         Return Surface that represents a subsurface that shares data with this surface.
         The rect argument is the area of the subsurface.
         """
         try:
-            x,y,w,h = rect[0].x, rect[0].y, rect[0].width, rect[0].height
-        except AttributeError:
             try:
-                x,y,w,h = rect[0]
-            except ValueError:
-                x,y = rect[0]
-                w,h = rect[1]
-        try:
-            subsurf = self.getSubimage(x, y, w, h)
+                subsurf = self.getSubimage(rect.x, rect.y, rect.width, rect.height)
+            except AttributeError:
+                rect = Rect(rect)
+                subsurf = self.getSubimage(rect.x, rect.y, rect.width, rect.height)
         except RasterFormatException:
             try:
-                clip = self.get_rect().createIntersection( Rect(x, y, w, h) )
-                x, y, w, h = clip.x, clip.y, clip.width, clip.height
-                subsurf = self.getSubimage(x, y, w, h)
+                rect = self.get_rect().createIntersection(rect)
+                subsurf = self.getSubimage(rect.x, rect.y, rect.width, rect.height)
             except:     #rect outside surface
                 return None
         surface = Surface(subsurf)
         surface._super_surface = self
         surface._g2d = surface.createGraphics()
-        surface._offset = (x,y)
+        surface._offset = (rect.x,rect.y)
         surface._colorkey = self._colorkey
         return surface
 
-    def subarea(self, *rect):
+    def subarea(self, rect):    #0.23
         """
         Return Surface and Rect that represents a subsurface that shares data with this surface.
         The rect argument is the area of the subsurface.
         """
         try:
-            x,y,w,h = rect[0].x, rect[0].y, rect[0].width, rect[0].height
-        except AttributeError:
             try:
-                x,y,w,h = rect[0]
-            except ValueError:
-                x,y = rect[0]
-                w,h = rect[1]
-        rect = Rect(x, y, w, h)
-        try:
-            subsurf = self.getSubimage(rect.x, rect.y, rect.width, rect.height)
+                subsurf = self.getSubimage(rect.x, rect.y, rect.width, rect.height)
+            except AttributeError:
+                rect = Rect(rect)
+                subsurf = self.getSubimage(rect.x, rect.y, rect.width, rect.height)
         except RasterFormatException:
             try:
                 clip = self.get_rect().createIntersection(rect)
@@ -318,14 +308,9 @@ class Surface(BufferedImage):
         g2d.setColor(color)
         if not rect:
             rect = Rect(0, 0, self.width, self.height)
-            x,y,w,h = rect.x, rect.y, rect.width, rect.height
         else:
-            try:
-                x,y,w,h = rect.x, rect.y, rect.width, rect.height
-            except AttributeError:
-                rect = Rect(rect[0], rect[1], rect[2], rect[3])
-                x,y,w,h = rect.x, rect.y, rect.width, rect.height
-        g2d.fillRect(x,y,w,h)
+            rect = Rect(rect)   #0.23
+        g2d.fillRect(rect.x, rect.y, rect.width, rect.height)
         if not surface_graphics:
             g2d.dispose()
         return rect
