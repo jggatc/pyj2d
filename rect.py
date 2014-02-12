@@ -65,7 +65,7 @@ class Rect(Rectangle):
         'h': lambda self: self.height
           }
 
-    def __init__(self, *arg):
+    def __init__(self, *arg):   #0.23
         """
         Return Rect that is subclassed from java.awt.Rectangle.
         
@@ -89,19 +89,26 @@ class Rect(Rectangle):
         
         Module initialization places pyj2d.Rect in module's namespace.
         """
+        def unpack(arg, lst=[]):
+            for x in arg:
+                if not isinstance(x, tuple):
+                    lst.append(x)
+                else:
+                    lst = unpack(x, lst)
+            return lst
         try:
             x,y,w,h = arg[0], arg[1], arg[2], arg[3]
         except IndexError:
             try:
-                x,y,w,h = arg[0].rect.x, arg[0].rect.y, arg[0].rect.width, arg[0].rect.height
-            except AttributeError:
+                x,y,w,h = arg[0][0], arg[0][1], arg[0][2], arg[0][3]
+            except (IndexError, TypeError, AttributeError):
+                arg = unpack(arg)
                 try:
+                    x,y,w,h = arg[0], arg[1], arg[2], arg[3]
+                except IndexError:
+                    if hasattr(arg[0], 'rect'):
+                        arg[0] = arg[0].rect
                     x,y,w,h = arg[0].x, arg[0].y, arg[0].width, arg[0].height
-                except AttributeError:
-                    try:
-                        x,y,w,h = arg[0][0], arg[0][1], arg[1][0], arg[1][1]
-                    except IndexError:
-                        x,y,w,h = arg[0][0], arg[0][1], arg[0][2], arg[0][3]
         try:
             Rectangle.__init__(self, x, y, w, h)
         except TypeError:
