@@ -221,7 +221,7 @@ class Rect(Rectangle):
         """
         clipRect = self.createIntersection(rect)
         if clipRect.width > 0 and clipRect.height > 0:  #0.23
-            return Rect(clipRect)
+            return Rect(clipRect.x,clipRect.y,clipRect.width,clipRect.height)
         else:
             return Rect(0,0,0,0)
 
