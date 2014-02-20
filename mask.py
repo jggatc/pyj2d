@@ -2,7 +2,7 @@
 
 from __future__ import division
 from java.util import BitSet
-from color import Color     #0.23
+from color import Color
 
 __docformat__ = 'restructuredtext'
 
@@ -35,7 +35,7 @@ def from_threshold(surface, color, threshold=(0,0,0,255)):
     mask = Mask((surface.width, surface.height))
     pixels = surface.getRGB(0,0,surface.width,surface.height,None,0,surface.width)
     if threshold == (0,0,0,255):
-        color = Color(color)    #0.23
+        color = Color(color)
         if color.a != 255:
             color = Color(color.r,color.g,color.b,255)
         icolor = color.getRGB()
@@ -46,9 +46,9 @@ def from_threshold(surface, color, threshold=(0,0,0,255)):
                     mask.set_at((x,y))
                 i += 1
     else:
-        color = Color(color)    #0.23
+        color = Color(color)
         col = {}
-        for i, c in enumerate(('r','g','b')):    #0.23
+        for i, c in enumerate(('r','g','b')):
             if threshold[i]:
                 col[c+'1'] = color[i] - threshold[i] - 1
                 col[c+'2'] = color[i] + threshold[i] + 1

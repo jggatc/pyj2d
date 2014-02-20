@@ -2,10 +2,10 @@
 
 from __future__ import division
 from java.awt import Font as JFont
-from java.awt import BasicStroke, RenderingHints, GraphicsEnvironment   #0.23
+from java.awt import BasicStroke, RenderingHints, GraphicsEnvironment
 from java.awt.image import BufferedImage
 import surface
-from color import Color     #0.23
+from color import Color
 
 __docformat__ = 'restructuredtext'
 
@@ -123,16 +123,16 @@ class Font(JFont):
         surf = surface.Surface((w,h), BufferedImage.TYPE_INT_ARGB)
         g2d = surf.createGraphics()
         if background:
-            g2d.setColor(Color(background))     #0.23
+            g2d.setColor(Color(background))
             g2d.fillRect(0,0,w,h)
         g2d.setFont(self.font)
         if antialias:
             g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
-        g2d.setColor(Color(color))      #0.23
-        g2d.drawString(text,0,(h//2)+(self.fontMetrics.getAscent()//2))    #0.22
+        g2d.setColor(Color(color))
+        g2d.drawString(text,0,(h//2)+(self.fontMetrics.getAscent()//2))
         if self.underline:
             g2d.setStroke(BasicStroke(1))
-            g2d.drawLine(0,h-1,w-1,h-1)     #0.22
+            g2d.drawLine(0,h-1,w-1,h-1)
         g2d.dispose()
         return surf
 
@@ -140,7 +140,7 @@ class Font(JFont):
         """
         Return size x,y of a surface for of given text.
         """
-        x = self.fontMetrics.stringWidth(text)      #0.22
+        x = self.fontMetrics.stringWidth(text)
         if x < 1:
             x = 1
         y = self.fontMetrics.getHeight()
@@ -209,25 +209,25 @@ class Font(JFont):
         """
         return self.fontMetrics.getHeight()
 
-    def get_linesize(self):     #0.22
+    def get_linesize(self):
         """
         Return linesize of font.
         """
         return self.fontMetrics.getHeight()
 
-    def get_ascent(self):     #0.22     ###
+    def get_ascent(self):
         """
         Return ascent of font.
         """
         return self.fontMetrics.getAscent()
 
-    def get_descent(self):     #0.22
+    def get_descent(self):
         """
         Return descent of font.
         """
         return self.fontMetrics.getDescent()
 
-    def _nonimplemented_methods(self):      #0.22
+    def _nonimplemented_methods(self):
         """
         Non-implemented methods.
         """

@@ -4,7 +4,7 @@ from __future__ import division
 from java.lang import Thread
 from java.awt.event import MouseEvent, KeyEvent
 import time
-import locals as Const  #0.22
+import locals as Const
 
 __docformat__ = 'restructuredtext'
 
@@ -108,7 +108,7 @@ class Event(object):
             self.queue = [ self.JEvent(event) for event in self.eventQueue[0:self.eventNum] ]
             self.eventNum = 0
         else:
-            queue = []      #0.23
+            queue = []
             self.queue = []
             try:
                 for i in range(self.eventNum):
@@ -129,7 +129,7 @@ class Event(object):
         self._unlock()
         return self.queue
 
-    def poll(self):   #0.23
+    def poll(self):
         """
         Return an event from the queue, or event type NOEVENT if none present.
         """
@@ -143,7 +143,7 @@ class Event(object):
         self._unlock()
         return evt
 
-    def wait(self):   #0.23
+    def wait(self):
         """
         Return an event from the queue, or wait for an event if none present.
         """
@@ -275,7 +275,7 @@ class Event(object):
         self.set_grab = lambda *arg: None
         self.get_grab = lambda *arg: False
 
-    class Event(object):    #0.22
+    class Event(object):
 
         __slots__ = ['type', 'attr']
 
@@ -355,7 +355,7 @@ class Event(object):
                     return self.event.getKeyLocation()
                 else:
                     raise AttributeError
-            except AttributeError:      #User Event     #0.22
+            except AttributeError:      #User Event
                 try:
                     return self.event.__getattribute__(attr)
                 except AttributeError:
@@ -366,7 +366,7 @@ class Event(object):
                     except KeyError:
                         raise AttributeError, ("'Event' object has no attribute '%s'" % attr)
 
-        def __setattr__(self, attr, value):     #0.22
+        def __setattr__(self, attr, value):
             raise AttributeError, ("'Event' object has no attribute '%s'" % attr)
 
         def getEvent(self):

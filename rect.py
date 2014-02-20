@@ -65,7 +65,7 @@ class Rect(Rectangle):
         'h': lambda self: self.height
           }
 
-    def __init__(self, *arg):   #0.23
+    def __init__(self, *arg):
         """
         Return Rect that is subclassed from java.awt.Rectangle.
         
@@ -155,13 +155,13 @@ class Rect(Rectangle):
         val = int(val)
         [lambda val: self.__setattr__("x", val), lambda val: self.__setattr__("y", val), lambda val: self.__setattr__("width", val), lambda val: self.__setattr__("height", val)][key](val)
 
-    def __nonzero__(self):      #0.23
+    def __nonzero__(self):
         """
         Rect nonzero check.
         """
         return self.width and self.height
 
-    def __eq__(self, other):    #0.23
+    def __eq__(self, other):
         """
         Rects equality check.
         """
@@ -170,7 +170,7 @@ class Rect(Rectangle):
         except AttributeError:
             return self.x==other[0] and self.y==other[1] and self.width==other[2] and self.height==other[3]
 
-    def __ne__(self, other):    #0.23
+    def __ne__(self, other):
         """
         Rects equality check.
         """
@@ -209,7 +209,7 @@ class Rect(Rectangle):
         """
         Return Rect at same position but size offset by x,y.
         """
-        return Rect(self.x-(x//2), self.y-(y//2), self.width+x, self.height+y)  #0.23
+        return Rect(self.x-(x//2), self.y-(y//2), self.width+x, self.height+y)
 
     def inflate_ip(self, x, y):
         """
@@ -219,7 +219,7 @@ class Rect(Rectangle):
             self.setSize(self.width+x, self.height+y)
         except TypeError:
             self.setSize(self.width+int(x), self.height+int(y))
-        self.setLocation(self.x-(x//2), self.y-(y//2))      #0.23
+        self.setLocation(self.x-(x//2), self.y-(y//2))
         return None
 
     def clip(self, rect):
@@ -227,7 +227,7 @@ class Rect(Rectangle):
         Return Rect representing the intersection of rect and this rect.
         """
         clipRect = self.createIntersection(rect)
-        if clipRect.width > 0 and clipRect.height > 0:  #0.23
+        if clipRect.width > 0 and clipRect.height > 0:
             return Rect(clipRect.x,clipRect.y,clipRect.width,clipRect.height)
         else:
             return Rect(0,0,0,0)

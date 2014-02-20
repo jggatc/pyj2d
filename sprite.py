@@ -256,7 +256,7 @@ class Group(object):
         """
         Update sprites in group by calling sprite.update.
         """
-        for sprite in self._sprites.values():    #0.23
+        for sprite in self._sprites.values():
             sprite.update(*args, **kwargs)  #*tuple unpack jythonc error, fix by adding **kwargs
         return None
 
@@ -342,7 +342,7 @@ class RenderUpdates(Group):
         """
         if surface._display:
             for group in (self._removed_sprite, self._sprites.itervalues()):
-                try:    #0.23
+                try:
                     self.changed_areas.extend([sprite._rect_pre for sprite in group])
                 except AttributeError:
                     continue

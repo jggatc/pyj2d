@@ -37,7 +37,7 @@ class Mouse(object):
     def get_pos(self):
         """
         Return x,y of mouse pointer.
-        If the pointer is not in frame, returns -1,-1
+        If the pointer is not in frame, returns -1,-1.
         """
         pos = env.jframe.jpanel.getMousePosition()
         try:
