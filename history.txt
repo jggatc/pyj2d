@@ -107,4 +107,5 @@ git development (https://github.com/jggatc/pyj2d)
 -updated to use Rect object.
 -updated Sprite group update to account for member changes.
 -added Surfarray methods.
+-added draw.ellipse method.
 

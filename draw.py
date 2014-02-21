@@ -3,6 +3,7 @@
 from __future__ import division
 from math import pi
 from java.awt import BasicStroke, RenderingHints
+from java.awt.geom import Ellipse2D
 from rect import Rect
 from color import Color
 
@@ -15,6 +16,7 @@ class Draw(object):
     
     * pyj2d.draw.rect
     * pyj2d.draw.circle
+    * pyj2d.draw.ellipse
     * pyj2d.draw.arc
     * pyj2d.draw.polygon
     * pyj2d.draw.line
@@ -63,6 +65,24 @@ class Draw(object):
             g.drawOval(rect.x, rect.y, rect.width, rect.height)
         else:
             g.fillOval(rect.x, rect.y, rect.width, rect.height)
+        g.dispose()
+        return surface.get_rect().clip(rect)
+
+    def ellipse(self, surface, color, rect, width=0):
+        """
+        Draw ellipse shape, and returns bounding Rect.
+        Argument include surface to draw, color, and rect.
+        Optional width argument of outline, which defaults to 0 for filled shape.
+        """
+        rect = Rect(rect)
+        g = surface.createGraphics()
+        g.setColor(Color(color))
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+        ellipse = Ellipse2D.Double(rect.x, rect.y, rect.width, rect.height)
+        if width:
+            g.draw(ellipse)
+        else:
+            g.fill(ellipse)
         g.dispose()
         return surface.get_rect().clip(rect)
 
