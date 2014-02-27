@@ -93,7 +93,7 @@ PyJ2D Version History
 -updated Font.size to adjust surface size.
 -updated Event/JEvent for proper function of UserEvent.
 
-git development (https://github.com/jggatc/pyj2d)
+0.23    February 27, 2014
 -updated Event.get to accept eventtype argument.
 -updated Event.poll and Event.wait to return JEvent object.
 -updated Event.poll noevent return.
@@ -108,4 +108,5 @@ git development (https://github.com/jggatc/pyj2d)
 -updated Sprite group update to account for member changes.
 -added Surfarray methods.
 -added draw.ellipse method.
+-changed license from GPL to LGPL.
 

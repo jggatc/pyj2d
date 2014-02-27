@@ -1,4 +1,4 @@
-PyJ2D
+PyJ2D - Python-to-Java Multimedia Framework
 
 PyJ2D module was modelled on Pygame commands that permits scripts coded in Python/Pygame to run in the Java virtual machine (JVM) using the Jython interpreter. This permits the deployment of JVM applications without extensive editing of the script. The current version of the module only supports a subset of Pygame functionality.
 
@@ -9,4 +9,9 @@ To launch a desktop application, JVM must be installed and have Jython. In Linux
 To create a deployable Java applet, copy Applet.py to the script folder, and edit Applet.py to import your Python/Pygame script, set applet size, and code to link the applet thread to the script application, including script setup, and script execution statements that will update during the applet thread loop. Alternatively, use Applet.py as a guide and edit your Python/Pygame script accordingly. To test, the edited Applet.py script can be run directly on the desktop JVM, which executes the applet code with the pawt module in main(). To create an applet jar that can be deployed online, use the command 'jythonc --core --deep --jar Pyj2d_Applet.jar Applet.py' to package together with Jython dependencies, or 'jythonc --jar Pyj2d_Applet.jar Applet.py' to package alone in which case jython.jar must be included. To update the applet jar with an image folder, use command 'jar uf Pyj2d_Applet.jar image'. Note that Java applets do not start from main() rather launch from japplet subclass with the same name as the script.
 
 To run the applet on desktop before deployment online, use appletviewer included with Sun's JDK package, which tests execution and whether applet conforms to security profile; using this method, unsigned applets were created successfully, but if code is required that violates security such as disk access, the applet needs to be signed for permission. To use appletviewer, place an edited Applet.html together with applet jar(s), and use command 'appletviewer Applet.html'. To deploy online, place applet jar(s) on your server, and to launch from browser, a method that worked is to initiate the applet using JavaScript in Applet.js, after editing applet size, jar name and site URL, that is embedded on the webpage.
+
+PyJ2D is released under LGPL, see license.txt for further information.
+
+PyJ2D page: http://gatc.ca/projects/pyj2d/
+PyJ2D docs: http://gatc.ca/projects/pyj2d/doc/
 
