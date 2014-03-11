@@ -59,11 +59,12 @@ class Transform(object):
         Return Surface rotated and resized by the given angle and size.
         """
         surf = self.rotate(surface, angle)
-        if size != 1.0:
-            try:
-                surf = self.scale(surf, (int(surface.getWidth()*size), int(surface.getHeight()*size)))
-            except IllegalArgumentException:    #dim < 1
-                surf = self.scale(surf, (int(math.ceil(surface.getWidth()*size)), int(math.ceil(surface.getHeight()*size))))
+        w, h = int(math.ceil(surf.getWidth()*size)), int(math.ceil(surf.getHeight()*size))
+        if w % 2:
+            w += 1
+        if h % 2:
+            h += 1
+        surf = self.scale(surf, (w, h))
         return surf
 
     def scale(self, surface, size, dest=None):
