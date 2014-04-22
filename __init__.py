@@ -28,6 +28,7 @@ from mouse import Mouse
 from transform import Transform
 from surfarray import Surfarray
 from color import Color
+from mixer import Mixer
 import time
 import mask
 import font
@@ -39,7 +40,7 @@ def init():
     """
     Initialize module.
     """
-    global display, image, draw, event, key, mouse, transform, surfarray, error, initialized
+    global display, image, draw, event, key, mouse, transform, surfarray, mixer, error, initialized
     try:
         if initialized:
             return
@@ -53,6 +54,7 @@ def init():
     mouse = Mouse()
     transform = Transform()
     surfarray = Surfarray()
+    mixer = Mixer()
     error = None
     return
 
@@ -63,12 +65,13 @@ def quit():
     """
     Uninitialize module.
     """
-    global display, sprite, image, draw, time, event, key, mouse, transform, font, surfarray, mask, initialized
+    global display, sprite, image, draw, time, event, key, mouse, transform, font, surfarray, mask, mixer, initialized
     if not initialized:
         return
     else:
         initialized = False
-    for module in (display, sprite, image, draw, time, event, key, mouse, transform, font, surfarray, mask):
+    mixer.quit()
+    for module in (display, sprite, image, draw, time, event, key, mouse, transform, font, surfarray, mask, mixer):
         del(module)
     if not env.japplet:
         env.jframe.dispose()

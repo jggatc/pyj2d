@@ -112,4 +112,5 @@ PyJ2D Version History
 
 0.24_git:
 -updated transform.rotozoom for correct scaling.
+-added mixer.
 
