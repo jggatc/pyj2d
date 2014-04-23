@@ -329,7 +329,12 @@ class Sound:
         self._id = Sound._id
         Sound._id += 1
         if isinstance(sound_file, str):
-            self._sound_object = File(sound_file)
+            try:
+                self._sound_object = env.japplet.class.getResource(sound_file.replace('\\','/'))    #java uses /, not os.path Windows \
+                if not self._sound_object:
+                    raise IOError
+            except:
+                self._sound_object = File(sound_file)      #make path os independent
         else:
             self._sound_object = sound_file
         self._channel = None
