@@ -40,6 +40,7 @@ class Mixer(Runnable):
         Plays wav, aiff, and au sampled audio.
         To specify the BigEndian format of aiff and au, use -16L for size.
         The mixing is done by Mixer.class, compiled with 'javac Mixer.java'.
+        When a JAR is created, include with 'jar uvf Pyj2d_App.jar pyj2d/Mixer.class'.
         """
         if not self._initialized:
             if buffer < 32:
@@ -70,7 +71,7 @@ class Mixer(Runnable):
                 self._mix = None
             self._line.start()
             self._thread.start()
-            self._intialized = True
+            self._initialized = True
         return None
 
     def pre_init(self, frequency=22050, size=-16, channels=2, buffer=4096):
@@ -131,10 +132,13 @@ class Mixer(Runnable):
         """
         Get the audio format initialized.
         """
-        frequency = int(self._audio_format.sampleRate)
-        format = self._audio_format.sampleSizeInBits * {True:1,False:-1}[self._audio_format.bigEndian]
-        channels = self._audio_format.channels
-        return (frequency, format, channels)
+        if self._initialized:
+            frequency = int(self._audio_format.sampleRate)
+            format = self._audio_format.sampleSizeInBits * {True:1,False:-1}[self._audio_format.bigEndian]
+            channels = self._audio_format.channels
+            return (frequency, format, channels)
+        else:
+            return None
 
     def stop(self):
         """
