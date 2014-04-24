@@ -7,6 +7,7 @@ from java.lang import IllegalArgumentException, IllegalAccessException, Security
 from java.io import File, IOException
 from java.lang import Thread, Runnable, InterruptedException
 import jarray
+import env
 import Mixer as AudioMixer
 
 __docformat__ = 'restructuredtext'
