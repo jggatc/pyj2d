@@ -5,7 +5,7 @@ from javax.sound.sampled import AudioSystem, SourceDataLine, DataLine, AudioForm
 from javax.sound.sampled import LineUnavailableException, UnsupportedAudioFileException
 from java.lang import IllegalArgumentException, IllegalAccessException, SecurityException
 from java.io import File, IOException
-from java.lang import Thread, Runnable
+from java.lang import Thread, Runnable, InterruptedException
 import jarray
 import Mixer as AudioMixer
 
@@ -275,7 +275,10 @@ class Mixer(Runnable):
         while True:
             channel_active = [self._channels[id] for id in self._channel_pool if self._channels[id]._active]
             if not channel_active:
-                self._thread.sleep(1)
+                try:
+                    self._thread.sleep(1)
+                except InterruptedException:
+                    Thread.currentThread().interrupt()
                 continue
             if len(channel_active) > 1:
                 for channel in channel_active:

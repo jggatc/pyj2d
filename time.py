@@ -1,7 +1,7 @@
 #PyJ2D - Copyright (C) 2011 James Garnon
 
 from __future__ import division
-from java.lang import Thread, System
+from java.lang import Thread, System, InterruptedException
 
 __docformat__ = 'restructuredtext'
 
@@ -51,7 +51,10 @@ class Clock(object):
             time_diff = sum(self.time_diff)/10
             time_pause = long( ((1.0/framerate)*1000) - time_diff )
             if time_pause > 0:
-                self.thread.sleep(time_pause)
+                try:
+                    self.thread.sleep(time_pause)
+                except InterruptedException:
+                    Thread.currentThread().interrupt()
         return self.time_diff[self.pos]
 
     def tick_busy_loop(self, framerate=0):
@@ -85,7 +88,10 @@ def delay(time):
     Pause for given time (in ms). Return ms paused.
     """
     start = System.nanoTime()/1000000
-    Thread.sleep(time)
+    try:
+        Thread.sleep(time)
+    except InterruptedException:
+        Thread.currentThread().interrupt()
     return (System.nanoTime()/1000000) - start
 
 
