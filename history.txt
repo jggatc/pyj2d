@@ -110,7 +110,8 @@ PyJ2D Version History
 -added draw.ellipse method.
 -changed license from GPL to LGPL.
 
-0.24_git:
--updated transform.rotozoom for correct scaling.
--added mixer.
+0.24    April 24, 2014
+-update transform.rotozoom for correct scaling.
+-update thread interrupt handling.
+-add mixer.
 
