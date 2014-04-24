@@ -1,14 +1,16 @@
 #PyJ2D - Copyright (C) 2011 James Garnon
 
 from __future__ import division
-from javax.sound.sampled import AudioSystem, SourceDataLine, DataLine, AudioFormat
-from javax.sound.sampled import LineUnavailableException, UnsupportedAudioFileException
-from java.lang import IllegalArgumentException, IllegalAccessException, SecurityException
+from javax.sound.sampled import AudioSystem, AudioFormat
+from javax.sound.sampled import LineUnavailableException
 from java.io import File, IOException
 from java.lang import Thread, Runnable, InterruptedException
 import jarray
 import env
-import Mixer as AudioMixer
+try:
+    import Mixer as AudioMixer
+except ImportError:
+    AudioMixer = None
 
 __docformat__ = 'restructuredtext'
 
@@ -38,39 +40,27 @@ class Mixer(Runnable):
         Mixer initialization.
         Argument sampled frequency, bit size, channels, and buffer.
         Currently implements PCM 16-bit audio.
-        Plays wav, aiff, and au sampled audio.
-        To specify the BigEndian format of aiff and au, use -16L for size.
+        Plays WAV, AIFF, and AU sampled audio.
+        To specify the BigEndian format of AIFF and AU, use -16L for size.
         The mixing is done by Mixer.class, compiled with 'javac Mixer.java'.
         When a JAR is created, include with 'jar uvf Pyj2d_App.jar pyj2d/Mixer.class'.
         """
         if not self._initialized:
-            if buffer < 32:
-                buffer = 32
-            isBigEndian = isinstance(size,long)
             encoding = {True:AudioFormat.Encoding.PCM_SIGNED, False:AudioFormat.Encoding.PCM_UNSIGNED}[size<0]
             channels = {True:1, False:2}[channels<=1]
             framesize = int((abs(size)/8) * channels)
+            isBigEndian = isinstance(size,long)
             self._audio_format = AudioFormat(encoding, int(frequency), int(abs(size)), channels, framesize, int(frequency), isBigEndian)
-            line_format = DataLine.Info(SourceDataLine, self._audio_format)
+            self._bufferSize = buffer
             try:
-                self._mixer = AudioSystem.getMixer(None)
-            except (IllegalArgumentException, SecurityException):
+                self._mixer = AudioMixer(self._audio_format, self._bufferSize)
+            except TypeError:
                 self._mixer = None
-            if self._mixer:
-                self._line = self._get_line(line_format, buffer)
-            if not self._line:
-                self._mixer = None
-            if not self._mixer:
-                self._mixer = self._get_mixer(line_format, buffer)
-            if not self._mixer and not self._line:
-                return
-            self._bufferSize = self._line.getBufferSize()
+                return None
+            if not self._mixer.isInitialized():
+                return None
+            self._bufferSize = self._mixer.getBufferSize()
             self._byteArray = jarray.zeros(self._bufferSize, 'b')
-            try:
-                self._mix = AudioMixer(self._audio_format, self._bufferSize)
-            except IllegalArgumentException:
-                self._mix = None
-            self._line.start()
             self._thread.start()
             self._initialized = True
         return None
@@ -82,49 +72,13 @@ class Mixer(Runnable):
         self.init(frequency, size, channels, buffer)
         return None
 
-    def _get_line(self, line_format, buffer):
-        if self._mixer.isLineSupported(line_format):
-            try:
-                self._line = self._mixer.getLine(line_format)
-                self._line.open(self._audio_format, int(buffer))
-            except (LineUnavailableException, IllegalArgumentException, SecurityException):
-                self._line = None
-        else:
-            self._line = None
-        if self._line:
-            try:
-                byteArray = jarray.zeros(4, 'b')
-                self._line.write(byteArray,0,4)
-            except IllegalAccessException:  #jython2.2 error with DirectAudioDevice
-                self._line.close()
-                self._line = None
-        return self._line
-
-    def _get_mixer(self, line_format, buffer):
-        for info in AudioSystem.getMixerInfo():
-            try:
-                mixer = AudioSystem.getMixer(info)
-            except (IllegalArgumentException, SecurityException):
-                continue
-            if not mixer.isLineSupported(line_format):
-                continue
-            self._mixer = mixer
-            self._line = self._get_line(line_format, buffer)
-            if not self._line:
-                continue
-            else:
-                return self._mixer
-        return None
-
     def quit(self):
         """
         Stop mixer processing and release resources.
         """
         self.stop()
         try:
-            self._line.stop()
-            self._line.close()
-            self._line = None
+            self._mixer.quit()
         except AttributeError:
             pass
         self._mixer = None
@@ -287,12 +241,12 @@ class Mixer(Runnable):
                         data, data_len, lvol, rvol = channel._get()
                     except AttributeError:
                         continue
-                    self._mix.setAudioData(data, data_len, lvol, rvol)
-                data_len = self._mix.getAudioData(self._byteArray)
+                    self._mixer.setAudioData(data, data_len, lvol, rvol)
+                data_len = self._mixer.getAudioData(self._byteArray)
                 if data_len > 0:
                     try:
-                        self._line.write(self._byteArray, 0, data_len)
-                    except AttributeError:
+                        self._mixer.write(self._byteArray, 0, data_len)
+                    except LineUnavailableException:
                         pass
             else:
                 try:
@@ -301,10 +255,10 @@ class Mixer(Runnable):
                     data_len = 0
                 if data_len > 0:
                     if lvol < 1.0 or rvol < 1.0:
-                        data = self._mix.processVolume(data, data_len, lvol, rvol)
+                        data = self._mixer.processVolume(data, data_len, lvol, rvol)
                     try:
-                        self._line.write(data, 0, data_len)
-                    except AttributeError:
+                        self._mixer.write(data, 0, data_len)
+                    except LineUnavailableException:
                         pass
 
     def _register_channel(self, channel):
