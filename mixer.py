@@ -34,6 +34,7 @@ class Mixer(Runnable):
         self._line_num = 0
         self._thread = Thread(self)
         self._initialized = False
+        self._nonimplemented_methods()
 
     def init(self, frequency=22050, size=-16, channels=2, buffer=4096):
         """
@@ -125,12 +126,10 @@ class Mixer(Runnable):
         self.channel_paused = []
         return None
 
-    def fadeout(self):
-        pass
-
     def set_num_channels(self, count):
         """
         Set maximum mixer channels.
+        Argument channel count.
         """
         if count >= self._channel_max:
             for id in range(self._channel_max, count):
@@ -152,6 +151,7 @@ class Mixer(Runnable):
     def set_reserved(self, count):
         """
         Reserve channel.
+        Argument reserved channel count.
         """
         if count > self._channel_max:
             count = self._channel_max
@@ -278,6 +278,12 @@ class Mixer(Runnable):
     def _register_sound(self, sound):
         self._sounds[sound._id] = sound
 
+    def _nonimplemented_methods(self):
+        """
+        Non-implemented methods.
+        """
+        self.fadeout = lambda *arg: None
+
 
 class Sound:
     _id = 0
@@ -298,10 +304,12 @@ class Sound:
         self._channel = None
         self._volume = 1.0
         self._mixer._register_sound(self)
+        self._nonimplemented_methods()
 
     def play(self, loops=0, maxtime=0, fade_ms=0):
         """
         Play sound on mixer channel.
+        Argument loops is number of repeats or -1 for continuous.
         """
         self._channel = self._mixer.find_channel()
         try:
@@ -326,12 +334,10 @@ class Sound:
         except AttributeError:
             pass
 
-    def fadeout(self, time):
-        pass
-
     def set_volume(self, volume):
         """
         Set sound volume.
+        Argument volume of value 0.0 to 1.0.
         """
         if volume < 0.0:
             volume = 0.0
@@ -368,8 +374,12 @@ class Sound:
         stream.close()
         return length
 
-    def get_buffer(self):
-        pass
+    def _nonimplemented_methods(self):
+        """
+        Non-implemented methods.
+        """
+        self.fadeout = lambda *arg: None
+        self.get_buffer = lambda *arg: None
 
 
 class Channel(Runnable):
@@ -388,6 +398,7 @@ class Channel(Runnable):
         self._lvolume = 1.0
         self._rvolume = 1.0
         self._mixer._register_channel(self)
+        self._nonimplemented_methods()
         self._thread = Thread(self)
         self._thread.start()
 
@@ -429,6 +440,7 @@ class Channel(Runnable):
     def play(self, sound, loops=0, maxtime=0, fade_ms=0):
         """
         Play sound on channel.
+        Argument sound to play and loops is number of repeats or -1 for continuous.
         """
         if self._sound:
             self.stop()
@@ -473,13 +485,10 @@ class Channel(Runnable):
                 self._pause = False
         return None
 
-    def fadeout(self):
-        pass
-
     def set_volume(self, volume, volume2=None):
         """
-        Set channel volume.
-        Argument specify both speakers when single, stereo l/r speakers with second value.
+        Set channel volume of sound playing.
+        Argument volume of value 0.0 to 1.0, setting for both speakers when single, stereo l/r speakers with second value.
         """
         if volume < 0.0:
             volume = 0.0
@@ -515,15 +524,13 @@ class Channel(Runnable):
         """
         return self._sound
 
-    def queue(self):
-        pass
-
-    def get_queue(self):
-        pass
-
-    def set_endevent(self):
-        pass
-
-    def get_endevent(self):
-        pass
+    def _nonimplemented_methods(self):
+        """
+        Non-implemented methods.
+        """
+        self.fadeout = lambda *arg: None
+        self.queue = lambda *arg: None
+        self.get_queue = lambda *arg: None
+        self.set_endevent = lambda *arg: None
+        self.get_endevent = lambda *arg: 0
 
