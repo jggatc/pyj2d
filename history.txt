@@ -115,3 +115,6 @@ PyJ2D Version History
 -update thread interrupt handling.
 -add mixer.
 
+0.25_git
+-update mixer thread interrupt.
+

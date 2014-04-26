@@ -32,7 +32,7 @@ class Mixer(Runnable):
         self._channel_pool = []
         self._lines = {}
         self._line_num = 0
-        self._thread = Thread(self)
+        self._thread = None
         self._initialized = False
         self._nonimplemented_methods()
 
@@ -62,8 +62,9 @@ class Mixer(Runnable):
                 return None
             self._bufferSize = self._mixer.getBufferSize()
             self._byteArray = jarray.zeros(self._bufferSize, 'b')
-            self._thread.start()
             self._initialized = True
+            self._thread = Thread(self)
+            self._thread.start()
         return None
 
     def pre_init(self, frequency=22050, size=-16, channels=2, buffer=4096):
@@ -83,6 +84,7 @@ class Mixer(Runnable):
         except AttributeError:
             pass
         self._mixer = None
+        self._initialized = False
 
     def get_init(self):
         """
@@ -227,7 +229,7 @@ class Mixer(Runnable):
         return False
 
     def run(self):
-        while True:
+        while not self._thread.isInterrupted():
             channel_active = [self._channels[id] for id in self._channel_pool if self._channels[id]._active]
             if not channel_active:
                 try:
@@ -260,6 +262,7 @@ class Mixer(Runnable):
                         self._mixer.write(data, 0, data_len)
                     except LineUnavailableException:
                         pass
+        self.quit()
 
     def _register_channel(self, channel):
         id = channel._id
@@ -414,7 +417,9 @@ class Channel(Runnable):
             self._data_len = self._stream.read(self._data)
         except IOException:
             self._data_len = 0
-        if self._data_len < 0:
+        if self._data_len > 0:
+            return (self._data, self._data_len, self._lvolume*self._sound._volume, self._rvolume*self._sound._volume)
+        else:
             if not self._loops:
                 self.stop()
             else:
@@ -422,7 +427,7 @@ class Channel(Runnable):
                 self._set_sound(self._sound)
                 if self._loops != -1:
                     self._loops -= 1
-        return (self._data, self._data_len, self._lvolume*self._sound._volume, self._rvolume*self._sound._volume)
+            return (self._data, self._data_len, 1.0, 1.0)
 
     def _play(self):
         self._volume = 1.0
