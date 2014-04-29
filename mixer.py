@@ -195,10 +195,10 @@ class Mixer(Runnable):
             for id in self._channel_pool:
                 if not self._channels[id]._active:
                     return self._channels[id]
-                    longest = 0
             else:
                 if force:
                     channel = None
+                    longest = 0
                     for id in self._channel_pool:
                         try:
                             duration = self._channels[id]._stream.getMicrosecondPosition()
