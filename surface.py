@@ -152,7 +152,6 @@ class Surface(BufferedImage):
                 return None
         surface = Surface(subsurf)
         surface._super_surface = self
-        surface._g2d = surface.createGraphics()
         surface._offset = (rect.x,rect.y)
         surface._colorkey = self._colorkey
         return surface
@@ -194,41 +193,26 @@ class Surface(BufferedImage):
                 surface, surface_rect = surface.subarea(area)
         except AttributeError:
             return Rect(0,0,0,0)
-        try:
-            g2d = self._g2d
-            surface_graphics = True
-        except AttributeError:
-            g2d = self.createGraphics()
-            surface_graphics = False
+        g2d = self.createGraphics()
         try:
             g2d.drawImage(surface, x, y, None)
         except TypeError:
             g2d.drawImage(surface, int(x), int(y), None)
-        if not surface_graphics:
-            g2d.dispose()
+        g2d.dispose()
         return surface_rect
 
     def blits(self, surfaces):
         """
         Draw list of (surface, rect) on this surface.
         """
-        try:
-            g2d = self._g2d
-            for surface in surfaces:
-                try:
-                    x, y = surface[1].x, surface[1].y
-                except AttributeError:
-                    x, y = surface[1][0], surface[1][1]
-                g2d.drawImage(surface[0], x, y, None)
-        except AttributeError:
-            g2d = self.createGraphics()
-            for surface in surfaces:
-                try:
-                    x, y = surface[1].x, surface[1].y
-                except AttributeError:
-                    x, y = surface[1][0], surface[1][1]
-                g2d.drawImage(surface[0], x, y, None)
-            g2d.dispose()
+        g2d = self.createGraphics()
+        for surface in surfaces:
+            try:
+                x, y = surface[1].x, surface[1].y
+            except AttributeError:
+                x, y = surface[1][0], surface[1][1]
+            g2d.drawImage(surface[0], x, y, None)
+        g2d.dispose()
         return None
 
     def set_colorkey(self, color, flags=None):
@@ -298,12 +282,7 @@ class Surface(BufferedImage):
         """
         Fill surface with color.
         """
-        try:
-            g2d = self._g2d
-            surface_graphics = True
-        except AttributeError:
-            g2d = self.createGraphics()
-            surface_graphics = False
+        g2d = self.createGraphics()
         color = Color(color)
         g2d.setColor(color)
         if not rect:
@@ -311,8 +290,7 @@ class Surface(BufferedImage):
         else:
             rect = Rect(rect)
         g2d.fillRect(rect.x, rect.y, rect.width, rect.height)
-        if not surface_graphics:
-            g2d.dispose()
+        g2d.dispose()
         return rect
 
     def get_parent(self):

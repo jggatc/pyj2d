@@ -130,8 +130,6 @@ class Display(object):
         self.jpanel = self.jframe.jpanel
         self.surface = self.jpanel.surface
         self.surface._display = self
-        self.surface._g2d = self.jpanel.surface.createGraphics()
-        self.surface._g2d.setBackground(Color.BLACK)
         self.clear()
         self.jframe.setVisible(True)
         return self.surface
@@ -158,10 +156,6 @@ class Display(object):
         """
         Uninitialize display.
         """
-        try:
-            self.surface._g2d.dispose()
-        except:
-            pass
         self._initialized = False
         return None
 
@@ -183,9 +177,10 @@ class Display(object):
         """
         Clear display surface.
         """
-        w, h = self.surface.getWidth(), self.surface.getHeight()
-        self.surface._g2d.setColor(Color.BLACK)
-        self.surface._g2d.fillRect(0,0,w,h)
+        g2d = self.surface.createGraphics()
+        g2d.setColor(Color.BLACK)
+        g2d.fillRect(0,0,self.surface.getWidth(),self.surface.getHeight())
+        g2d.dispose()
 
     def _nonimplemented_methods(self):
         """
