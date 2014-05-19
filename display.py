@@ -114,7 +114,9 @@ class Display(object):
         if not self._initialized:
             self.caption = ''
             self.icon = None
-            self._nonimplemented_methods()
+            self.jframe = None
+            self.jpanel = None
+            self.surface = None
             self._initialized = True
 
     def set_mode(self, size, *args, **kwargs):
@@ -126,6 +128,8 @@ class Display(object):
             self.jframe = pyj2d.env.japplet
         else:
             self.jframe = Frame(self.caption, size)
+            if self.icon:
+                self.jframe.setIconImage(self.icon)
         pyj2d.env.jframe = self.jframe
         self.jpanel = self.jframe.jpanel
         self.surface = self.jpanel.surface
@@ -165,12 +169,28 @@ class Display(object):
         """
         return self._initialized
 
-    def set_caption(self, caption):
+    def set_caption(self, caption, *args, **kwargs):
         """
         Set display caption.
-        Argument: caption for JFrame.
+        Argument: caption for JFrame title.
         """
         self.caption = caption
+        try:
+            self.jframe.setTitle(self.caption)
+        except AttributeError:
+            pass
+        return None
+
+    def set_icon(self, surface):
+        """
+        Set display icon.
+        Argument: Surface for JFrame icon.
+        """
+        self.icon = surface
+        try:
+            self.jframe.setIconImage(self.icon)
+        except AttributeError:
+            pass
         return None
 
     def clear(self):
@@ -181,12 +201,6 @@ class Display(object):
         g2d.setColor(Color.BLACK)
         g2d.fillRect(0,0,self.surface.getWidth(),self.surface.getHeight())
         g2d.dispose()
-
-    def _nonimplemented_methods(self):
-        """
-        Non-implemented methods.
-        """
-        self.set_icon = lambda *arg: None
 
     def flip(self):
         """
