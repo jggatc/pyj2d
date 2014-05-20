@@ -92,7 +92,9 @@ class Display(object):
     * pyj2d.display.get_panel
     * pyj2d.display.quit
     * pyj2d.display.get_init
+    * pyj2d.display.get_active
     * pyj2d.display.set_caption
+    * pyj2d.display.set_icon
     * pyj2d.display.clear
     * pyj2d.display.flip
     * pyj2d.display.update
@@ -168,6 +170,18 @@ class Display(object):
         Check that display module is initialized.
         """
         return self._initialized
+
+    def get_active(self):
+        """
+        Check if display is visible.
+        """
+        try:
+            return not (self.jframe.getExtendedState() & JFrame.ICONIFIED)
+        except AttributeError:
+            if self.jframe:
+                return True
+            else:
+                return False
 
     def set_caption(self, caption, *args, **kwargs):
         """

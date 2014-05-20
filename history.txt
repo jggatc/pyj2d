@@ -118,4 +118,7 @@ PyJ2D Version History
 0.25_git
 -update mixer thread interrupt.
 -update handling of display surface graphics2d object.
+-update display.set_mode to accept additional arguments.
+-add display set_caption/set_icon to set JFrame title/icon.
+-add display.get_active method.
 
