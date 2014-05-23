@@ -48,6 +48,9 @@ class Event(object):
         self.eventName = {MouseEvent.MOUSE_PRESSED:'MouseButtonDown', MouseEvent.MOUSE_RELEASED:'MouseButtonUp', MouseEvent.MOUSE_MOVED:'MouseMotion', KeyEvent.KEY_PRESSED:'KeyDown', KeyEvent.KEY_RELEASED:'KeyUp'}
         self.eventType = [MouseEvent.MOUSE_PRESSED, MouseEvent.MOUSE_RELEASED, MouseEvent.MOUSE_MOVED, KeyEvent.KEY_PRESSED, KeyEvent.KEY_RELEASED]
         self.events = [MouseEvent.MOUSE_PRESSED, MouseEvent.MOUSE_RELEASED, MouseEvent.MOUSE_MOVED, KeyEvent.KEY_PRESSED, KeyEvent.KEY_RELEASED]
+        self.keyPress = {Const.K_ALT:False, Const.K_CTRL:False, Const.K_SHIFT:False}
+        self.modKey = set([Const.K_ALT, Const.K_CTRL, Const.K_SHIFT])
+        self.keyMod = {Const.K_ALT:{True:Const.KMOD_ALT,False:0}, Const.K_CTRL:{True:Const.KMOD_CTRL,False:0}, Const.K_SHIFT:{True:Const.KMOD_SHIFT,False:0}}
 
     def _lock(self):
         self.queueLock = True   #block next event access
