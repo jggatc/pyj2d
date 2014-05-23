@@ -279,12 +279,16 @@ class Event(object):
 
         __slots__ = ['type', 'attr']
 
-        def __init__(self, eventType, attr=None):
+        def __init__(self, eventType, *args, **kwargs):
             """
             Return user event.
             Argument includes eventType (USEREVENT+num).
             Optional attribute argument as dictionary ({str:val}) or keyword arg(s).
             """
+            if args:
+                attr = args[0]
+            else:
+                attr = kwargs
             object.__setattr__(self, "type", eventType)
             object.__setattr__(self, "attr", attr)
 
