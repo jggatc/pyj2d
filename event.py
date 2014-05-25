@@ -42,7 +42,7 @@ class Event(object):
         self.queueLock = False
         self.queueAccess = False
         self.queue = []
-        self.mousePress = None
+        self.mousePress = {1:False, 2:False, 3:False}
         self.timer = time.Clock()
         self._nonimplemented_methods()
         self.eventName = {MouseEvent.MOUSE_PRESSED:'MouseButtonDown', MouseEvent.MOUSE_RELEASED:'MouseButtonUp', MouseEvent.MOUSE_MOVED:'MouseMotion', KeyEvent.KEY_PRESSED:'KeyDown', KeyEvent.KEY_RELEASED:'KeyUp'}

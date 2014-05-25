@@ -33,18 +33,18 @@ class Frame(JFrame, MouseListener, MouseMotionListener, KeyListener):
         self.modKey = pyj2d.event.modKey
 
     def mousePressed(self, event):
-        self.event.mousePress = event
+        self.event.mousePress[event.button] = True
         self.event._updateQueue(event)
 
     def mouseReleased(self, event):
-        self.event.mousePress = None
+        self.event.mousePress[event.button] = False
         self.event._updateQueue(event)
 
     def mouseEntered(self, event):
         pass
 
     def mouseExited(self, event):
-        self.event.mousePress = None
+        self.event.mousePress[1], self.event.mousePress[2], self.event.mousePress[3] = False, False, False
         for keycode in self.modKey:
             if self.event.keyPress[keycode]:
                 self.event.keyPress[keycode] = False

@@ -2,6 +2,7 @@
 
 from __future__ import division
 import env
+import pyj2d.event
 
 __docformat__ = 'restructuredtext'
 
@@ -21,6 +22,7 @@ class Mouse(object):
         
         Module initialization creates pyj2d.mouse instance.
         """
+        self.mousePress = pyj2d.event.mousePress
         self.pos_rel = (0, 0)
         self._nonimplemented_methods()
 
@@ -28,11 +30,7 @@ class Mouse(object):
         """
         Return state of mouse buttons as a tuple of bool for button1,2,3.
         """
-        try:
-            button = env.jframe.event.mousePress.button
-        except AttributeError:
-            button = None
-        return (1==button,2==button,3==button)
+        return (self.mousePress[1], self.mousePress[2], self.mousePress[3])
 
     def get_pos(self):
         """
