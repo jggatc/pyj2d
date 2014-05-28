@@ -7,6 +7,7 @@ from java.awt.image import BufferedImage
 from java.awt.event import MouseListener
 from java.awt.event import MouseMotionListener
 from java.awt.event import KeyListener
+from java.awt.event import MouseEvent, KeyEvent
 import pyj2d.event
 import pyj2d.surface
 import pyj2d.env
@@ -34,11 +35,11 @@ class Frame(JFrame, MouseListener, MouseMotionListener, KeyListener):
 
     def mousePressed(self, event):
         self.event.mousePress[event.button] = True
-        self.event._updateQueue(event)
+        self.event._updateQueue(event, MouseEvent.MOUSE_PRESSED)
 
     def mouseReleased(self, event):
         self.event.mousePress[event.button] = False
-        self.event._updateQueue(event)
+        self.event._updateQueue(event, MouseEvent.MOUSE_RELEASED)
 
     def mouseEntered(self, event):
         pass
@@ -53,20 +54,20 @@ class Frame(JFrame, MouseListener, MouseMotionListener, KeyListener):
         pass
 
     def mouseMoved(self, event):
-        self.event._updateQueue(event)
+        self.event._updateQueue(event, MouseEvent.MOUSE_MOVED)
 
     def mouseDragged(self, event):
-        pass
+        self.event._updateQueue(event, MouseEvent.MOUSE_MOVED)
 
     def keyPressed(self, event):
         if event.keyCode in self.modKey:
             self.event.keyPress[event.keyCode] = True
-        self.event._updateQueue(event)
+        self.event._updateQueue(event, KeyEvent.KEY_PRESSED)
 
     def keyReleased(self, event):
         if event.keyCode in self.modKey:
             self.event.keyPress[event.keyCode] = False
-        self.event._updateQueue(event)
+        self.event._updateQueue(event, KeyEvent.KEY_RELEASED)
 
     def keyTyped(self, event):
         pass

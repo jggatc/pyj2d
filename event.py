@@ -51,6 +51,7 @@ class Event(object):
         self.keyPress = {Const.K_ALT:False, Const.K_CTRL:False, Const.K_SHIFT:False}
         self.modKey = set([Const.K_ALT, Const.K_CTRL, Const.K_SHIFT])
         self.keyMod = {Const.K_ALT:{True:Const.KMOD_ALT,False:0}, Const.K_CTRL:{True:Const.KMOD_CTRL,False:0}, Const.K_SHIFT:{True:Const.KMOD_SHIFT,False:0}}
+        self.Event = UserEvent
 
     def _lock(self):
         self.queueLock = True   #block next event access
@@ -60,9 +61,11 @@ class Event(object):
     def _unlock(self):
         self.queueLock = False
 
-    def _updateQueue(self, event):
-        if event.getID() not in self.events:
+    def _updateQueue(self, event, eventType):
+        if eventType not in self.events:
             return
+        else:
+            event = JEvent(event, eventType)
         self.queueAccess = True
         if not self.queueLock:
             if self.eventNumTmp:
@@ -108,23 +111,23 @@ class Event(object):
         """
         self._lock()
         if not eventType:
-            self.queue = [ self.JEvent(event) for event in self.eventQueue[0:self.eventNum] ]
+            self.queue = self.eventQueue[0:self.eventNum]
             self.eventNum = 0
         else:
             queue = []
             self.queue = []
             try:
                 for i in range(self.eventNum):
-                    if self.eventQueue[i].getID() not in eventType:
+                    if self.eventQueue[i].type not in eventType:
                         queue.append(self.eventQueue[i])
                     else:
-                        self.queue.append( self.JEvent(self.eventQueue[i]) )
+                        self.queue.append(self.eventQueue[i])
             except TypeError:
                 for i in range(self.eventNum):
-                    if self.eventQueue[i].getID() != eventType:
+                    if self.eventQueue[i].type != eventType:
                         queue.append(self.eventQueue[i])
                     else:
-                        self.queue.append( self.JEvent(self.eventQueue[i]) )
+                        self.queue.append(self.eventQueue[i])
             if len(queue) != self.eventNum:
                 self.eventNum = len(queue)
                 for i in range(self.eventNum):
@@ -138,7 +141,7 @@ class Event(object):
         """
         self._lock()
         if self.eventNum:
-            evt = self.JEvent( self.eventQueue.pop(0) )
+            evt = self.eventQueue.pop(0)
             self.eventNum -= 1
             self.eventQueue.append(None)
         else:
@@ -153,7 +156,7 @@ class Event(object):
         while True:
             if self.eventNum:
                 self._lock()
-                evt = self.JEvent( self.eventQueue.pop(0) )
+                evt = self.eventQueue.pop(0)
                 self.eventNum -= 1
                 self.eventQueue.append(None)
                 self._unlock()
@@ -170,7 +173,7 @@ class Event(object):
         if not self.eventNum:
             return False
         self._lock()
-        evt = [event.getID() for event in self.eventQueue[0:self.eventNum]]
+        evt = [event.type for event in self.eventQueue[0:self.eventNum]]
         self._unlock()
         try:
             for evtType in eventType:
@@ -195,11 +198,11 @@ class Event(object):
             queue = []
             try:
                 for i in range(self.eventNum):
-                    if self.eventQueue[i].getID() not in eventType:
+                    if self.eventQueue[i].type not in eventType:
                         queue.append(self.eventQueue[i])
             except TypeError:
                 for i in range(self.eventNum):
-                    if self.eventQueue[i].getID() != eventType:
+                    if self.eventQueue[i].type != eventType:
                         queue.append(self.eventQueue[i])
             if len(queue) != self.eventNum:
                 self.eventNum = len(queue)
@@ -278,107 +281,102 @@ class Event(object):
         self.set_grab = lambda *arg: None
         self.get_grab = lambda *arg: False
 
-    class Event(object):
 
-        __slots__ = ['type', 'attr']
+class UserEvent(object):
 
-        def __init__(self, eventType, *args, **kwargs):
-            """
-            Return user event.
-            Argument includes eventType (USEREVENT+num).
-            Optional attribute argument as dictionary ({str:val}) or keyword arg(s).
-            """
-            if args:
-                attr = args[0]
-            else:
-                attr = kwargs
-            object.__setattr__(self, "type", eventType)
-            object.__setattr__(self, "attr", attr)
+    __slots__ = ['type', 'attr']
 
-        def __repr__(self):
-            """
-            Return string representation of Event object.
-            """
-            return "%s(%s-UserEvent %r)" % (self.__class__, self.type, self.attr)
+    def __init__(self, eventType, *args, **kwargs):
+        """
+        Return user event.
+        Argument includes eventType (USEREVENT+num).
+        Optional attribute argument as dictionary ({str:val}) or keyword arg(s).
+        """
+        if args:
+            attr = args[0]
+        else:
+            attr = kwargs
+        object.__setattr__(self, "type", eventType)
+        object.__setattr__(self, "attr", attr)
 
-        def __setattr__(self, attr, value):
+    def __repr__(self):
+        """
+        Return string representation of Event object.
+        """
+        return "%s(%s-UserEvent %r)" % (self.__class__, self.type, self.attr)
+
+    def __getattr__(self, attr):
+        try:
+            return self.attr[attr]
+        except KeyError:
             raise AttributeError, ("'Event' object has no attribute '%s'" % attr)
 
+    def __setattr__(self, attr, value):
+        raise AttributeError, ("'Event' object has no attribute '%s'" % attr)
 
-    class JEvent(object):
 
-        __slots__ = ['event']
-        _mouse_pos = (0, 0)
+class JEvent(object):
 
-        def __init__(self, event):
-            """
-            Event object wraps Java event, created when retrieving events from queue.
-            
-            Event object attributes:
-            
-            * type: MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, KEYDOWN, KEYUP
-            * button: mouse button pressed (1/2/3)
-            * pos: mouse position (x,y)
-            * rel: mouse relative position change (x,y)
-            * key: keycode of key pressed (K_a-K_z...)
-            * unicode: char pressed ('a'-'z'...)
-            * mod: modifier pressed (KMOD_ALT | KMOD_CTRL | KMOD_SHIFT | KMOD_META)
-            * location: modifier place - (KEY_LOCATION_LEFT or KEY_LOCATION_RIGHT)
-            """
-            object.__setattr__(self, "event", event)
+    __slots__ = ['event', 'type']
+    _mouse_pos = (0, 0)
+    _attr = {
+            'button': lambda self: self.event.getButton(),
+            'pos': lambda self: ( self.event.getX(),self.event.getY() ),
+            'rel': lambda self: self._getRel(),
+            'key': lambda self: self.event.getKeyCode(),
+            'unicode': lambda self: self._getUnicode,
+            'mod': lambda self: self.event.getModifiers(),
+            'location': lambda self: self.event.getKeyLocation()
+            }
 
-        def __repr__(self):
-            """
-            Return string representation of Event object.
-            """
-            try:
-                return "%s(%s)" % (self.__class__, self.event.toString())
-            except AttributeError:      #User Event
-                return self.event.__repr__()
+    def __init__(self, event, eventType):
+        """
+        Event object wraps Java event.
+        
+        Event object attributes:
+        
+        * type: MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, KEYDOWN, KEYUP
+        * button: mouse button pressed (1/2/3)
+        * pos: mouse position (x,y)
+        * rel: mouse relative position change (x,y)
+        * key: keycode of key pressed (K_a-K_z...)
+        * unicode: char pressed ('a'-'z'...)
+        * mod: modifier pressed (KMOD_ALT | KMOD_CTRL | KMOD_SHIFT | KMOD_META)
+        * location: modifier place - (KEY_LOCATION_LEFT or KEY_LOCATION_RIGHT)
+        """
+        object.__setattr__(self, "event", event)
+        object.__setattr__(self, "type", eventType)
 
-        def __getattr__(self, attr):
-            try:
-                if attr == 'type':
-                    return self.event.getID()
-                elif attr == 'button':
-                    return self.event.getButton()
-                elif attr == 'pos':
-                    return ( self.event.getX(),self.event.getY() )
-                elif attr == 'rel':
-                    pos =  self.event.getX(), self.event.getY()
-                    rel = (pos[0]-self.__class__._mouse_pos[0], pos[1]-self.__class__._mouse_pos[1])
-                    self.__class__._mouse_pos = pos
-                    return rel
-                elif attr == 'key':
-                    return self.event.getKeyCode()
-                elif attr == 'unicode':
-                    char = self.event.getKeyChar()
-                    if char == KeyEvent.CHAR_UNDEFINED:
-                        char = ''
-                    return char
-                elif attr == 'mod':
-                    return self.event.getModifiers()
-                elif attr == 'location':
-                    return self.event.getKeyLocation()
-                else:
-                    raise AttributeError
-            except AttributeError:      #User Event
-                try:
-                    return self.event.__getattribute__(attr)
-                except AttributeError:
-                    try:
-                        return self.event.__getattribute__('attr')[attr]
-                    except AttributeError:
-                        raise AttributeError, ("'Event' object has no attribute '%s'" % attr)
-                    except KeyError:
-                        raise AttributeError, ("'Event' object has no attribute '%s'" % attr)
+    def __repr__(self):
+        """
+        Return string representation of Event object.
+        """
+        return "%s(%s)" % (self.__class__, self.event.toString())
 
-        def __setattr__(self, attr, value):
+    def __getattr__(self, attr):
+        try:
+            return self._attr[attr](self)
+        except (AttributeError, KeyError):
             raise AttributeError, ("'Event' object has no attribute '%s'" % attr)
 
-        def getEvent(self):
-            """
-            Return Java event.
-            """
-            return self.event
+    def _getRel(self):
+        pos =  self.event.getX(), self.event.getY()
+        rel = (pos[0]-self.__class__._mouse_pos[0], pos[1]-self.__class__._mouse_pos[1])
+        self.__class__._mouse_pos = pos
+        return rel
+
+    def _getUnicode(self):
+        char = self.event.getKeyChar()
+        if char == KeyEvent.CHAR_UNDEFINED:
+            char = ''
+        return char
+
+    def __setattr__(self, attr, value):
+        raise AttributeError, ("'Event' object has no attribute '%s'" % attr)
+
+    def getEvent(self):
+        """
+        Return Java event.
+        """
+        return self.event
 
