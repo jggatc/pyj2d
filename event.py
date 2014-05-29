@@ -344,7 +344,7 @@ class JEvent(object):
         * key: keycode of key pressed (K_a-K_z...)
         * unicode: char pressed ('a'-'z'...)
         * mod: modifier pressed (KMOD_ALT | KMOD_CTRL | KMOD_SHIFT | KMOD_META)
-        * location: modifier place - (KEY_LOCATION_LEFT or KEY_LOCATION_RIGHT)
+        * location: modifier place - (KEY_LEFT or KEY_RIGHT)
         """
         object.__setattr__(self, "event", event)
         object.__setattr__(self, "type", eventType)
