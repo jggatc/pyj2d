@@ -125,4 +125,5 @@ PyJ2D Version History
 -add key.get_mods method.
 -update mouse.get_pressed to properly return state of all buttons.
 -restructured event handler to capture all mouse motion events.
+-add event member buttons.
 

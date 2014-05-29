@@ -321,6 +321,7 @@ class JEvent(object):
     _mouse_pos = (0, 0)
     _attr = {
             'button': lambda self: self.event.getButton(),
+            'buttons': lambda self: self._getButtons(),
             'pos': lambda self: ( self.event.getX(),self.event.getY() ),
             'rel': lambda self: self._getRel(),
             'key': lambda self: self.event.getKeyCode(),
@@ -337,6 +338,7 @@ class JEvent(object):
         
         * type: MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, KEYDOWN, KEYUP
         * button: mouse button pressed (1/2/3)
+        * buttons: mouse buttons pressed (1,2,3)
         * pos: mouse position (x,y)
         * rel: mouse relative position change (x,y)
         * key: keycode of key pressed (K_a-K_z...)
@@ -358,6 +360,10 @@ class JEvent(object):
             return self._attr[attr](self)
         except (AttributeError, KeyError):
             raise AttributeError, ("'Event' object has no attribute '%s'" % attr)
+
+    def _getButtons(self):
+        mod = self.event.getModifiersEx()
+        return ((mod&MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK, (mod&MouseEvent.BUTTON2_DOWN_MASK) == MouseEvent.BUTTON2_DOWN_MASK, (mod&MouseEvent.BUTTON3_DOWN_MASK) == MouseEvent.BUTTON3_DOWN_MASK)
 
     def _getRel(self):
         pos =  self.event.getX(), self.event.getY()
