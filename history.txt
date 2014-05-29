@@ -126,4 +126,5 @@ PyJ2D Version History
 -update mouse.get_pressed to properly return state of all buttons.
 -restructured event handler to capture all mouse motion events.
 -add event member buttons.
+-change event key location to event.loc (KEY_LOCATION_LEFT|RIGHT|STANDARD|NUMPAD|UNKNOWN).
 

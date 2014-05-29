@@ -327,7 +327,7 @@ class JEvent(object):
             'key': lambda self: self.event.getKeyCode(),
             'unicode': lambda self: self._getUnicode(),
             'mod': lambda self: self.event.getModifiers(),
-            'location': lambda self: self.event.getKeyLocation()
+            'loc': lambda self: self.event.getKeyLocation()
             }
 
     def __init__(self, event, eventType):
@@ -344,7 +344,7 @@ class JEvent(object):
         * key: keycode of key pressed (K_a-K_z...)
         * unicode: char pressed ('a'-'z'...)
         * mod: modifier pressed (KMOD_ALT | KMOD_CTRL | KMOD_SHIFT | KMOD_META)
-        * location: modifier place - (KEY_LEFT or KEY_RIGHT)
+        * loc: key location (KEY_LOCATION_LEFT | KEY_LOCATION_RIGHT)
         """
         object.__setattr__(self, "event", event)
         object.__setattr__(self, "type", eventType)
