@@ -325,7 +325,7 @@ class JEvent(object):
             'pos': lambda self: ( self.event.getX(),self.event.getY() ),
             'rel': lambda self: self._getRel(),
             'key': lambda self: self.event.getKeyCode(),
-            'unicode': lambda self: self._getUnicode,
+            'unicode': lambda self: self._getUnicode(),
             'mod': lambda self: self.event.getModifiers(),
             'location': lambda self: self.event.getKeyLocation()
             }
