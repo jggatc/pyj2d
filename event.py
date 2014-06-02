@@ -33,7 +33,7 @@ class Event(object):
         
         Module initialization creates pyj2d.event instance.
         """
-        self.eventQueue = [None] * 256      #max 256: Error: Event queue full
+        self.eventQueue = [None] * 256      #max 256
         self.eventNum = 0
         self.eventQueueTmp = [None] * 256   #used when main queue is locked
         self.eventNumTmp = 0
@@ -97,12 +97,19 @@ class Event(object):
 
     def pump(self):
         """
-        Reset event queue.
+        Process events to reduce queue overflow, unnecessary if processing with other methods.
         """
-        self._lock()
-        self.eventNum = 0
-        self._unlock()
+        if self.eventNum > 250:
+            self._lock()
+            self._pump()
+            self._unlock()
         return None
+
+    def _pump(self):
+        queue = self.eventQueue[50:self.eventNum]
+        self.eventNum -= 50
+        for i in range(self.eventNum):
+            self.eventQueue[i] = queue[i]
 
     def get(self, eventType=None):
         """
@@ -132,6 +139,8 @@ class Event(object):
                 self.eventNum = len(queue)
                 for i in range(self.eventNum):
                     self.eventQueue[i] = queue[i]
+            if self.eventNum > 250:
+                self._pump()
         self._unlock()
         return self.queue
 
@@ -144,6 +153,8 @@ class Event(object):
             evt = self.eventQueue.pop(0)
             self.eventNum -= 1
             self.eventQueue.append(None)
+            if self.eventNum > 250:
+                self._pump()
         else:
             evt = self.Event(Const.NOEVENT)
         self._unlock()
@@ -159,6 +170,8 @@ class Event(object):
                 evt = self.eventQueue.pop(0)
                 self.eventNum -= 1
                 self.eventQueue.append(None)
+                if self.eventNum > 250:
+                    self._pump()
                 self._unlock()
                 return evt
             else:
@@ -174,6 +187,8 @@ class Event(object):
             return False
         self._lock()
         evt = [event.type for event in self.eventQueue[0:self.eventNum]]
+        if self.eventNum > 250:
+            self._pump()
         self._unlock()
         try:
             for evtType in eventType:
@@ -208,6 +223,8 @@ class Event(object):
                 self.eventNum = len(queue)
                 for i in range(self.eventNum):
                     self.eventQueue[i] = queue[i]
+            if self.eventNum > 250:
+                self._pump()
         self._unlock()
         return None
 
