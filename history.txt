@@ -127,4 +127,8 @@ PyJ2D Version History
 -restructured event handler to capture all mouse motion events.
 -add event member buttons.
 -change event key location to event.loc (KEY_LOCATION_LEFT|RIGHT|STANDARD|NUMPAD|UNKNOWN).
+-correct event.pump to maintain queue.
+-add event.dict access.
+-update mouse.get_rel process on frame exit.
+-update event.rel to properly return with multiple access.
 

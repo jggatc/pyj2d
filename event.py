@@ -335,7 +335,6 @@ class UserEvent(object):
 class JEvent(object):
 
     __slots__ = ['event', 'type']
-    _mouse_pos = (0, 0)
     _attr = {
             'button': lambda self: self.event.getButton(),
             'buttons': lambda self: self._getButtons(),
@@ -350,6 +349,8 @@ class JEvent(object):
     _mouseEvent = ('button', 'pos')
     _mouseMotionEvent = ('buttons', 'pos', 'rel')
     _keyEvent = ('key', 'unicode', 'mod', 'loc')
+    _mousePos = {'x':0, 'y':0}
+    _mouseRel = {'x':0, 'y':0}
 
     def __init__(self, event, eventType):
         """
@@ -394,8 +395,12 @@ class JEvent(object):
 
     def _getRel(self):
         pos =  self.event.getX(), self.event.getY()
-        rel = (pos[0]-self.__class__._mouse_pos[0], pos[1]-self.__class__._mouse_pos[1])
-        self.__class__._mouse_pos = pos
+        rel = (pos[0]-self.__class__._mousePos['x'], pos[1]-self.__class__._mousePos['y'])
+        if rel[0] or rel[1]:
+            self.__class__._mousePos['x'], self.__class__._mousePos['y'] = pos[0], pos[1]
+            self.__class__._mouseRel['x'], self.__class__._mouseRel['y'] = rel[0], rel[1]
+        else:
+            rel = (self.__class__._mouseRel['x'], self.__class__._mouseRel['y'])
         return rel
 
     def _getUnicode(self):
