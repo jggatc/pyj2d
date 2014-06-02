@@ -23,7 +23,7 @@ class Mouse(object):
         Module initialization creates pyj2d.mouse instance.
         """
         self.mousePress = pyj2d.event.mousePress
-        self.pos_rel = (0, 0)
+        self.mousePos = {'x':0, 'y':0}
         self._nonimplemented_methods()
 
     def get_pressed(self):
@@ -47,9 +47,13 @@ class Mouse(object):
         """
         Return relative x,y change of mouse position since last call.
         """
-        pos = self.get_pos()
-        rel = (pos[0]-self.pos_rel[0], pos[1]-self.pos_rel[1])
-        self.pos_rel = pos
+        pos = env.jframe.jpanel.getMousePosition()
+        if pos:
+            rel = pos.x-self.mousePos['x'], pos.y-self.mousePos['y']
+            if rel[0] or rel[1]:
+                self.mousePos['x'], self.mousePos['y'] = pos.x, pos.y
+        else:
+            rel = (0,0)
         return rel
 
     def _nonimplemented_methods(self):
