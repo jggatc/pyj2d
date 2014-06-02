@@ -301,7 +301,7 @@ class Event(object):
 
 class UserEvent(object):
 
-    __slots__ = ['type', 'attr']
+    __slots__ = ['type', 'dict']
 
     def __init__(self, eventType, *args, **kwargs):
         """
@@ -314,17 +314,17 @@ class UserEvent(object):
         else:
             attr = kwargs
         object.__setattr__(self, "type", eventType)
-        object.__setattr__(self, "attr", attr)
+        object.__setattr__(self, "dict", attr)
 
     def __repr__(self):
         """
         Return string representation of Event object.
         """
-        return "%s(%s-UserEvent %r)" % (self.__class__, self.type, self.attr)
+        return "%s(%s-UserEvent %r)" % (self.__class__, self.type, self.dict)
 
     def __getattr__(self, attr):
         try:
-            return self.attr[attr]
+            return self.dict[attr]
         except KeyError:
             raise AttributeError, ("'Event' object has no attribute '%s'" % attr)
 
@@ -344,8 +344,12 @@ class JEvent(object):
             'key': lambda self: self.event.getKeyCode(),
             'unicode': lambda self: self._getUnicode(),
             'mod': lambda self: self.event.getModifiers(),
-            'loc': lambda self: self.event.getKeyLocation()
+            'loc': lambda self: self.event.getKeyLocation(),
+            'dict': lambda self: self._dict()
             }
+    _mouseEvent = ('button', 'pos')
+    _mouseMotionEvent = ('buttons', 'pos', 'rel')
+    _keyEvent = ('key', 'unicode', 'mod', 'loc')
 
     def __init__(self, event, eventType):
         """
@@ -377,6 +381,12 @@ class JEvent(object):
             return self._attr[attr](self)
         except (AttributeError, KeyError):
             raise AttributeError, ("'Event' object has no attribute '%s'" % attr)
+
+    def _dict(self):
+        attrDict = {}
+        for attr in {Const.MOUSEBUTTONDOWN:self._mouseEvent, Const.MOUSEBUTTONUP:self._mouseEvent, Const.MOUSEMOTION:self._mouseMotionEvent, Const.KEYDOWN:self._keyEvent, Const.KEYUP:self._keyEvent}[self.type]:
+            attrDict[attr] = self._attr[attr](self)
+        return attrDict
 
     def _getButtons(self):
         mod = self.event.getModifiersEx()
