@@ -131,4 +131,5 @@ PyJ2D Version History
 -add event.dict access.
 -update mouse.get_rel process on frame exit.
 -update event.rel to properly return with multiple access.
+-update event modKey set to use sets module with earlier Jython releases.
 
