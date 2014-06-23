@@ -3,6 +3,7 @@ from java.awt import Color, Dimension, Toolkit
 from java.awt.image import BufferedImage
 from java.lang import Runnable
 from java.lang import Thread
+from java.awt.event import MouseEvent, KeyEvent
 import pyj2d.event
 import pyj2d.surface
 import pyj2d.env
@@ -52,11 +53,13 @@ class Applet(JApplet, Runnable):
         self.getContentPane().add(self.jpanel)
         pyj2d.env.japplet = self
         self.event = pyj2d.event
+        self.modKey = pyj2d.event.modKey
         self.mousePressed = self.mousePress
         self.mouseReleased = self.mouseRelease
         self.mouseEntered = self.mouseEnter
         self.mouseExited = self.mouseExit
         self.mouseMoved = self.mouseMove
+        self.mouseDragged = self.mouseDrag
         self.keyPressed = self.keyPress
         self.keyReleased = self.keyRelease
         self.setFocusable(True)
@@ -65,27 +68,37 @@ class Applet(JApplet, Runnable):
         self.thread.start()
 
     def mousePress(self, event):
-        self.event.mousePress = event
-        self.event._updateQueue(event)
+        self.event.mousePress[event.button] = True
+        self.event._updateQueue(event, MouseEvent.MOUSE_PRESSED)
 
     def mouseRelease(self, event):
-        self.event.mousePress = None
-        self.event._updateQueue(event)
+        self.event.mousePress[event.button] = False
+        self.event._updateQueue(event, MouseEvent.MOUSE_RELEASED)
 
     def mouseEnter(self, event):
         self.requestFocus()
 
     def mouseExit(self, event):
-        self.event.mousePress = None
+        self.event.mousePress[1], self.event.mousePress[2], self.event.mousePress[3] = False, False, False
+        for keycode in self.modKey:
+            if self.event.keyPress[keycode]:
+                self.event.keyPress[keycode] = False
 
     def mouseMove(self, event):
-        self.event._updateQueue(event)
+        self.event._updateQueue(event, MouseEvent.MOUSE_MOVED)
+
+    def mouseDrag(self, event):
+        self.event._updateQueue(event, MouseEvent.MOUSE_MOVED)
 
     def keyPress(self, event):
-        self.event._updateQueue(event)
+        if event.keyCode in self.modKey:
+            self.event.keyPress[event.keyCode] = True
+        self.event._updateQueue(event, KeyEvent.KEY_PRESSED)
 
     def keyRelease(self, event):
-        self.event._updateQueue(event)
+        if event.keyCode in self.modKey:
+            self.event.keyPress[event.keyCode] = False
+        self.event._updateQueue(event, KeyEvent.KEY_RELEASED)
 
     def run(self):
         self.program.update()
