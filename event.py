@@ -52,7 +52,7 @@ class Event(object):
         try:
             self.modKey = set([Const.K_ALT, Const.K_CTRL, Const.K_SHIFT])
         except NameError:
-            from sets import Set as set
+            from java.util import HashSet as set
             self.modKey = set([Const.K_ALT, Const.K_CTRL, Const.K_SHIFT])
         self.keyMod = {Const.K_ALT:{True:Const.KMOD_ALT,False:0}, Const.K_CTRL:{True:Const.KMOD_CTRL,False:0}, Const.K_SHIFT:{True:Const.KMOD_SHIFT,False:0}}
         self.Event = UserEvent
