@@ -37,8 +37,6 @@ class Event(object):
         self.eventNum = 0
         self.eventQueueTmp = [None] * 256   #used when main queue is locked
         self.eventNumTmp = 0
-        self.eventAllowed = []
-        self.eventBlocked = []
         self.queueLock = False
         self.queueAccess = False
         self.queue = []
@@ -47,13 +45,14 @@ class Event(object):
         self._nonimplemented_methods()
         self.eventName = {MouseEvent.MOUSE_PRESSED:'MouseButtonDown', MouseEvent.MOUSE_RELEASED:'MouseButtonUp', MouseEvent.MOUSE_MOVED:'MouseMotion', KeyEvent.KEY_PRESSED:'KeyDown', KeyEvent.KEY_RELEASED:'KeyUp'}
         self.eventType = [MouseEvent.MOUSE_PRESSED, MouseEvent.MOUSE_RELEASED, MouseEvent.MOUSE_MOVED, KeyEvent.KEY_PRESSED, KeyEvent.KEY_RELEASED]
-        self.events = [MouseEvent.MOUSE_PRESSED, MouseEvent.MOUSE_RELEASED, MouseEvent.MOUSE_MOVED, KeyEvent.KEY_PRESSED, KeyEvent.KEY_RELEASED]
-        self.keyPress = {Const.K_ALT:False, Const.K_CTRL:False, Const.K_SHIFT:False}
         try:
+            self.events = set(self.eventType)
             self.modKey = set([Const.K_ALT, Const.K_CTRL, Const.K_SHIFT])
         except NameError:
             from java.util import HashSet as set
+            self.events = set(self.eventType)
             self.modKey = set([Const.K_ALT, Const.K_CTRL, Const.K_SHIFT])
+        self.keyPress = {Const.K_ALT:False, Const.K_CTRL:False, Const.K_SHIFT:False}
         self.keyMod = {Const.K_ALT:{True:Const.KMOD_ALT,False:0}, Const.K_CTRL:{True:Const.KMOD_CTRL,False:0}, Const.K_SHIFT:{True:Const.KMOD_SHIFT,False:0}}
         self.Event = UserEvent
 
@@ -250,15 +249,16 @@ class Event(object):
                 for evtType in eventType:
                     try:
                         self.events.remove(evtType)
-                    except ValueError:
+                    except KeyError:
                         pass
             except TypeError:
                 try:
                     self.events.remove(eventType)
-                except ValueError:
+                except KeyError:
                     pass
         else:
-            self.events = self.eventType[:]
+            for event in self.eventType:
+                self.events.add(event)
         return None
 
     def set_allowed(self, eventType):
@@ -268,13 +268,11 @@ class Event(object):
         if eventType is not None:
             try:
                 for evtType in eventType:
-                    if evtType not in self.events:
-                        self.events.append(evtType)
+                    self.events.add(evtType)
             except TypeError:
-                if eventType not in self.events:
-                    self.events.append(eventType)
+                self.events.add(eventType)
         else:
-            self.events = []
+            self.events.clear()
         return None
 
     def get_blocked(self, eventType):
