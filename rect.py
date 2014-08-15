@@ -209,7 +209,7 @@ class Rect(Rectangle):
         """
         Return Rect at same position but size offset by x,y.
         """
-        return Rect(self.x-(x//2), self.y-(y//2), self.width+x, self.height+y)
+        return Rect(self.x-int(float(x)/2), self.y-int(float(y)/2), self.width+x, self.height+y)
 
     def inflate_ip(self, x, y):
         """
@@ -219,7 +219,7 @@ class Rect(Rectangle):
             self.setSize(self.width+x, self.height+y)
         except TypeError:
             self.setSize(self.width+int(x), self.height+int(y))
-        self.setLocation(self.x-(x//2), self.y-(y//2))
+        self.setLocation(self.x-int(float(x)/2), self.y-int(float(y)/2))
         return None
 
     def clip(self, rect):
