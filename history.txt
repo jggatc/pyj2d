@@ -134,4 +134,5 @@ PyJ2D Version History
 -update event modKey set to use Java HashSet with earlier Jython releases, defined in __init__.py (HashSet not sets import due to compile problem).
 -update event eventtype list as a set object.
 -update rect inflate/inflate_ip positioning.
+-update display to repaint on dispatch thread.
 
