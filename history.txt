@@ -115,7 +115,7 @@ PyJ2D Version History
 -update thread interrupt handling.
 -add mixer.
 
-0.25_git
+0.25    August 20, 2014
 -update mixer thread interrupt.
 -update handling of display surface graphics2d object.
 -update display.set_mode to accept additional arguments.

@@ -14,7 +14,7 @@
 #You should have received a copy of the GNU Lesser General Public License
 #along with this library; if not, see http://www.gnu.org/licenses/.
 #
-#PyJ2D version 0.24
+#PyJ2D version 0.25
 #Download Site: http://gatc.ca
 
 from display import Display
