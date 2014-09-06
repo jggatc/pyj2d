@@ -15,6 +15,10 @@ class Rect(Rectangle):
     * Rect.move_ip
     * Rect.inflate
     * Rect.inflate_ip
+    * Rect.unionx
+    * Rect.union_ip
+    * Rect.unionall
+    * Rect.unionall_ip
     * Rect.clip
     * Rect.collidepoint
     * Rect.colliderect
@@ -231,6 +235,38 @@ class Rect(Rectangle):
             return Rect(clipRect.x,clipRect.y,clipRect.width,clipRect.height)
         else:
             return Rect(0,0,0,0)
+
+    def unionx(self, rect):     #super uses java.awt.Rectangle.union()
+        """
+        Return Rect representing the union of rect and this rect.
+        """
+        unionRect = Rect((0,0,0,0))
+        self.union(self, rect, unionRect)
+        return unionRect
+
+    def union_ip(self, rect):
+        """
+        Change this rect to represent the union of rect and this rect.
+        """
+        self.union(self, rect, self)
+        return None
+
+    def unionall(self, rect_list):
+        """
+        Return Rect representing the union of rect list and this rect.
+        """
+        unionRect = Rect((self.x,self.y,self.width,self.height))
+        for rect in rect_list:
+            self.union(unionRect, rect, unionRect)
+        return unionRect
+
+    def unionall_ip(self, rect_list):
+        """
+        Change this rect to represent the union of rect list and this rect.
+        """
+        for rect in rect_list:
+            self.union(self, rect, self)
+        return None
 
     def collidepoint(self, *point):
         """
