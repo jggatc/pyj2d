@@ -131,7 +131,8 @@ class Group(object):
                 self._sprites[id(sprite)] = sprite
         self._surface_blits = []
         self._clear_active = False
-        self._removed_sprite = []
+        self._sprites_drawn = {}
+        self._rects = []
 
     def __repr__(self):
         """
@@ -186,8 +187,6 @@ class Group(object):
         for sprite in sprites:
             try:
                 del self._sprites[id(sprite)]
-                if self._clear_active:
-                    self._removed_sprite.append(sprite)
             except KeyError:
                 pass
         return None
@@ -210,8 +209,13 @@ class Group(object):
         """
         Draw sprite on surface.
         """
-        self._surface_blits = [(sprite.image,sprite.rect) for sprite in self._sprites.itervalues()]
+        self._surface_blits[:] = [(sprite.image,sprite.rect) for sprite in self._sprites.itervalues()]
         surface.blits(self._surface_blits)
+        if self._clear_active:
+            self._rects.extend(self._sprites_drawn.itervalues())
+            self._sprites_drawn.clear()
+            for sprite in self._sprites:
+                self._sprites_drawn[sprite] = self._get_rect(self._sprites[sprite].rect)
         return None
 
     def clear(self, surface, background):
@@ -220,35 +224,28 @@ class Group(object):
         The background argument can be a callback function.
         """
         self._clear_active = True
-        self._surface_blits = []
-        for group in (self._removed_sprite, self._sprites.itervalues()):
-            for sprite in group:
-                try:
-                    subsurf = background.subarea
-                except AttributeError:
-                    try:
-                        background(surface,sprite._rect_pre)
-                        sprite._rect_pre = Rect(sprite.rect)
-                        continue
-                    except AttributeError:
-                        sprite._rect_pre = Rect(sprite.rect)
-                        continue
-                try:
-                    subsurface, rect = subsurf(sprite._rect_pre)
-                except AttributeError:
-                    sprite._rect_pre = Rect(sprite.rect)
-                    continue
+        if hasattr(background, 'subarea'):
+            self._surface_blits[:] = []
+            for sprite in self._sprites_drawn:
+                subsurface, rect = background.subarea(self._sprites_drawn[sprite])
                 self._surface_blits.append((subsurface,rect))
-                sprite._rect_pre = Rect(sprite.rect)
-        surface.blits(self._surface_blits)
-        self._removed_sprite = []
+            surface.blits(self._surface_blits)
+        else:
+            for sprite in self._sprites_drawn:
+                background(surface, self._sprites_drawn[sprite])
+
+    def _get_rect(self, r):
+        try:
+            rect = self._rects.pop()
+            rect.x, rect.y, rect.width, rect.height = r.x, r.y, r.width, r.height
+        except IndexError:
+            rect = Rect(r.x, r.y, r.width, r.height)
+        return rect
 
     def empty(self):
         """
         Empty group.
         """
-        if self._clear_active:
-            self._removed_sprite.extend(self._sprites.values())
         self._sprites.clear()
         return None
 
@@ -292,8 +289,6 @@ class GroupSingle(Group):
         """
         Add sprite to group, replacing existing sprite.
         """
-        if self._clear_active:
-            self._removed_sprite.extend(self._sprites.values())
         self._sprites.clear()
         self._sprites[id(sprite)] = sprite
         return None
@@ -326,28 +321,28 @@ class RenderUpdates(Group):
         Draw sprite on surface.
         Returns list of Rect of sprites updated, which can be passed to display.update.
         """
-        if surface._display:
-            changed_areas = self.changed_areas
-            self.changed_areas = []
-            changed_areas.extend([sprite.rect for sprite in self._sprites.itervalues()])
-        else:
-            changed_areas = []
-        Group.draw(self, surface)
-        return changed_areas
-
-    def clear(self, surface, background):
-        """
-        Clear previous sprite draw to surface using a background surface.
-        The background argument can be a callback function.
-        """
-        if surface._display:
-            for group in (self._removed_sprite, self._sprites.itervalues()):
+        self._surface_blits[:] = [(sprite.image,sprite.rect) for sprite in self._sprites.itervalues()]
+        surface.blits(self._surface_blits)
+        if self._clear_active:
+            self._rects.extend(self.changed_areas)
+            self.changed_areas[:] = []
+            for sprite in self._sprites:
                 try:
-                    self.changed_areas.extend([sprite._rect_pre for sprite in group])
-                except AttributeError:
-                    continue
-        Group.clear(self, surface, background)
-        return None
+                    if self._sprites_drawn[sprite].intersects(self._sprites[sprite].rect):
+                        self._sprites_drawn[sprite].union_ip(self._sprites[sprite].rect)
+                    else:
+                        self.changed_areas.append(self._get_rect(self._sprites[sprite].rect))
+                except KeyError:
+                    self.changed_areas.append(self._get_rect(self._sprites[sprite].rect))
+            self.changed_areas.extend(self._sprites_drawn.itervalues())
+            self._sprites_drawn.clear()
+            for sprite in self._sprites:
+                self._sprites_drawn[sprite] = self._get_rect(self._sprites[sprite].rect)
+        else:
+            self._rects.extend(self.changed_areas)
+            self.changed_areas[:] = []
+            self.changed_areas.extend([self._get_rect(sprite.rect) for sprite in self._sprites.itervalues()])
+        return self.changed_areas
 
 
 class OrderedUpdates(RenderUpdates):
@@ -473,12 +468,6 @@ class OrderedUpdates(RenderUpdates):
         """
         Draw sprite on surface in order of addition.
         """
-        if surface._display:
-            changed_areas = self.changed_areas
-            self.changed_areas = []
-            changed_areas.extend([sprite.rect for sprite in self._sprites.itervalues()])
-        else:
-            changed_areas = []
         try:
             order_sprite = iter(self.sort)
         except TypeError:
@@ -488,7 +477,26 @@ class OrderedUpdates(RenderUpdates):
             order_sprite = iter(self.sort)
         self._surface_blits = [(sprite.image,sprite.rect) for sprite in order_sprite]
         surface.blits(self._surface_blits)
-        return changed_areas
+        if self._clear_active:
+            self._rects.extend(self.changed_areas)
+            self.changed_areas[:] = []
+            for sprite in self._sprites:
+                try:
+                    if self._sprites_drawn[sprite].intersects(self._sprites[sprite].rect):
+                        self._sprites_drawn[sprite].union_ip(self._sprites[sprite].rect)
+                    else:
+                        self.changed_areas.append(self._get_rect(self._sprites[sprite].rect))
+                except KeyError:
+                    self.changed_areas.append(self._get_rect(self._sprites[sprite].rect))
+            self.changed_areas.extend(self._sprites_drawn.itervalues())
+            self._sprites_drawn.clear()
+            for sprite in self._sprites:
+                self._sprites_drawn[sprite] = self._get_rect(self._sprites[sprite].rect)
+        else:
+            self._rects.extend(self.changed_areas)
+            self.changed_areas[:] = []
+            self.changed_areas.extend([self._get_rect(sprite.rect) for sprite in self._sprites.itervalues()])
+        return self.changed_areas
 
 
 class LayeredUpdates(OrderedUpdates):
