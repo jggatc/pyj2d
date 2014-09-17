@@ -146,7 +146,7 @@ class Surface(BufferedImage):
                 subsurf = self.getSubimage(rect.x, rect.y, rect.width, rect.height)
         except RasterFormatException:
             try:
-                rect = self.get_rect().createIntersection(rect)
+                rect = self.get_rect().intersection(rect)
                 subsurf = self.getSubimage(rect.x, rect.y, rect.width, rect.height)
             except:     #rect outside surface
                 return None
@@ -169,7 +169,7 @@ class Surface(BufferedImage):
                 subsurf = self.getSubimage(rect.x, rect.y, rect.width, rect.height)
         except RasterFormatException:
             try:
-                clip = self.get_rect().createIntersection(rect)
+                clip = self.get_rect().intersection(rect)
                 rect = Rect(clip.x, clip.y, clip.width, clip.height)
                 subsurf = self.getSubimage(rect.x, rect.y, rect.width, rect.height)
             except:     #rect outside surface
@@ -187,7 +187,7 @@ class Surface(BufferedImage):
             x, y = position[0], position[1]
         try:
             if not area:
-                rect = self.get_rect().createIntersection( Rect(x, y, surface.width, surface.height) )
+                rect = self.get_rect().intersection( Rect(x, y, surface.width, surface.height) )
                 surface_rect = Rect(rect.x, rect.y, rect.width, rect.height)
             else:
                 surface, surface_rect = surface.subarea(area)
