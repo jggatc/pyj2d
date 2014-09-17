@@ -138,4 +138,6 @@ PyJ2D Version History
 
 0.26_git
 -add rect union methods.
+-update surface methods to use rect intersection.
+-update surface blit rect computation.
 

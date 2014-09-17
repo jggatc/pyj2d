@@ -173,6 +173,7 @@ class Surface(BufferedImage):
                 rect = Rect(clip.x, clip.y, clip.width, clip.height)
                 subsurf = self.getSubimage(rect.x, rect.y, rect.width, rect.height)
             except:     #rect outside surface
+                rect = Rect(0,0,0,0)
                 subsurf = None
         return subsurf, rect
 
@@ -181,23 +182,21 @@ class Surface(BufferedImage):
         Draw given surface on this surface at position.
         Optional area delimitates the region of given surface to draw.
         """
-        try:
-            x, y = position.x, position.y
-        except AttributeError:
-            x, y = position[0], position[1]
-        try:
-            if not area:
-                rect = self.get_rect().intersection( Rect(x, y, surface.width, surface.height) )
-                surface_rect = Rect(rect.x, rect.y, rect.width, rect.height)
-            else:
-                surface, surface_rect = surface.subarea(area)
-        except AttributeError:
-            return Rect(0,0,0,0)
+        if not area:
+            rect = self.get_rect().intersection( Rect(position[0], position[1], surface.width, surface.height) )
+            surface_rect = Rect(rect.x, rect.y, rect.width, rect.height)
+        else:
+            surface, rect = surface.subarea(area)
+            rect.x, rect.y = int(position[0]), int(position[1])
+            rect = self.get_rect().intersection(rect)
+            surface_rect = Rect(rect.x, rect.y, rect.width, rect.height)
+        if surface_rect.width < 1 or surface_rect.height < 1:
+            surface_rect.width = surface_rect.height = 0
         g2d = self.createGraphics()
         try:
-            g2d.drawImage(surface, x, y, None)
+            g2d.drawImage(surface, position[0], position[1], None)
         except TypeError:
-            g2d.drawImage(surface, int(x), int(y), None)
+            g2d.drawImage(surface, int(position[0]), int(position[1]), None)
         g2d.dispose()
         return surface_rect
 
