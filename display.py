@@ -151,6 +151,7 @@ class Display(Runnable):
         self._rect_list = None
         self.clear()
         self.jframe.setVisible(True)
+        self._warmup()
         return self.surface
 
     def get_surface(self):
@@ -170,6 +171,28 @@ class Display(Runnable):
         Return JPanel.
         """
         return self.jpanel
+
+    def _warmup(self):
+        Surface = pyj2d.surface.Surface
+        Sprite = pyj2d.sprite.Sprite
+        Group = pyj2d.sprite.Group
+        RenderUpdates = pyj2d.sprite.RenderUpdates
+        OrderedUpdates = pyj2d.sprite.OrderedUpdates
+        surface = [Surface(size) for size in ((5,5), (5,5), (3,3))]
+        for i, color in enumerate([(0,0,0), (0,0,0), (100,100,100)]):
+            surface[i].fill(color)
+        for i in range(500):
+            surface[0].blit(surface[2])
+        sprite = [Sprite() for i in range(3)]
+        group = [Grp() for Grp in (Group, RenderUpdates, OrderedUpdates)]
+        for i, grp in enumerate(group):
+            sprite[i].image = surface[2]
+            sprite[i].rect = sprite[i].image.get_rect(center=(2,2))
+            grp.add(sprite[i])
+        for grp in group:
+            for i in range(500):
+                grp.clear(surface[0],surface[1])
+                grp.draw(surface[0])
 
     def quit(self):
         """

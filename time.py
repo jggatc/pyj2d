@@ -27,6 +27,7 @@ class Clock(object):
         self.time_init = self.time
         self.time_diff = [25]*10
         self.pos = 0
+        self.tick = self._tick_init
         self.thread = Thread()
 
     def get_time(self):
@@ -35,7 +36,29 @@ class Clock(object):
         """
         return self.time_diff[self.pos]
 
-    def tick(self, framerate=0):
+    def _tick_init(self, framerate=0):
+        if self.pos < 9:
+            self.pos += 1
+        else:
+            self.pos = 0
+            self.tick = self._tick
+        self.time = System.nanoTime()/1000000
+        self.time_diff[self.pos] = (self.time-self.time_init)
+        self.time_init = self.time
+        if framerate:
+            if self.time_diff[self.pos] > ((1.0/framerate)*1000):
+                self.time_diff[self.pos] = ((1.0/framerate)*1000)
+                return sum(self.time_diff)/10
+            time_diff = self.time_diff[self.pos]
+            time_pause = long( ((1.0/framerate)*1000) - time_diff )
+            if time_pause > 0:
+                try:
+                    self.thread.sleep(time_pause)
+                except InterruptedException:
+                    Thread.currentThread().interrupt()
+        return self.time_diff[self.pos]
+
+    def _tick(self, framerate=0):
         """
         Call once per program cycle, returns ms since last call.
         An optional framerate will add pause to limit rate.
