@@ -230,7 +230,7 @@ class Rect(Rectangle):
         """
         Return Rect representing the intersection of rect and this rect.
         """
-        clipRect = self.createIntersection(rect)
+        clipRect = self.intersection(rect)
         if clipRect.width > 0 and clipRect.height > 0:
             return Rect(clipRect.x,clipRect.y,clipRect.width,clipRect.height)
         else:
