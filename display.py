@@ -182,7 +182,7 @@ class Display(Runnable):
         for i, color in enumerate([(0,0,0), (0,0,0), (100,100,100)]):
             surface[i].fill(color)
         for i in range(500):
-            surface[0].blit(surface[2])
+            surface[0].blit(surface[2], (1,1))
         sprite = [Sprite() for i in range(3)]
         group = [Grp() for Grp in (Group, RenderUpdates, OrderedUpdates)]
         for i, grp in enumerate(group):
