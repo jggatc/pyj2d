@@ -2,6 +2,7 @@
 
 from __future__ import division
 from java.awt import Rectangle
+from java.util.concurrent import ConcurrentLinkedQueue
 
 __docformat__ = 'restructuredtext'
 
@@ -292,4 +293,45 @@ class Rect(Rectangle):
             if self.intersects(rect):
                 return i
         return -1
+
+
+class RectPool(ConcurrentLinkedQueue):
+    """
+    **pyj2d.rect.rectPool**
+    
+    * rectPool.append
+    * rectPool.extend
+    * rectPool.get
+    * rectPool.copy
+
+    Rect pool accessed by rectPool instance through append method to add Rect, extend method to add Rect list, get method to return Rect set with x,y,width,height attributes, and copy method to return copy of a given Rect. If pool is empty, return is a new Rect.
+    """
+
+    def __init__(self):
+        self.append = self.add
+        self.extend = self.addAll
+
+    def get(self, x, y, width, height):
+        """
+        Return a Rect with x,y,width,height attributes.
+        """
+        rect = self.poll()
+        if rect is not None:
+            rect.x, rect.y, rect.width, rect.height = x, y, width, height
+            return rect
+        else:
+            return Rect(x,y,width,height)
+
+    def copy(self, r):
+        """
+        Return a Rect with x,y,width,height attributes of the Rect argument.
+        """
+        rect = self.poll()
+        if rect is not None:
+            rect.x, rect.y, rect.width, rect.height = r.x, r.y, r.width, r.height
+            return rect
+        else:
+            return Rect(r.x,r.y,r.width,r.height)
+
+rectPool = RectPool()
 

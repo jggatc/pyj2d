@@ -1,6 +1,6 @@
 #PyJ2D - Copyright (C) 2011 James Garnon
 
-from rect import Rect
+from rect import Rect, rectPool
 import mask
 
 __docformat__ = 'restructuredtext'
@@ -132,7 +132,6 @@ class Group(object):
         self._surface_blits = []
         self._clear_active = False
         self._sprites_drawn = {}
-        self._rects = []
 
     def __repr__(self):
         """
@@ -212,10 +211,10 @@ class Group(object):
         self._surface_blits[:] = [(sprite.image,sprite.rect) for sprite in self._sprites.itervalues()]
         surface.blits(self._surface_blits)
         if self._clear_active:
-            self._rects.extend(self._sprites_drawn.itervalues())
+            rectPool.extend(self._sprites_drawn.values())
             self._sprites_drawn.clear()
             for sprite in self._sprites:
-                self._sprites_drawn[sprite] = self._get_rect(self._sprites[sprite].rect)
+                self._sprites_drawn[sprite] = rectPool.copy(self._sprites[sprite].rect)
         return None
 
     def clear(self, surface, background):
@@ -233,14 +232,6 @@ class Group(object):
         else:
             for sprite in self._sprites_drawn:
                 background(surface, self._sprites_drawn[sprite])
-
-    def _get_rect(self, r):
-        try:
-            rect = self._rects.pop()
-            rect.x, rect.y, rect.width, rect.height = r.x, r.y, r.width, r.height
-        except IndexError:
-            rect = Rect(r.x, r.y, r.width, r.height)
-        return rect
 
     def empty(self):
         """
@@ -324,24 +315,24 @@ class RenderUpdates(Group):
         self._surface_blits[:] = [(sprite.image,sprite.rect) for sprite in self._sprites.itervalues()]
         surface.blits(self._surface_blits)
         if self._clear_active:
-            self._rects.extend(self.changed_areas)
+            rectPool.extend(self.changed_areas)
             self.changed_areas[:] = []
             for sprite in self._sprites:
                 try:
                     if self._sprites_drawn[sprite].intersects(self._sprites[sprite].rect):
                         self._sprites_drawn[sprite].union_ip(self._sprites[sprite].rect)
                     else:
-                        self.changed_areas.append(self._get_rect(self._sprites[sprite].rect))
+                        self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
                 except KeyError:
-                    self.changed_areas.append(self._get_rect(self._sprites[sprite].rect))
+                    self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
             self.changed_areas.extend(self._sprites_drawn.itervalues())
             self._sprites_drawn.clear()
             for sprite in self._sprites:
-                self._sprites_drawn[sprite] = self._get_rect(self._sprites[sprite].rect)
+                self._sprites_drawn[sprite] = rectPool.copy(self._sprites[sprite].rect)
         else:
-            self._rects.extend(self.changed_areas)
+            rectPool.extend(self.changed_areas)
             self.changed_areas[:] = []
-            self.changed_areas.extend([self._get_rect(sprite.rect) for sprite in self._sprites.itervalues()])
+            self.changed_areas.extend([rectPool.copy(sprite.rect) for sprite in self._sprites.itervalues()])
         return self.changed_areas
 
 
@@ -478,24 +469,24 @@ class OrderedUpdates(RenderUpdates):
         self._surface_blits = [(sprite.image,sprite.rect) for sprite in order_sprite]
         surface.blits(self._surface_blits)
         if self._clear_active:
-            self._rects.extend(self.changed_areas)
+            rectPool.extend(self.changed_areas)
             self.changed_areas[:] = []
             for sprite in self._sprites:
                 try:
                     if self._sprites_drawn[sprite].intersects(self._sprites[sprite].rect):
                         self._sprites_drawn[sprite].union_ip(self._sprites[sprite].rect)
                     else:
-                        self.changed_areas.append(self._get_rect(self._sprites[sprite].rect))
+                        self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
                 except KeyError:
-                    self.changed_areas.append(self._get_rect(self._sprites[sprite].rect))
+                    self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
             self.changed_areas.extend(self._sprites_drawn.itervalues())
             self._sprites_drawn.clear()
             for sprite in self._sprites:
-                self._sprites_drawn[sprite] = self._get_rect(self._sprites[sprite].rect)
+                self._sprites_drawn[sprite] = rectPool.copy(self._sprites[sprite].rect)
         else:
-            self._rects.extend(self.changed_areas)
+            rectPool.extend(self.changed_areas)
             self.changed_areas[:] = []
-            self.changed_areas.extend([self._get_rect(sprite.rect) for sprite in self._sprites.itervalues()])
+            self.changed_areas.extend([rectPool.copy(sprite.rect) for sprite in self._sprites.itervalues()])
         return self.changed_areas
 
 
