@@ -325,7 +325,7 @@ class RenderUpdates(Group):
                         self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
                 except KeyError:
                     self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
-            self.changed_areas.extend(self._sprites_drawn.itervalues())
+            self.changed_areas.extend(self._sprites_drawn.values())
             self._sprites_drawn.clear()
             for sprite in self._sprites:
                 self._sprites_drawn[sprite] = rectPool.copy(self._sprites[sprite].rect)
@@ -479,7 +479,7 @@ class OrderedUpdates(RenderUpdates):
                         self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
                 except KeyError:
                     self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
-            self.changed_areas.extend(self._sprites_drawn.itervalues())
+            self.changed_areas.extend(self._sprites_drawn.values())
             self._sprites_drawn.clear()
             for sprite in self._sprites:
                 self._sprites_drawn[sprite] = rectPool.copy(self._sprites[sprite].rect)
