@@ -142,4 +142,5 @@ PyJ2D Version History
 -update surface blit rect computation.
 -update initialization to stabilize timing.
 -add rect rectPool to utilize a rect pool.
+-update sprite draw for performance.
 

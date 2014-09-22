@@ -205,12 +205,8 @@ class Surface(BufferedImage):
         Draw list of (surface, rect) on this surface.
         """
         g2d = self.createGraphics()
-        for surface in surfaces:
-            try:
-                x, y = surface[1].x, surface[1].y
-            except AttributeError:
-                x, y = surface[1][0], surface[1][1]
-            g2d.drawImage(surface[0], x, y, None)
+        for surface, rect in surfaces:
+            g2d.drawImage(surface, rect.x, rect.y, None)
         g2d.dispose()
         return None
 
