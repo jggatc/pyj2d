@@ -70,7 +70,10 @@ def quit():
         return
     else:
         initialized = False
-    mixer.quit()
+    try:
+        mixer.quit()
+    except:
+        pass
     for module in (display, sprite, image, draw, time, event, key, mouse, transform, font, surfarray, mask, mixer):
         del(module)
     if not env.japplet:
