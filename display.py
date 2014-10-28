@@ -193,6 +193,9 @@ class Display(Runnable):
             for i in range(500):
                 grp.clear(surface[0],surface[1])
                 grp.draw(surface[0])
+        for grp in group:
+            grp.empty()
+            Group._groups.remove(grp)
 
     def quit(self):
         """
