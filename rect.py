@@ -119,6 +119,12 @@ class Rect(Rectangle):
         except TypeError:
             Rectangle.__init__(self, int(x), int(y), int(w), int(h))
 
+    def __str__(self):
+        """
+        Return string representation of Rect object.
+        """
+        return "<rect(%d, %d, %d, %d)>" % (self.x, self.y, self.width, self.height)
+
     def __repr__(self):
         """
         Return string representation of Rect object.
