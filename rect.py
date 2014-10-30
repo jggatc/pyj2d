@@ -20,6 +20,8 @@ class Rect(Rectangle):
     * Rect.union_ip
     * Rect.unionall
     * Rect.unionall_ip
+    * Rect.clamp
+    * Rect.clamp_ip
     * Rect.clip
     * Rect.collidepoint
     * Rect.colliderect
@@ -274,6 +276,46 @@ class Rect(Rectangle):
         for rect in rect_list:
             self.union(self, rect, self)
         return None
+
+    def clamp(self, rect):
+        """
+        Return Rect of same dimension as this rect moved within rect.
+        """
+        if rect.contains(self):
+            return Rect(self.x, self.y, self.width, self.height)
+        x, y = self._clamp(rect)
+        return Rect(x, y, self.width, self.height)
+
+    def clamp_ip(self, rect):
+        """
+        Move this rect within rect.
+        """
+        if rect.contains(self):
+            return None
+        x, y = self._clamp(rect)
+        self.setLocation(x, y)
+        return None
+
+    def _clamp(self, rect):
+        if self.width < rect.width:
+            if self.x < rect.x:
+                x = rect.x
+            elif self.x+self.width > rect.x+rect.width:
+                x = rect.x+rect.width-self.width
+            else:
+                x = 0
+        else:
+            x = rect.x - (self.width-rect.width)//2
+        if self.height < rect.height:
+            if self.y < rect.y:
+                y = rect.y
+            elif self.y+self.height > rect.y+rect.height:
+                y = rect.y+rect.height-self.height
+            else:
+                y = 0
+        else:
+            y = rect.y - (self.height-rect.height)//2
+        return x, y
 
     def collidepoint(self, *point):
         """
