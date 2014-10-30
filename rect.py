@@ -303,7 +303,7 @@ class Rect(Rectangle):
             elif self.x+self.width > rect.x+rect.width:
                 x = rect.x+rect.width-self.width
             else:
-                x = 0
+                x = self.x
         else:
             x = rect.x - (self.width-rect.width)//2
         if self.height < rect.height:
@@ -312,7 +312,7 @@ class Rect(Rectangle):
             elif self.y+self.height > rect.y+rect.height:
                 y = rect.y+rect.height-self.height
             else:
-                y = 0
+                y = self.y
         else:
             y = rect.y - (self.height-rect.height)//2
         return x, y
