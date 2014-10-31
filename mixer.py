@@ -4,7 +4,7 @@ from __future__ import division
 from javax.sound.sampled import AudioSystem, AudioFormat
 from javax.sound.sampled import LineUnavailableException
 from java.io import File, IOException
-from java.lang import Thread, Runnable, InterruptedException
+from java.lang import Thread, Runnable, InterruptedException, IllegalArgumentException
 import jarray
 import env
 try:
@@ -248,6 +248,14 @@ class Mixer(Runnable):
                 if data_len > 0:
                     try:
                         self._mixer.write(self._byteArray, 0, data_len)
+                    except IllegalArgumentException:
+                        nonIntegralByte = data_len % self._audio_format.getFrameSize()
+                        if nonIntegralByte:
+                            data_len -= nonIntegralByte
+                            try:
+                                self._mixer.write(self._byteArray, 0, data_len)
+                            except (IllegalArgumentException, LineUnavailableException):
+                                pass
                     except LineUnavailableException:
                         pass
             else:
@@ -260,6 +268,14 @@ class Mixer(Runnable):
                         data = self._mixer.processVolume(data, data_len, lvol, rvol)
                     try:
                         self._mixer.write(data, 0, data_len)
+                    except IllegalArgumentException:
+                        nonIntegralByte = data_len % self._audio_format.getFrameSize()
+                        if nonIntegralByte:
+                            data_len -= nonIntegralByte
+                            try:
+                                self._mixer.write(data, 0, data_len)
+                            except (IllegalArgumentException, LineUnavailableException):
+                                pass
                     except LineUnavailableException:
                         pass
         self.quit()
