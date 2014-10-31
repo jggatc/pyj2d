@@ -78,13 +78,15 @@ class Mixer(Runnable):
         """
         Stop mixer processing and release resources.
         """
+        self._initialized = False
+
+    def _quit(self):
         self.stop()
         try:
             self._mixer.quit()
         except AttributeError:
             pass
         self._mixer = None
-        self._initialized = False
 
     def get_init(self):
         """
@@ -229,13 +231,14 @@ class Mixer(Runnable):
         return False
 
     def run(self):
-        while not self._thread.isInterrupted():
+        while self._initialized:
             channel_active = [self._channels[id] for id in self._channel_pool if self._channels[id]._active]
             if not channel_active:
                 try:
                     self._thread.sleep(1)
                 except InterruptedException:
                     Thread.currentThread().interrupt()
+                    self.quit()
                 continue
             if len(channel_active) > 1:
                 for channel in channel_active:
@@ -278,7 +281,7 @@ class Mixer(Runnable):
                                 pass
                     except LineUnavailableException:
                         pass
-        self.quit()
+        self._quit()
 
     def _register_channel(self, channel):
         id = channel._id
