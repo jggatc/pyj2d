@@ -147,4 +147,5 @@ PyJ2D Version History
 -add rect clamp methods.
 -update mixer write for non-integral frames.
 -update mixer quit to properly stop thread.
+-add mouse set_visible method.
 
