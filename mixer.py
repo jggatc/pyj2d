@@ -16,6 +16,23 @@ __docformat__ = 'restructuredtext'
 
 
 class Mixer(Runnable):
+    """
+    **pyj2d.mixer**
+    
+    * pyj2d.mixer.init
+    * pyj2d.mixer.quit
+    * pyj2d.mixer.get_init
+    * pyj2d.mixer.stop
+    * pyj2d.mixer.pause
+    * pyj2d.mixer.unpause
+    * pyj2d.mixer.set_num_channels
+    * pyj2d.mixer.get_num_channels
+    * pyj2d.mixer.set_reserved
+    * pyj2d.mixer.find_channel
+    * pyj2d.mixer.get_busy
+    * pyj2d.mixer.Sound
+    * pyj2d.mixer.Channel
+    """
 
     def __init__(self):
         self._mixer = None
@@ -308,6 +325,17 @@ class Mixer(Runnable):
 
 
 class Sound:
+    """
+    **pyj2d.mixer.Sound**
+    
+    * Sound.play
+    * Sound.stop
+    * Sound.set_volume
+    * Sound.get_volume
+    * Sound.get_num_channels
+    * Sound.get_length
+    """
+
     _id = 0
     _mixer = None
 
@@ -405,6 +433,19 @@ class Sound:
 
 
 class Channel(Runnable):
+    """
+    **pyj2d.mixer.Channel**
+    
+    * Channel.play
+    * Channel.stop
+    * Channel.pause
+    * Channel.unpause
+    * Channel.set_volume
+    * Channel.get_volume
+    * Channel.get_busy
+    * Channel.get_sound
+    """
+
     _mixer = None
 
     def __init__(self, id):
