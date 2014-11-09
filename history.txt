@@ -136,7 +136,7 @@ PyJ2D Version History
 -update rect inflate/inflate_ip positioning.
 -update display to repaint on dispatch thread.
 
-0.26_git
+0.26    November 9, 2014
 -add rect union methods.
 -update methods to use rect intersection.
 -update surface blit rect computation.
