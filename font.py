@@ -4,8 +4,11 @@ from __future__ import division
 from java.awt import Font as JFont
 from java.awt import BasicStroke, RenderingHints, GraphicsEnvironment
 from java.awt.image import BufferedImage
+from java.io import File
+import os
 import surface
 from color import Color
+import env
 
 __docformat__ = 'restructuredtext'
 
@@ -24,7 +27,6 @@ def init():
     global _surf, _g2d, _initialized, match_font
     _surf = surface.Surface((1,1), BufferedImage.TYPE_INT_RGB)
     _g2d = _surf.createGraphics()
-    match_font = lambda *arg: None      #nonimplemented_methods
     _initialized = True
 init()
 
@@ -57,7 +59,12 @@ def get_default_font():
     
     Return default font.
     """
-    return 'Arial'
+    fonts = get_fonts()
+    for fontfamily in Font._font_family:
+        for font in fontfamily:
+            if font in fonts:
+                return font
+    return fonts[0]
 
 
 def get_fonts():
@@ -66,8 +73,22 @@ def get_fonts():
     
     Return fonts available in JVM.
     """
-    GraphicsEnv = GraphicsEnvironment.getLocalGraphicsEnvironment()
-    return GraphicsEnv.getAvailableFontFamilyNames()
+    return [''.join([c for c in f if c.isalnum()]).lower() for f in GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()]
+
+
+def match_font(name, *args, **kwargs):
+    """
+    **pyj2d.font.match_font**
+    
+    Argument name is a font name, or comma-delimited string of font names.
+    Return font found on system, otherwise return None if none found.
+    """
+    font = [''.join([c for c in f if c.isalnum()]).lower() for f in name.split(',')]
+    fonts = get_fonts()
+    for fn in font:
+        if fn in fonts:
+            return fn
+    return None
 
 
 class Font(JFont):
@@ -83,21 +104,34 @@ class Font(JFont):
     * Font.set_italic
     * Font.get_italic
     * Font.get_height
+    * Font.get_linesize
+    * Font.get_ascent
+    * Font.get_descent
     """
+
+    _font = None
+
+    _font_default = None
+
+    _font_family = [['arial', 'helvetica', 'liberationsans',  'nimbussansl', 'freesans', 'tahoma', 'sansserif'], ['verdana', 'bitstreamverasans', 'dejavusans', 'sansserif'], ['impact', 'sansserif'], ['comicsansms', 'cursive', 'sansserif'], ['couriernew', 'courier', 'lucidaconsole', 'dejavusansmono', 'monospace'], ['timesnewroman', 'times', 'liberationserif', 'nimbusromanno9l', 'serif'], ['garamond',  'bookantiqua', 'palatino', 'liberationserif', 'nimbusromanno9l', 'serif'], ['georgia', 'bitstreamveraserif', 'lucidaserif', 'liberationserif', 'dejavuserif', 'serif']]
 
     def __init__(self, name, size):
         """
         Return Font subclassed of java.awt.Font.
-        Arguments include name and size of font.
-        Currently font name limited to 'Arial'.
+        Arguments include name of a system font and size of font. The name argument can be a string of comma-delimited names to specify fallbacks and use a default font if none found, or specify a font file (eg. 'resource/font.ttf') with a exception if file not found.
         """
-        self.fontname = 'Arial'
+        if not Font._font:
+            Font._font = get_fonts()
+            Font._font_default = get_default_font()
+        self.fontname, isFile = self._getFontName(name)
         self.fontsize = size
-        try:
-            self.fontstyle = self._style
-        except AttributeError:
+        if not hasattr(self, 'fontstyle'):
             self.fontstyle = JFont.PLAIN
-        JFont.__init__(self,self.fontname,self.fontstyle,self.fontsize)
+        if not isFile:
+            JFont.__init__(self, self.fontname, self.fontstyle, self.fontsize)
+        else:
+            font = self._getFont(self.fontname, self.fontstyle, self.fontsize)
+            JFont.__init__(self, font)
         self.font = self
         _g2d.setFont(self.font)
         self.fontMetrics = _g2d.getFontMetrics()
@@ -109,6 +143,37 @@ class Font(JFont):
         Return string representation of Font object.
         """
         return "%s(%r)" % (self.__class__, self.__dict__)
+
+    def _getFontName(self, name):
+        isFile = False
+        if not name:
+            return Font._font_default, isFile
+        if name.split('.')[-1].lower() == 'ttf':
+            isFile = True
+            return name, isFile
+        name = [''.join([c for c in f if c.isalnum()]).lower() for f in name.split(',')]
+        for fn in name:
+            if name in Font._font:
+                return fn, isFile
+        for fn in name:
+            for ff in Font._font_family:
+                if fn in ff:
+                    for font in ff:
+                        if font in Font._font:
+                            return font, isFile
+        return Font._font_default, isFile
+
+    def _getFont(self, name, style, size):
+        name = os.path.normpath(name)
+        dirname, self.fontname = os.path.split(name)
+        fontpath = os.path.join(dirname,self.fontname)
+        if not env.japplet:
+            font = self.createFont(JFont.TRUETYPE_FONT, File(fontpath))
+        else:
+            font = self.createFont(JFont.TRUETYPE_FONT, env.japplet.class.getResourceAsStream(fontpath))
+            if not font:
+                raise IOError
+        return font.deriveFont(style, float(size))
 
     def render(self, text, antialias, color, background=None):
         """
@@ -244,14 +309,13 @@ class SysFont(Font):
     def __init__(self, name, size, bold=False, italic=False):
         """
         Return SysFont subclassed of Font.
-        Arguments include name and size of font, with optional bold and italic style.
-        Currently font name limited to 'Arial'.
+        Arguments include name of a system font and size of font, with optional bold and italic style. The name argument can be a string of comma-delimited names to specify fallbacks and use a default font if none found.
         """
-        self._style = JFont.PLAIN
+        self.fontstyle = JFont.PLAIN
         if bold:
-            self._style |= JFont.BOLD
+            self.fontstyle |= JFont.BOLD
         if italic:
-            self._style |= JFont.ITALIC
+            self.fontstyle |= JFont.ITALIC
         Font.__init__(self,name,size)
 
     def set_bold(self, setting=True):

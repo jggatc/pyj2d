@@ -149,3 +149,6 @@ PyJ2D Version History
 -update mixer quit to properly stop thread.
 -add mouse set_visible method.
 
+0.27_git
+-update font to enhance fonts access.
+
