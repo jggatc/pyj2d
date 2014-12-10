@@ -153,7 +153,7 @@ class Font(JFont):
             return name, isFile
         name = [''.join([c for c in f if c.isalnum()]).lower() for f in name.split(',')]
         for fn in name:
-            if name in Font._font:
+            if fn in Font._font:
                 return fn, isFile
         for fn in name:
             for ff in Font._font_family:
