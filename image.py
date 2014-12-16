@@ -2,7 +2,7 @@
 
 from __future__ import division
 from javax.imageio import ImageIO
-from java.io import File
+from java.io import File, ByteArrayInputStream
 from surface import Surface
 import env
 
@@ -27,15 +27,20 @@ class Image(object):
     def load(self, img_file, namehint=None):
         """
         Load image from file as a java.awt.image.BufferedImage.
+        The img_file can be a filename or file-like object.
         Return the bufferedimage as a Surface.
         """
-        try:
-            f = env.japplet.class.getResource(img_file.replace('\\','/'))    #java uses /, not os.path Windows \
-            if not f:
-                raise
-        except:
-            f = File(img_file)      #make path os independent
-        bimage = ImageIO.read(f)
+        if isinstance(img_file, str):
+            try:
+                f = env.japplet.class.getResource(img_file.replace('\\','/'))
+                if not f:
+                    raise
+            except:
+                f = File(img_file)
+            bimage = ImageIO.read(f)
+        else:
+            bimage = ImageIO.read(ByteArrayInputStream(img_file.getvalue()))
+            img_file.close()
         surf = Surface(bimage)
         return surf
 
