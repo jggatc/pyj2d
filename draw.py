@@ -115,8 +115,8 @@ class Draw(object):
         g = surface.createGraphics()
         g.setColor(Color(color))
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-        xpts = [pt[0] for pt in pointlist]
-        ypts = [pt[1] for pt in pointlist]
+        xpts = [int(pt[0]) for pt in pointlist]
+        ypts = [int(pt[1]) for pt in pointlist]
         npts = len(pointlist)
         xmin = min(xpts)
         xmax = max(xpts)
@@ -137,13 +137,11 @@ class Draw(object):
         Argument include surface to draw, color, point1, point2.
         Optional width argument of line.
         """
-        p1x, p1y = point1
-        p2x, p2y = point2
         g = surface.createGraphics()
         g.setColor(Color(color))
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
         g.setStroke(BasicStroke(width))
-        g.drawLine(p1x,p1y,p2x,p2y)
+        g.drawLine(int(point1[0]),int(point1[1]),int(point2[0]),int(point2[1]))
         g.dispose()
         xpts = [pt[0] for pt in (point1,point2)]
         ypts = [pt[1] for pt in (point1,point2)]
@@ -160,8 +158,8 @@ class Draw(object):
         Argument include surface to draw, color, closed, and pointlist.
         Optional width argument of line.
         """
-        xpoints = [p[0] for p in pointlist]
-        ypoints = [p[1] for p in pointlist]
+        xpoints = [int(p[0]) for p in pointlist]
+        ypoints = [int(p[1]) for p in pointlist]
         if closed:
             xpoint, ypoint = xpoints[0], ypoints[0]
             xpoints.append(xpoint)
