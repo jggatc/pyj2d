@@ -16,6 +16,7 @@ class Rect(Rectangle):
     * Rect.move_ip
     * Rect.inflate
     * Rect.inflate_ip
+    * Rect.contains
     * Rect.unionx
     * Rect.union_ip
     * Rect.unionall
