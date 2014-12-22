@@ -153,4 +153,5 @@ PyJ2D Version History
 -update font to enhance fonts access.
 -update image load to allow file-like argument.
 -update draw methods to int convert argument.
+-add mask.toString method.
 
