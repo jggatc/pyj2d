@@ -303,7 +303,7 @@ class Event(object):
 
 class UserEvent(object):
 
-    __slots__ = ['type', 'dict']
+    __slots__ = ['type', 'attr']
 
     def __init__(self, eventType, *args, **kwargs):
         """
@@ -316,17 +316,17 @@ class UserEvent(object):
         else:
             attr = kwargs
         object.__setattr__(self, "type", eventType)
-        object.__setattr__(self, "dict", attr)
+        object.__setattr__(self, "attr", attr)
 
     def __repr__(self):
         """
         Return string representation of Event object.
         """
-        return "%s(%s-UserEvent %r)" % (self.__class__, self.type, self.dict)
+        return "%s(%s-UserEvent %r)" % (self.__class__, self.type, self.attr)
 
     def __getattr__(self, attr):
         try:
-            return self.dict[attr]
+            return self.attr[attr]
         except KeyError:
             raise AttributeError, ("'Event' object has no attribute '%s'" % attr)
 
