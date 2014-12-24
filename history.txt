@@ -154,4 +154,6 @@ PyJ2D Version History
 -update image load to allow file-like argument.
 -update draw methods to int convert argument.
 -add mask.toString method.
+-add rect iter method.
+-add additional rect collide methods.
 
