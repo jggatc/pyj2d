@@ -1,6 +1,6 @@
 #PyJ2D - Copyright (C) 2011 James Garnon
 
-from rect import Rect, rectPool
+from rect import rectPool
 import mask
 
 __docformat__ = 'restructuredtext'
