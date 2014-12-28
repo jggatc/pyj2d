@@ -344,7 +344,7 @@ class Sound:
         Sound._id += 1
         if isinstance(sound_file, str):
             try:
-                self._sound_object = env.japplet.class.getResource(sound_file.replace('\\','/'))    #java uses /, not os.path Windows \
+                self._sound_object = env.japplet.getClass().getResource(sound_file.replace('\\','/'))    #java uses /, not os.path Windows \
                 if not self._sound_object:
                     raise IOError
             except:

@@ -32,7 +32,7 @@ class Image(object):
         """
         if isinstance(img_file, str):
             try:
-                f = env.japplet.class.getResource(img_file.replace('\\','/'))
+                f = env.japplet.getClass().getResource(img_file.replace('\\','/'))
                 if not f:
                     raise
             except:

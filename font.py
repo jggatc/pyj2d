@@ -170,7 +170,7 @@ class Font(JFont):
         if not env.japplet:
             font = self.createFont(JFont.TRUETYPE_FONT, File(fontpath))
         else:
-            font = self.createFont(JFont.TRUETYPE_FONT, env.japplet.class.getResourceAsStream(fontpath))
+            font = self.createFont(JFont.TRUETYPE_FONT, env.japplet.getClass().getResourceAsStream(fontpath))
             if not font:
                 raise IOError
         return font.deriveFont(style, float(size))
