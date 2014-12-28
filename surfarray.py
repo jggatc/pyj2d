@@ -31,7 +31,7 @@ class Surfarray(object):
         global numeric
         from numeric import numeric
         if not numeric:
-            raise ImportError, "JNumeric module is required."
+            raise ImportError("JNumeric module is required.")
         self.initialized = True
 
     def array2d(self, surface):

@@ -328,10 +328,10 @@ class UserEvent(object):
         try:
             return self.attr[attr]
         except KeyError:
-            raise AttributeError, ("'Event' object has no attribute '%s'" % attr)
+            raise AttributeError("'Event' object has no attribute '%s'" % attr)
 
     def __setattr__(self, attr, value):
-        raise AttributeError, ("'Event' object has no attribute '%s'" % attr)
+        raise AttributeError("'Event' object has no attribute '%s'" % attr)
 
 
 class JEvent(object):
@@ -383,7 +383,7 @@ class JEvent(object):
         try:
             return self._attr[attr](self)
         except (AttributeError, KeyError):
-            raise AttributeError, ("'Event' object has no attribute '%s'" % attr)
+            raise AttributeError("'Event' object has no attribute '%s'" % attr)
 
     def _dict(self):
         attrDict = {}
@@ -412,7 +412,7 @@ class JEvent(object):
         return char
 
     def __setattr__(self, attr, value):
-        raise AttributeError, ("'Event' object has no attribute '%s'" % attr)
+        raise AttributeError("'Event' object has no attribute '%s'" % attr)
 
     def getEvent(self):
         """
