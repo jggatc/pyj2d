@@ -26,15 +26,12 @@ class Color(_Color):
 
         Module initialization places pyj2d.Color in module's namespace.
         """
-        if isinstance(color[0],tuple):
+        if len(color) == 1:
             color = color[0]
         try:
             r,g,b,a = color[0],color[1],color[2],color[3]
         except IndexError:
-            try:
-                r,g,b,a = color[0],color[1],color[2],255
-            except IndexError:
-                r,g,b,a = (color[0]>>16) & 0xff, (color[0]>>8) & 0xff, color[0] & 0xff, (color[0]>>24) & 0xff
+            r,g,b,a = color[0],color[1],color[2],255
         except TypeError:
             r,g,b,a = (color>>16) & 0xff, (color>>8) & 0xff, color & 0xff, (color>>24) & 0xff
         _Color.__init__(self,r,g,b,a)
@@ -82,6 +79,12 @@ class Color(_Color):
 
     def __setitem__(self, index, val):
         self.__setattr__({0:'r', 1:'g', 2:'b', 3:'a'}[index], val)
+
+    def __iter__(self):
+        return iter([self.getRed(), self.getGreen(), self.getBlue(), self.getAlpha()])
+
+    def __len__(self):
+        return 4
 
     def _getRed(self):
         return self._color['r']
