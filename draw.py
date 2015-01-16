@@ -39,9 +39,13 @@ class Draw(object):
         Argument include surface to draw, color, Rect.
         Optional width argument of outline, which defaults to 0 for filled shape.
         """
-        rect = Rect(rect)
+        if not hasattr(rect, 'width'):
+            rect = Rect(rect)
         g = surface.createGraphics()
-        g.setColor(Color(color))
+        if hasattr(color, 'a'):
+            g.setColor(color)
+        else:
+            g.setColor(Color(color))
         if width:
             g.setStroke(BasicStroke(width))
             g.drawRect(rect.x, rect.y, rect.width, rect.height)
@@ -58,7 +62,10 @@ class Draw(object):
         """
         rect = Rect(position[0]-radius, position[1]-radius, 2*radius, 2*radius)
         g = surface.createGraphics()
-        g.setColor(Color(color))
+        if hasattr(color, 'a'):
+            g.setColor(color)
+        else:
+            g.setColor(Color(color))
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
         if width:
             g.setStroke(BasicStroke(width))
@@ -74,9 +81,13 @@ class Draw(object):
         Argument include surface to draw, color, and rect.
         Optional width argument of outline, which defaults to 0 for filled shape.
         """
-        rect = Rect(rect)
+        if not hasattr(rect, 'width'):
+            rect = Rect(rect)
         g = surface.createGraphics()
-        g.setColor(Color(color))
+        if hasattr(color, 'a'):
+            g.setColor(color)
+        else:
+            g.setColor(Color(color))
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
         ellipse = Ellipse2D.Double(rect.x, rect.y, rect.width, rect.height)
         if width:
@@ -92,11 +103,15 @@ class Draw(object):
         Argument include surface to draw, color, rect, start_angle, stop_angle.
         Optional width argument of outline.
         """
-        rect = Rect(rect)
+        if not hasattr(rect, 'width'):
+            rect = Rect(rect)
         start_angle = int(start_angle * self.rad_deg)
         stop_angle = int(stop_angle * self.rad_deg)
         g = surface.createGraphics()
-        g.setColor(Color(color))
+        if hasattr(color, 'a'):
+            g.setColor(color)
+        else:
+            g.setColor(Color(color))
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
         if width:
             g.setStroke(BasicStroke(width))
@@ -113,7 +128,10 @@ class Draw(object):
         Optional width argument of outline, which defaults to 0 for filled shape.
         """
         g = surface.createGraphics()
-        g.setColor(Color(color))
+        if hasattr(color, 'a'):
+            g.setColor(color)
+        else:
+            g.setColor(Color(color))
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
         xpts = [int(pt[0]) for pt in pointlist]
         ypts = [int(pt[1]) for pt in pointlist]
@@ -138,7 +156,10 @@ class Draw(object):
         Optional width argument of line.
         """
         g = surface.createGraphics()
-        g.setColor(Color(color))
+        if hasattr(color, 'a'):
+            g.setColor(color)
+        else:
+            g.setColor(Color(color))
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
         g.setStroke(BasicStroke(width))
         g.drawLine(int(point1[0]),int(point1[1]),int(point2[0]),int(point2[1]))
@@ -166,7 +187,10 @@ class Draw(object):
             ypoints.append(ypoint)
         npoints = len(xpoints)
         g = surface.createGraphics()
-        g.setColor(Color(color))
+        if hasattr(color, 'a'):
+            g.setColor(color)
+        else:
+            g.setColor(Color(color))
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
         g.setStroke(BasicStroke(width))
         g.drawPolyline(xpoints, ypoints, npoints)
