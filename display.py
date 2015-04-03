@@ -6,6 +6,7 @@ from java.awt import Color, Dimension, Toolkit
 from java.awt.image import BufferedImage
 from java.awt.event import MouseListener
 from java.awt.event import MouseMotionListener
+from java.awt.event import MouseWheelListener
 from java.awt.event import KeyListener
 from java.awt.event import MouseEvent, KeyEvent
 from java.lang import Thread, Runnable, InterruptedException
@@ -17,7 +18,7 @@ import pyj2d.env
 __docformat__ = 'restructuredtext'
 
 
-class Frame(JFrame, MouseListener, MouseMotionListener, KeyListener):
+class Frame(JFrame, MouseListener, MouseMotionListener, MouseWheelListener, KeyListener):
 
     def __init__(self, title, size):
         JFrame.__init__(self, title)
@@ -31,6 +32,7 @@ class Frame(JFrame, MouseListener, MouseMotionListener, KeyListener):
         self.pack()
         self.addMouseListener(self)
         self.addMouseMotionListener(self)
+        self.addMouseWheelListener(self)
         self.addKeyListener(self)
         self.event = pyj2d.event
         self.modKey = pyj2d.event.modKey
@@ -60,6 +62,9 @@ class Frame(JFrame, MouseListener, MouseMotionListener, KeyListener):
 
     def mouseDragged(self, event):
         self.event._updateQueue(event, MouseEvent.MOUSE_MOVED)
+
+    def mouseWheelMoved(self, event):
+        self.event._updateQueue(event, MouseEvent.MOUSE_PRESSED)
 
     def keyPressed(self, event):
         if event.keyCode in self.modKey:

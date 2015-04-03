@@ -338,7 +338,7 @@ class JEvent(object):
 
     __slots__ = ['event', 'type']
     _attr = {
-            'button': lambda self: self.event.getButton(),
+            'button': lambda self: self._getButton(),
             'buttons': lambda self: self._getButtons(),
             'pos': lambda self: ( self.event.getX(),self.event.getY() ),
             'rel': lambda self: self._getRel(),
@@ -353,6 +353,8 @@ class JEvent(object):
     _keyEvent = ('key', 'unicode', 'mod', 'loc')
     _mousePos = {'x':0, 'y':0}
     _mouseRel = {'x':0, 'y':0}
+    _mouseButton = {1:1, 2:2, 3:3, 4:6, 5:7}
+    _mouseWheelButton = {-1:4, 1:5}
 
     def __init__(self, event, eventType):
         """
@@ -361,7 +363,7 @@ class JEvent(object):
         Event object attributes:
         
         * type: MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, KEYDOWN, KEYUP
-        * button: mouse button pressed (1/2/3)
+        * button: mouse button pressed (1-7)
         * buttons: mouse buttons pressed (1,2,3)
         * pos: mouse position (x,y)
         * rel: mouse relative position change (x,y)
@@ -390,6 +392,12 @@ class JEvent(object):
         for attr in {Const.MOUSEBUTTONDOWN:self._mouseEvent, Const.MOUSEBUTTONUP:self._mouseEvent, Const.MOUSEMOTION:self._mouseMotionEvent, Const.KEYDOWN:self._keyEvent, Const.KEYUP:self._keyEvent}[self.type]:
             attrDict[attr] = self._attr[attr](self)
         return attrDict
+
+    def _getButton(self):
+        if self.event.getID() != MouseEvent.MOUSE_WHEEL:
+            return self._mouseButton[self.event.getButton()]
+        else:
+            return self._mouseWheelButton[self.event.getWheelRotation()]
 
     def _getButtons(self):
         mod = self.event.getModifiersEx()
