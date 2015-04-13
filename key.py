@@ -1,4 +1,5 @@
-#PyJ2D - Copyright (C) 2011 James Garnon
+#PyJ2D - Copyright (C) 2011 James Garnon <http://gatc.ca/>
+#Released under the MIT License <http://opensource.org/licenses/MIT>
 
 from java.awt.event import KeyEvent
 import pyj2d.event
