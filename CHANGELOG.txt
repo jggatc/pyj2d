@@ -1,3 +1,6 @@
+0.28_dev
+-update jpanel with event handling that registers appropriate mouse position.
+
 0.27    2015-04-12
 -update font to enhance fonts access.
 -update image load to allow file-like argument.

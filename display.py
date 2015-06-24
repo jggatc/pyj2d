@@ -19,7 +19,7 @@ import pyj2d.env
 __docformat__ = 'restructuredtext'
 
 
-class Frame(JFrame, MouseListener, MouseMotionListener, MouseWheelListener, KeyListener):
+class Frame(JFrame):
 
     def __init__(self, title, size):
         JFrame.__init__(self, title)
@@ -31,10 +31,21 @@ class Frame(JFrame, MouseListener, MouseMotionListener, MouseWheelListener, KeyL
         self.jpanel = Panel(size)
         self.getContentPane().add(self.jpanel)
         self.pack()
+
+
+class Panel(JPanel, MouseListener, MouseMotionListener, MouseWheelListener, KeyListener):
+
+    def __init__(self, size):
+        JPanel.__init__(self)
+        self.setPreferredSize(Dimension(size[0],size[1]))
+        self.surface = pyj2d.surface.Surface(size, BufferedImage.TYPE_INT_RGB)
+        self.setBackground(Color.BLACK)
         self.addMouseListener(self)
         self.addMouseMotionListener(self)
         self.addMouseWheelListener(self)
         self.addKeyListener(self)
+        self.setFocusable(True)
+        self.requestFocusInWindow()
         self.event = pyj2d.event
         self.modKey = pyj2d.event.modKey
 
@@ -79,15 +90,6 @@ class Frame(JFrame, MouseListener, MouseMotionListener, MouseWheelListener, KeyL
 
     def keyTyped(self, event):
         pass
-
-
-class Panel(JPanel):
-
-    def __init__(self, size):
-        JPanel.__init__(self)
-        self.setPreferredSize(Dimension(size[0],size[1]))
-        self.surface = pyj2d.surface.Surface(size, BufferedImage.TYPE_INT_RGB)
-        self.setBackground(Color.BLACK)
 
     def paintComponent(self, g2d):
         self.super__paintComponent(g2d)
