@@ -3,6 +3,11 @@
 
 from __future__ import division
 from java.lang import Thread, System, InterruptedException
+try:
+    from threading import Timer
+except ImportError:
+    pass
+import pyj2d.event
 
 __docformat__ = 'restructuredtext'
 
@@ -127,4 +132,50 @@ def wait(time):
     """
     pause = delay(time)
     return pause
+
+def set_timer(eventid, time):
+    """
+    **pyj2d.time.set_timer**
+
+    Events of type eventid placed on queue at time (ms) intervals.
+    Disable by time of 0.
+    """
+    if eventid not in _EventTimer.timers:
+        _EventTimer.timers[eventid] = _EventTimer(eventid)
+    if time:
+        _EventTimer.timers[eventid].start(time)
+    else:
+        _EventTimer.timers[eventid].cancel()
+    return None
+
+class _EventTimer:
+    timers = {}
+
+    def __init__(self, eventid):
+        self.eventid = eventid
+        self.time = 0
+        self.timer = None
+        self.repeat = True
+
+    def run(self):
+        pyj2d.event.post( pyj2d.event.Event(self.eventid) )
+        if self.repeat:
+            self.timeout()
+
+    def timeout(self):
+        self.timer = Timer(self.time/1000.0, self.run, ([]))
+        self.timer.start()
+
+    def start(self, time):
+        if self.timer:
+            self.cancel()
+        self.time = time
+        self.repeat = True
+        self.timeout()
+
+    def cancel(self):
+        if self.timer:
+            self.timer.cancel()
+            self.timer = None
+        self.repeat = False
 
