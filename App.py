@@ -15,7 +15,7 @@ import pyj2d.env
 ##############################
 #App configuration:
 # Refer to instructions at end of file
-# Copy App.py to root
+# Copy App.py to script folder
 # Edit App.py for your script
 #  -Script name to import
 #  -App size
@@ -140,17 +140,17 @@ class Panel(JPanel):
 if __name__ == '__main__':
     import pawt
     pawt.test(App(), size=_app_size)
-#    pawt.test(Applet(), size=_app_size)
 
 
 """
 
-To create a deployable Java app, copy App.py to the script folder with PyJ2D on the path, and edit App.py to import your Python script, set app size, and code to link the app thread to the script application, including script setup, and script execution statements that will update during the app thread loop. Alternatively, use App.py as a guide and edit your Python script accordingly. To test, the edited App.py script can be run directly on the desktop JVM, which executes the app code with the pawt module in main(). To create an app jar that can be deployed online, use jythonc available for Jython 2.2.1, with the command 'jythonc --core --deep --jar Pyj2d_App.jar App.py' to package together with Jython dependencies, or 'jythonc --jar Pyj2d_App.jar App.py' to package alone in which case jython.jar must be included. The mixer function requires Mixer.class (compiled with 'javac Mixer.java') and should be included in the jar with 'jar uvf Pyj2d_App.jar pyj2d/Mixer.class'. To update the app jar with a resources folder containing image and audio files, use command 'jar uvf Pyj2d_App.jar resources'. Note that Java apps do not start from main() rather launch from japplet subclass with the same name as the script.
+This information can be used to deploy a Java app online. Copy App.py to the script folder with PyJ2D on the path. Edit App.py to import your Python script, set app size, and code to link the app thread to the script application, including script setup that will be called upon app initialization and script execution statements that will update during the app thread loop. Alternatively, use App.py as a guide and edit your Python script accordingly. To test, the edited App.py script can be run directly on the desktop JVM using the command 'jython App.py', which executes the app code with the pawt module in main(). To create an app jar that can be deployed online, use jythonc available for Jython 2.2.1, with the command 'jythonc --core --deep --jar Pyj2d_App.jar App.py' to package together with Jython dependencies, or 'jythonc --jar Pyj2d_App.jar App.py' to package alone in which case jython.jar must be included. The mixer function requires Mixer.class (compiled with 'javac Mixer.java') and should be included in the jar with 'jar uvf Pyj2d_App.jar pyj2d/Mixer.class'. To update the app jar with a resources folder containing image and audio files, use command 'jar uvf Pyj2d_App.jar resources'. Note that Java apps do not start from main() rather launch from japplet subclass with the same name as the script.
 
-To run the app on desktop before deployment online, use appletviewer included with JDK package, which tests execution and whether the app conforms to security profile. Using this method with Java 6 and prior versions of PyJ2D, unsigned apps were created successfully, but if code is required that violates security such as disk access, the app needs to be signed for permission. Current versions of Java requires signing unless security configuration is changed. The functionality of online deployment using PyJ2D has not been maintained, creation of unsigned apps was verified using PyJ2D 0.23 (http://s3.gatc.ca/files/PyJ2D_0.23.zip). Code that can be used to launch the app is provided at the end of this file. To use appletviewer, place an edited App.html together with app jar(s), and use command 'appletviewer App.html'. To deploy online, place app jar(s) on your server, and to launch from browser, a method that worked is to initiate the app using JavaScript in App.js, after editing app size, jar name and site URL, that is embedded on the webpage.
+To run the app on desktop before deployment online, use appletviewer included with JDK package, which tests execution and whether the app conforms to the security profile. Using this method with Java 6 unsigned apps were created successfully, but if code is required that violates the security profile such as disk access, the app needs to be signed for permission. Current versions of Java requires all online apps to be signed, unless security configuration is changed. The functionality of online deployment using PyJ2D has not been maintained, creation of unsigned apps was verified using PyJ2D 0.23 (http://s3.gatc.ca/files/PyJ2D_0.23.zip). Code that can be used to launch the app is provided at the end of this file. To use appletviewer, place an edited App.html together with the app jar(s), and use command 'appletviewer App.html'. To deploy online, place the app jar(s) on a Web server and use an edited App.js and the HTML code that calls the JavaScript function to launch the app from the Web browser.
 
 
 Example code to launch app packaged in Pyj2d_App.jar with separate jython.jar:
+(edit the Pyj2d_App name and app size)
 
 HTML code for App.html file:
 <HTML>
@@ -167,6 +167,7 @@ HTML code for App.html file:
 
 
 Example code for JavaScript launchable app packaged in Pyj2d_App.jar with separate jython.jar:
+(edit the Pyj2d_App name, app size, and site URL)
 
 JavaScript code for App.js file:
 <script type="text/javascript">
@@ -182,7 +183,7 @@ function appLauncher (appArchive,appCode,appWidth,appHeight)
 }
 </script>
 
-HTML code embedded on the webpage:
+HTML code embedded on the Web page:
 
 <div id="Pyj2d_App" title="App: Pyj2d_App" style="width:400px; height:300px; border:1px solid #333; background-color:#000; position:relative; left:100px;">
 <input type='button' value='Launch App' onClick='appLauncher("Pyj2d_App")'/>
