@@ -7,6 +7,7 @@ from java.awt.image import BufferedImage
 from java.lang import Runnable
 from java.lang import Thread
 from java.awt.event import MouseEvent, KeyEvent
+from java.util.concurrent.atomic import AtomicBoolean
 import pyj2d.event
 import pyj2d.surface
 import pyj2d.env
@@ -127,6 +128,7 @@ class Panel(JPanel):
         self.setPreferredSize(Dimension(size[0],size[1]))
         self.surface = pyj2d.surface.Surface(size, BufferedImage.TYPE_INT_RGB)
         self.setBackground(Color.BLACK)
+        self._repainting = AtomicBoolean(False)
 
     def paintComponent(self, g2d):
         self.super__paintComponent(g2d)
@@ -135,6 +137,7 @@ class Panel(JPanel):
             Toolkit.getDefaultToolkit().sync()
         except:
             pass
+        self._repainting.set(False)
 
 
 if __name__ == '__main__':

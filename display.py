@@ -11,6 +11,7 @@ from java.awt.event import MouseWheelListener
 from java.awt.event import KeyListener
 from java.awt.event import MouseEvent, KeyEvent
 from java.lang import Thread, Runnable, InterruptedException
+from java.util.concurrent.atomic import AtomicBoolean
 from javax.swing import SwingUtilities
 import pyj2d.event
 import pyj2d.surface
@@ -48,6 +49,7 @@ class Panel(JPanel, MouseListener, MouseMotionListener, MouseWheelListener, KeyL
         self.requestFocusInWindow()
         self.event = pyj2d.event
         self.modKey = pyj2d.event.modKey
+        self._repainting = AtomicBoolean(False)
 
     def mousePressed(self, event):
         self.event.mousePress[event.button] = True
@@ -98,6 +100,7 @@ class Panel(JPanel, MouseListener, MouseMotionListener, MouseWheelListener, KeyL
             Toolkit.getDefaultToolkit().sync()
         except:
             pass
+        self._repainting.set(False)
 
 
 class Display(Runnable):
@@ -297,7 +300,15 @@ class Display(Runnable):
                         self.jpanel.repaint(rect[0],rect[1],rect[2],rect[3])
                     except (TypeError, AttributeError):
                         if rect is None:
-                            continue
+                            try:
+                                if rect_check:
+                                    continue
+                            except NameError:
+                                rect_check = bool([r for r in self._rect_list if r])
+                                if rect_check:
+                                    continue
+                                else:
+                                    return
                         else:
                             rect = self._rect_list
                             try:
@@ -305,6 +316,7 @@ class Display(Runnable):
                             except AttributeError:
                                 self.jpanel.repaint(rect[0],rect[1],rect[2],rect[3])
                             break
+            self.jpanel._repainting.set(True)
         except TypeError:
             if self._rect_list is not None:
                 raise ValueError

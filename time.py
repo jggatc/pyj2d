@@ -8,6 +8,7 @@ try:
 except ImportError:
     pass
 import pyj2d.event
+import pyj2d.env
 
 __docformat__ = 'restructuredtext'
 
@@ -84,6 +85,12 @@ class Clock(object):
                     self.thread.sleep(time_pause)
                 except InterruptedException:
                     Thread.currentThread().interrupt()
+        while pyj2d.env.jframe.jpanel._repainting.get():
+            try:
+                self.thread.sleep(1)
+            except InterruptedException:
+                Thread.currentThread().interrupt()
+                break
         return self.time_diff[self.pos]
 
     def tick_busy_loop(self, framerate=0):
