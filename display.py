@@ -295,7 +295,7 @@ class Display(Runnable):
                 except AttributeError:
                     try:
                         self.jpanel.repaint(rect[0],rect[1],rect[2],rect[3])
-                    except TypeError:
+                    except (TypeError, AttributeError):
                         if rect is None:
                             continue
                         else:
