@@ -55,7 +55,7 @@ class Surface(BufferedImage):
                     BufferedImage.__init__(self, width, height, BufferedImage.TYPE_INT_RGB)
             except IndexError:
                 BufferedImage.__init__(self, width, height, BufferedImage.TYPE_INT_ARGB)
-                graphics2D = BufferedImage.createGraphics(self)
+                graphics2D = self.createGraphics()
                 graphics2D.setColor(Color(0,0,0))
                 graphics2D.fillRect(0, 0, width, height)
                 graphics2D.dispose()
