@@ -173,7 +173,7 @@ class Display(Runnable):
 
     def get_frame(self):
         """
-        Return JFrame or JApplet.
+        Return JFrame.
         """
         return self.jframe
 
