@@ -23,29 +23,24 @@ class Sprite(object):
         """
         Return Sprite.
         Optional argument inludes group(s) to place sprite.
-        Sprite can have image and rect attributes.
+        Sprite require image and rect attributes for some functionality.
         """
-        self.x = None
-        self.y = None
-        self.image = None
-        self.rect = None
+        self._groups = {}
         for group in groups:
-            if self not in group:
-                group.add(self)
+            group.add(self)
 
     def __repr__(self):
         """
         Return string representation of Sprite object.
         """
-        return "%s(in %d groups)" % (self.__class__, len(self.groups()))
+        return "%s(in %d groups)" % (self.__class__, len(self._groups))
 
     def add(self, *groups):
         """
         Add sprite to group(s).
         """
         for group in groups:
-            if self not in group:
-                group.add(self)
+            group.add(self)
         return None
 
     def remove(self, *groups):
@@ -53,33 +48,31 @@ class Sprite(object):
         Remove sprite from group(s).
         """
         for group in groups:
-            if self in group:
-                group.remove(self)
+            group.remove(self)
         return None
 
     def kill(self):
         """
         Remove sprite from all member groups.
         """
-        for group in Group._groups:
-            if self in group:
-                group.remove(self)
+        for group in self._groups:
+            group.remove(self)
         return None
 
     def alive(self):
         """
         Return True if sprite is member of any groups.
         """
-        for group in Group._groups:
-            if self in group:
-                return True
-        return False
+        if self._groups:
+            return True
+        else:
+            return False
 
     def groups(self):
         """
         Return list of groups that sprite is a member.
         """
-        return [group for group in Group._groups if self in group]
+        return self._groups.values()
 
     def update(self, *args):
         """
@@ -118,18 +111,16 @@ class Group(object):
     * Group.update
     """
 
-    _groups = []
-
     def __init__(self, *sprites):
         """
         Return Group.
         Can optionally be called with sprite(s) to add.
         """
-        Group._groups.append(self)
         self._sprites = {}
         if sprites:
             for sprite in sprites:
                 self._sprites[id(sprite)] = sprite
+                sprite._groups[id(self)] = self
         self._clear_active = False
         self._sprites_drawn = {}
 
@@ -176,7 +167,10 @@ class Group(object):
         Add sprite(s) to group.
         """
         for sprite in sprites:
-            self._sprites[id(sprite)] = sprite
+            spriteID = id(sprite)
+            if spriteID not in self._sprites:
+                self._sprites[spriteID] = sprite
+                sprite._groups[id(self)] = self
         return None
 
     def remove(self, *sprites):
@@ -186,6 +180,7 @@ class Group(object):
         for sprite in sprites:
             try:
                 del self._sprites[id(sprite)]
+                del sprite._groups[id(self)]
             except KeyError:
                 pass
         return None
@@ -232,6 +227,8 @@ class Group(object):
         """
         Empty group.
         """
+        for sprite in self._sprites.itervalues():
+            del sprite._groups[id(self)]
         self._sprites.clear()
         return None
 
@@ -239,7 +236,7 @@ class Group(object):
         """
         Update sprites in group by calling sprite.update.
         """
-        for sprite in self._sprites.values():
+        for sprite in self._sprites.itervalues():
             sprite.update(*args, **kwargs)  #*tuple unpack jythonc error, fix by adding **kwargs
         return None
 
@@ -275,8 +272,9 @@ class GroupSingle(Group):
         """
         Add sprite to group, replacing existing sprite.
         """
-        self._sprites.clear()
+        self.empty()
         self._sprites[id(sprite)] = sprite
+        sprite._groups[id(self)] = self
         return None
 
     def update(self, *args, **kwargs):

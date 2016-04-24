@@ -2,6 +2,7 @@
 -update jpanel with event handling that registers appropriate mouse position.
 -add time.set_timer method.
 -update display repaint to sync with program iteration.
+-update sprite to revise member groups.
 
 0.27    2015-04-12
 -update font to enhance fonts access.
