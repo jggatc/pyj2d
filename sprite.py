@@ -178,22 +178,18 @@ class Group(object):
         Remove sprite(s) from group.
         """
         for sprite in sprites:
-            try:
-                del self._sprites[id(sprite)]
+            spriteID = id(sprite)
+            if spriteID in self._sprites:
+                del self._sprites[spriteID]
                 del sprite._groups[id(self)]
-            except KeyError:
-                pass
         return None
 
     def has(self, *sprites):
         """
         Check if all sprite(s) in group.
         """
-        try:
-            if not isinstance(sprites[0], Sprite):
-                sprites = sprites[0]
-        except IndexError:
-            return False
+        if not isinstance(sprites[0], Sprite):
+            sprites = sprites[0]
         for sprite in sprites:
             if id(sprite) not in self._sprites.iterkeys():
                 return False
@@ -263,9 +259,9 @@ class GroupSingle(Group):
         Get Group.sprite.
         """
         if attr == 'sprite':
-            try:
+            if self._sprites:
                 return self._sprites.values()[0]
-            except:
+            else:
                 return None
 
     def add(self, sprite):
@@ -310,12 +306,12 @@ class RenderUpdates(Group):
             rectPool.extend(self.changed_areas)
             self.changed_areas[:] = []
             for sprite in self._sprites:
-                try:
+                if sprite in self._sprites_drawn:
                     if self._sprites_drawn[sprite].intersects(self._sprites[sprite].rect):
                         self._sprites_drawn[sprite].union_ip(self._sprites[sprite].rect)
                     else:
                         self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
-                except KeyError:
+                else:
                     self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
             self.changed_areas.extend(self._sprites_drawn.values())
             self._sprites_drawn.clear()
@@ -357,9 +353,9 @@ class OrderedUpdates(RenderUpdates):
         """
         Provides iterator to sprites in Group.
         """
-        try:
+        if self.sort:
             order_sprite = iter(self.sort)
-        except TypeError:
+        else:
             keys = self.order.keys()
             keys.sort()
             self.sort = [self._sprites[self.order[key]] for key in keys]
@@ -370,9 +366,9 @@ class OrderedUpdates(RenderUpdates):
         """
         Return ordered list of sprites in the group.
         """
-        try:
+        if self.sort:
             order_sprite = self.sort[:]
-        except TypeError:
+        else:
             keys = self.order.keys()
             keys.sort()
             self.sort = [self._sprites[self.order[key]] for key in keys]
@@ -396,12 +392,12 @@ class OrderedUpdates(RenderUpdates):
         """
         for sprite in sprites:
             if sprite not in self._sprites:
-                try:
-                    index = self.index.next()
+                index = self._get_index()
+                if index is not None:
                     spriteID = id(sprite)
                     self.order[index] = spriteID
                     self.place[spriteID] = index
-                except StopIteration:
+                else:
                     keys = self.order.keys()
                     keys.sort()
                     if len(keys)*2 > self.range:
@@ -422,17 +418,21 @@ class OrderedUpdates(RenderUpdates):
         RenderUpdates.add(self, *sprites, **kwargs)     #*tuple unpack error kwargs fix
         return None
 
+    def _get_index(self):
+        try:
+            return self.index.next()
+        except StopIteration:
+            return None
+
     def remove(self, *sprites, **kwargs):
         """
         Remove sprite(s) from group.
         """
         for sprite in sprites:
-            try:
-                spriteID = id(sprite)
+            spriteID = id(sprite)
+            if spriteID in self.place:
                 del self.order[self.place[spriteID]]
                 del self.place[spriteID]
-            except KeyError:
-                continue
         self.sort = None
         RenderUpdates.remove(self, *sprites, **kwargs)     #*tuple unpack error kwargs fix
         return None
@@ -451,9 +451,9 @@ class OrderedUpdates(RenderUpdates):
         """
         Draw sprite on surface in order of addition.
         """
-        try:
+        if self.sort:
             order_sprite = iter(self.sort)
-        except TypeError:
+        else:
             keys = self.order.keys()
             keys.sort()
             self.sort = [self._sprites[self.order[key]] for key in keys]
@@ -463,12 +463,12 @@ class OrderedUpdates(RenderUpdates):
             rectPool.extend(self.changed_areas)
             self.changed_areas[:] = []
             for sprite in self._sprites:
-                try:
+                if sprite in self._sprites_drawn:
                     if self._sprites_drawn[sprite].intersects(self._sprites[sprite].rect):
                         self._sprites_drawn[sprite].union_ip(self._sprites[sprite].rect)
                     else:
                         self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
-                except KeyError:
+                else:
                     self.changed_areas.append(rectPool.copy(self._sprites[sprite].rect))
             self.changed_areas.extend(self._sprites_drawn.values())
             self._sprites_drawn.clear()
@@ -636,18 +636,17 @@ def collide_mask(sprite1, sprite2):
         return False
     x1,y1 = clip.x-sprite1.rect.x, clip.y-sprite1.rect.y
     x2,y2 = clip.x-sprite2.rect.x, clip.y-sprite2.rect.y
-    masks = []
-    for sprite in (sprite1, sprite2):
-        try:
-            masks.append(sprite.mask)
-        except AttributeError:
-            masks.append(mask.from_surface(sprite.image))
+    if hasattr(sprite1, 'mask'):
+        mask1 = sprite1.mask
+    else:
+        mask1 = mask.from_surface(sprite1.image)
+    if hasattr(sprite2, 'mask'):
+        mask2 = sprite2.mask
+    else:
+        mask2 = mask.from_surface(sprite2.image)
     for y in range(clip.height):
-        try:
-            if masks[0].bit[y1+y].get(x1, x1+clip.width).intersects(masks[1].bit[y2+y].get(x2, x2+clip.width)):
-                return True
-        except IndexError:
-            continue
+        if mask1.bit[y1+y].get(x1, x1+clip.width).intersects(mask2.bit[y2+y].get(x2, x2+clip.width)):
+            return True
     return False
 
 
