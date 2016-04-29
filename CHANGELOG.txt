@@ -4,6 +4,7 @@
 -update display repaint to sync with program iteration.
 -update sprite to revise member groups.
 -update sprite argument handling.
+-update sprite.collide_mask to use mask.overlap.
 
 0.27    2015-04-12
 -update font to enhance fonts access.
