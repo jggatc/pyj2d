@@ -4,6 +4,7 @@
 from __future__ import division
 from java.awt.image import BufferedImage
 from java.awt import Toolkit, Point, AWTError
+from java.awt import Cursor
 import env
 import pyj2d.event
 
@@ -18,6 +19,8 @@ class Mouse(object):
     * pyj2d.mouse.get_pos
     * pyj2d.mouse.get_rel
     * pyj2d.mouse.set_visible
+    * pyj2d.mouse.set_cursor
+    * pyj2d.mouse.get_cursor
     """
 
     def __init__(self):
@@ -28,7 +31,9 @@ class Mouse(object):
         """
         self.mousePress = pyj2d.event.mousePress
         self.mousePos = {'x':0, 'y':0}
-        self._visible = True
+        self._cursorVisible = True
+        self._cursorBlank = None
+        self._cursorType = Cursor.DEFAULT_CURSOR
         self._nonimplemented_methods()
 
     def get_pressed(self):
@@ -66,19 +71,37 @@ class Mouse(object):
         Set mouse cursor visibility according to visible bool argument.
         Return previous cursor visibility state.
         """
-        visible_pre = self._visible
+        visible_pre = self._cursorVisible
         if visible:
-            env.jframe.getContentPane().setCursor(None)
-            self._visible = True
+            env.jframe.getContentPane().setCursor(Cursor(self._cursorType))
+            self._cursorVisible = True
         else:
-            image = BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB)
-            try:
-                cursor = Toolkit.getDefaultToolkit().createCustomCursor(image, Point(0,0), 'blank cursor')
-                env.jframe.getContentPane().setCursor(cursor)
-            except AWTError:
-                return visible_pre
-            self._visible = False
+            if not self._cursorBlank:
+                image = BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB)
+                hotspot = Point(0,0)
+                name = 'blank cursor'
+                try:
+                    self._cursorBlank = Toolkit.getDefaultToolkit().createCustomCursor(image, hotspot, name)
+                except AWTError:
+                    return visible_pre
+            env.jframe.getContentPane().setCursor(self._cursorBlank)
+            self._cursorVisible = False
         return visible_pre
+
+    def set_cursor(self, *cursor):
+        """
+        Set mouse cursor. Refer to cursors.py for details.
+        """
+        if len(cursor) == 1:
+            self._cursorType = cursor[0]
+            if self._cursorVisible:
+                env.jframe.getContentPane().setCursor(Cursor(self._cursorType))
+
+    def get_cursor(self):
+        """
+        Get mouse cursor.
+        """
+        return self._cursorType
 
     def _nonimplemented_methods(self):
         """
@@ -86,6 +109,4 @@ class Mouse(object):
         """
         self.set_pos = lambda *arg: None
         self.get_focused = lambda *arg: True
-        self.set_cursor = lambda *arg: None
-        self.get_cursor = lambda *arg: ()
 

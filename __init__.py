@@ -38,6 +38,7 @@ import time
 import mask
 import font
 import sprite
+import cursors
 from locals import *
 
 
