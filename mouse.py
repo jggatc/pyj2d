@@ -33,7 +33,7 @@ class Mouse(object):
         self.mousePos = {'x':0, 'y':0}
         self._cursorVisible = True
         self._cursorBlank = None
-        self._cursorType = Cursor.DEFAULT_CURSOR
+        self._cursorType = None
         self._nonimplemented_methods()
 
     def get_pressed(self):
@@ -73,13 +73,15 @@ class Mouse(object):
         """
         visible_pre = self._cursorVisible
         if visible:
-            env.jframe.getContentPane().setCursor(Cursor(self._cursorType))
+            if not self._cursorType:
+                self._cursorType = Cursor(Cursor.DEFAULT_CURSOR)
+            env.jframe.getContentPane().setCursor(self._cursorType)
             self._cursorVisible = True
         else:
             if not self._cursorBlank:
                 image = BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB)
                 hotspot = Point(0,0)
-                name = 'blank cursor'
+                name = 'Blank Cursor'
                 try:
                     self._cursorBlank = Toolkit.getDefaultToolkit().createCustomCursor(image, hotspot, name)
                 except AWTError:
@@ -90,18 +92,35 @@ class Mouse(object):
 
     def set_cursor(self, *cursor):
         """
-        Set mouse cursor. Refer to cursors.py for details.
+        Set mouse cursor.
+        Alternative arguments:
+        * JVM system cursor
+        * image or surface, hotspot (x,y), and optional name
+        Refer to pyj2d.cursors for details.
         """
+        args = len(cursor)
         if len(cursor) == 1:
-            self._cursorType = cursor[0]
-            if self._cursorVisible:
-                env.jframe.getContentPane().setCursor(Cursor(self._cursorType))
+            self._cursorType = Cursor(cursor[0])
+        elif args in (2,3):
+            image = cursor[0]
+            hotspot = Point(*cursor[1])
+            if args == 2:
+                name = 'Custom Cursor'
+            else:
+                name = cursor[2]
+            self._cursorType = Toolkit.getDefaultToolkit().createCustomCursor(image, hotspot, name)
+        else:
+            self._cursorType = Cursor(Cursor.DEFAULT_CURSOR)
+        if self._cursorVisible:
+            env.jframe.getContentPane().setCursor(self._cursorType)
 
     def get_cursor(self):
         """
-        Get mouse cursor.
+        Return cursor type and name.
         """
-        return self._cursorType
+        if not self._cursorType:
+            self._cursorType = Cursor(Cursor.DEFAULT_CURSOR)
+        return (self._cursorType.getType(), self._cursorType.getName())
 
     def _nonimplemented_methods(self):
         """
