@@ -5,6 +5,7 @@ from __future__ import division
 from java.awt.image import BufferedImage
 from java.awt import Toolkit, Point, AWTError
 from java.awt import Cursor
+import cursors
 import env
 import pyj2d.event
 
@@ -33,7 +34,7 @@ class Mouse(object):
         self.mousePos = {'x':0, 'y':0}
         self._cursorVisible = True
         self._cursorBlank = None
-        self._cursorType = None
+        self._cursor = None
         self._nonimplemented_methods()
 
     def get_pressed(self):
@@ -73,9 +74,9 @@ class Mouse(object):
         """
         visible_pre = self._cursorVisible
         if visible:
-            if not self._cursorType:
-                self._cursorType = Cursor(Cursor.DEFAULT_CURSOR)
-            env.jframe.getContentPane().setCursor(self._cursorType)
+            if not self._cursor:
+                self._cursor = Cursor(Cursor.DEFAULT_CURSOR)
+            env.jframe.getContentPane().setCursor(self._cursor)
             self._cursorVisible = True
         else:
             if not self._cursorBlank:
@@ -94,13 +95,17 @@ class Mouse(object):
         """
         Set mouse cursor.
         Alternative arguments:
-        * JVM system cursor
+        * JVM system cursor or cursor object
         * image or surface, hotspot (x,y), and optional name
+        * size, hotspot, data, mask, and optional name
         Refer to pyj2d.cursors for details.
         """
         args = len(cursor)
         if len(cursor) == 1:
-            self._cursorType = Cursor(cursor[0])
+            if isinstance(cursor[0], int):
+                self._cursor = Cursor(cursor[0])
+            else:
+                self._cursor = cursor[0]
         elif args in (2,3):
             image = cursor[0]
             hotspot = Point(*cursor[1])
@@ -108,19 +113,31 @@ class Mouse(object):
                 name = 'Custom Cursor'
             else:
                 name = cursor[2]
-            self._cursorType = Toolkit.getDefaultToolkit().createCustomCursor(image, hotspot, name)
+            self._cursor = Toolkit.getDefaultToolkit().createCustomCursor(image, hotspot, name)
+        elif args in (4,5):
+            size = cursor[0]
+            hotspot = Point(*cursor[1])
+            data = cursor[2]
+            mask = cursor[3]
+            if args == 4:
+                name = 'Custom Cursor'
+            else:
+                name = cursor[4]
+            surface = cursors.create_cursor(size, data, mask)
+            self._cursor = Toolkit.getDefaultToolkit().createCustomCursor(surface, hotspot, name)
         else:
-            self._cursorType = Cursor(Cursor.DEFAULT_CURSOR)
+            self._cursor = Cursor(Cursor.DEFAULT_CURSOR)
         if self._cursorVisible:
-            env.jframe.getContentPane().setCursor(self._cursorType)
+            env.jframe.getContentPane().setCursor(self._cursor)
 
     def get_cursor(self):
         """
-        Return cursor type and name.
+        Return cursor object.
+        Cursor type and name accessed with object getType and getName methods.
         """
-        if not self._cursorType:
-            self._cursorType = Cursor(Cursor.DEFAULT_CURSOR)
-        return (self._cursorType.getType(), self._cursorType.getName())
+        if not self._cursor:
+            self._cursor = Cursor(Cursor.DEFAULT_CURSOR)
+        return self._cursor
 
     def _nonimplemented_methods(self):
         """

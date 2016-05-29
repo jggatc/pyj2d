@@ -6,6 +6,8 @@
 -update sprite argument handling.
 -update sprite.collide_mask to use mask.overlap.
 -add mouse set_cursor and get_cursor methods.
+-update mouse set_cursor to use custom image.
+-update mouse set_cursor to use cursor data.
 
 0.27    2015-04-12
 -update font to enhance fonts access.
