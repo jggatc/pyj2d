@@ -36,6 +36,8 @@ class Transform(object):
         """
         Return Surface rotated by the given angle.
         """
+        if not angle:
+            return surface.copy()
         theta = angle*self.deg_rad
         width_i = surface.getWidth()
         height_i = surface.getHeight()
@@ -45,12 +47,13 @@ class Transform(object):
         height_f = int( (width_i*sin_theta)+(height_i*cos_theta) )
         surf = Surface((width_f,height_f), BufferedImage.TYPE_INT_ARGB)
         at = AffineTransform()
-        at.rotate(-theta, width_f/2, height_f/2)
+        at.translate(width_f/2, height_f/2)
+        at.rotate(-theta)
         g2d = surf.createGraphics()
         ot = g2d.getTransform()
         g2d.setTransform(at)
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR)
-        g2d.drawImage(surface, (width_f-width_i)//2, (height_f-height_i)//2, None)
+        g2d.drawImage(surface, -width_i//2, -height_i//2, None)
         g2d.setTransform(ot)
         g2d.dispose()
         return surf
