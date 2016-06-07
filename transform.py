@@ -62,13 +62,32 @@ class Transform(object):
         """
         Return Surface rotated and resized by the given angle and size.
         """
-        surf = self.rotate(surface, angle)
-        w, h = int(math.ceil(surf.getWidth()*size)), int(math.ceil(surf.getHeight()*size))
-        if w % 2:
-            w += 1
-        if h % 2:
-            h += 1
-        surf = self.scale(surf, (w, h))
+        if not angle:
+            width = int(surface.getWidth()*size)
+            height = int(surface.getHeight()*size)
+            return self.scale(surface, (width, height))
+        theta = angle*self.deg_rad
+        width_i = int(surface.getWidth()*size)
+        height_i = int(surface.getHeight()*size)
+        cos_theta = math.fabs( math.cos(theta) )
+        sin_theta = math.fabs( math.sin(theta) )
+        width_f = int( math.ceil((width_i*cos_theta)+(height_i*sin_theta)) )
+        if width_f % 2:
+            width_f += 1
+        height_f = int( math.ceil((width_i*sin_theta)+(height_i*cos_theta)) )
+        if height_f % 2:
+            height_f += 1
+        surf = Surface((width_f,height_f), BufferedImage.TYPE_INT_ARGB)
+        at = AffineTransform()
+        at.translate(width_f/2, height_f/2)
+        at.rotate(-theta)
+        g2d = surf.createGraphics()
+        ot = g2d.getTransform()
+        g2d.setTransform(at)
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR)
+        g2d.drawImage(surface, -width_i//2, -height_i//2, width_i, height_i, None)
+        g2d.setTransform(ot)
+        g2d.dispose()
         return surf
 
     def scale(self, surface, size, dest=None):
