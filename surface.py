@@ -22,9 +22,7 @@ class Surface(BufferedImage):
     * Surface.get_rect
     * Surface.copy
     * Surface.subsurface
-    * Surface.subarea
     * Surface.blit
-    * Surface.blits
     * Surface.set_colorkey
     * Surface.get_colorkey
     * Surface.replace_color
@@ -160,59 +158,34 @@ class Surface(BufferedImage):
         surface._colorkey = self._colorkey
         return surface
 
-    def subarea(self, rect):
-        """
-        Return Surface and Rect that represents a subsurface that shares data with this surface.
-        The rect argument is the area of the subsurface.
-        """
-        try:
-            try:
-                subsurf = self.getSubimage(rect.x, rect.y, rect.width, rect.height)
-            except AttributeError:
-                rect = Rect(rect)
-                subsurf = self.getSubimage(rect.x, rect.y, rect.width, rect.height)
-        except RasterFormatException:
-            try:
-                clip = self.get_rect().intersection(rect)
-                rect = Rect(clip.x, clip.y, clip.width, clip.height)
-                subsurf = self.getSubimage(rect.x, rect.y, rect.width, rect.height)
-            except:     #rect outside surface
-                rect = Rect(0,0,0,0)
-                subsurf = None
-        return subsurf, rect
-
     def blit(self, surface, position, area=None):
         """
         Draw given surface on this surface at position.
         Optional area delimitates the region of given surface to draw.
         """
-        if not area:
-            rect = self.get_rect().intersection( Rect(position[0], position[1], surface.width, surface.height) )
-            surface_rect = Rect(rect.x, rect.y, rect.width, rect.height)
-        else:
-            surface, rect = surface.subarea(area)
-            rect.x, rect.y = int(position[0]), int(position[1])
-            rect = self.get_rect().intersection(rect)
-            surface_rect = Rect(rect.x, rect.y, rect.width, rect.height)
-        if surface_rect.width < 1 or surface_rect.height < 1:
-            surface_rect.width = surface_rect.height = 0
         g2d = self.createGraphics()
-        try:
-            g2d.drawImage(surface, position[0], position[1], None)
-        except TypeError:
-            g2d.drawImage(surface, int(position[0]), int(position[1]), None)
+        if not area:
+            rect = Rect(position[0],position[1],surface.width,surface.height)
+            g2d.drawImage(surface, rect.x, rect.y, None)
+        else:
+            rect = Rect(position[0],position[1],area[2],area[3])
+            g2d.drawImage(surface, rect.x,rect.y,rect.x+area[2],rect.y+area[3],
+                                   area[0],area[1],area[0]+area[2],area[1]+area[3], None)
         g2d.dispose()
-        return surface_rect
+        return self.get_rect().clip(rect)
 
-    def blits(self, surfaces):
-        """
-        Draw list of (surface, rect) on this surface.
-        """
+    def _blits(self, surfaces):
         g2d = self.createGraphics()
         for surface, rect in surfaces:
             g2d.drawImage(surface, rect.x, rect.y, None)
         g2d.dispose()
-        return None
+
+    def _blit_clear(self, surface, rect_list):
+        g2d = self.createGraphics()
+        for r in rect_list:
+            g2d.drawImage(surface, r.x,r.y,r.x+r.width,r.y+r.height,
+                                   r.x,r.y,r.x+r.width,r.y+r.height, None)
+        g2d.dispose()
 
     def set_colorkey(self, color, flags=None):
         """

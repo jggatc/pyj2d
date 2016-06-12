@@ -9,6 +9,7 @@
 -update mouse set_cursor to use custom image.
 -update mouse set_cursor to use cursor data.
 -update transform rotozoom to optimize.
+-update surface area blit to optimize.
 
 0.27    2015-04-12
 -update font to enhance fonts access.

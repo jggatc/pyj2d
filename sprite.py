@@ -211,7 +211,7 @@ class Group(object):
         """
         Draw sprite on surface.
         """
-        surface.blits([(sprite.image,sprite.rect) for sprite in self._sprites.itervalues()])
+        surface._blits([(sprite.image,sprite.rect) for sprite in self._sprites.itervalues()])
         if self._clear_active:
             rectPool.extend(self._sprites_drawn.values())
             self._sprites_drawn.clear()
@@ -225,8 +225,8 @@ class Group(object):
         The background argument can be a callback function.
         """
         self._clear_active = True
-        if hasattr(background, 'subarea'):
-            surface.blits([background.subarea(self._sprites_drawn[sprite]) for sprite in self._sprites_drawn])
+        if hasattr(background, 'width'):
+            surface._blit_clear(background, self._sprites_drawn.itervalues())
         else:
             for sprite in self._sprites_drawn:
                 background(surface, self._sprites_drawn[sprite])
@@ -313,7 +313,7 @@ class RenderUpdates(Group):
         Draw sprite on surface.
         Returns list of Rect of sprites updated, which can be passed to display.update.
         """
-        surface.blits([(sprite.image,sprite.rect) for sprite in self._sprites.itervalues()])
+        surface._blits([(sprite.image,sprite.rect) for sprite in self._sprites.itervalues()])
         if self._clear_active:
             rectPool.extend(self.changed_areas)
             self.changed_areas[:] = []
@@ -470,7 +470,7 @@ class OrderedUpdates(RenderUpdates):
             keys.sort()
             self.sort = [self._sprites[self.order[key]] for key in keys]
             order_sprite = iter(self.sort)
-        surface.blits([(sprite.image,sprite.rect) for sprite in order_sprite])
+        surface._blits([(sprite.image,sprite.rect) for sprite in order_sprite])
         if self._clear_active:
             rectPool.extend(self.changed_areas)
             self.changed_areas[:] = []
