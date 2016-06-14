@@ -16,6 +16,7 @@ from javax.swing import SwingUtilities
 import pyj2d.event
 import pyj2d.surface
 import pyj2d.env
+from rect import Rect
 
 __docformat__ = 'restructuredtext'
 
@@ -273,48 +274,29 @@ class Display(Runnable):
         except InterruptedException:
             Thread.currentThread().interrupt()
 
-    def update(self, *rect_list):
+    def update(self, rect_list=None):
         """
         Repaint display.
         An optional rect_list to specify regions to repaint.
         """
-        if rect_list:
-            self._rect_list = rect_list[0]
+        if isinstance(rect_list, (list,tuple)):
+            self._rect_list = rect_list
         else:
-            self._rect_list = self._surface_rect
+            if rect_list:
+                self._rect_list = [rect_list]
+            else:
+                self._rect_list = self._surface_rect
         try:
             SwingUtilities.invokeAndWait(self)
         except InterruptedException:
             Thread.currentThread().interrupt()
 
     def run(self):
-        try:
-            for rect in self._rect_list:
-                try:
-                    self.jpanel.repaint(rect.x,rect.y,rect.width,rect.height)
-                except AttributeError:
-                    try:
-                        self.jpanel.repaint(rect[0],rect[1],rect[2],rect[3])
-                    except (TypeError, AttributeError):
-                        if rect is None:
-                            try:
-                                if rect_check:
-                                    continue
-                            except NameError:
-                                rect_check = bool([r for r in self._rect_list if r])
-                                if rect_check:
-                                    continue
-                                else:
-                                    return
-                        else:
-                            rect = self._rect_list
-                            try:
-                                self.jpanel.repaint(rect.x,rect.y,rect.width,rect.height)
-                            except AttributeError:
-                                self.jpanel.repaint(rect[0],rect[1],rect[2],rect[3])
-                            break
-            self.jpanel._repainting.set(True)
-        except TypeError:
-            if self._rect_list is not None:
-                raise ValueError
+        for rect in self._rect_list:
+            if isinstance(rect, Rect):
+                self.jpanel.repaint(rect.x,rect.y,rect.width,rect.height)
+            else:
+                if rect:
+                    self.jpanel.repaint(rect[0],rect[1],rect[2],rect[3])
+        self.jpanel._repainting.set(True)
 
