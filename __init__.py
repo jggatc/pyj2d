@@ -22,6 +22,7 @@
 #PyJ2D version 0.27
 #Project Site: http://gatc.ca/
 
+import util
 from display import Display
 from surface import Surface
 from rect import Rect
