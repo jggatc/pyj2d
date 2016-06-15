@@ -277,15 +277,14 @@ class Display(Runnable):
     def update(self, rect_list=None):
         """
         Repaint display.
-        An optional rect_list to specify regions to repaint.
+        Optional rect or rect list to specify regions to repaint.
         """
-        if isinstance(rect_list, (list,tuple)):
+        if isinstance(rect_list, list):
             self._rect_list = rect_list
+        elif rect_list:
+            self._rect_list = [rect_list]
         else:
-            if rect_list:
-                self._rect_list = [rect_list]
-            else:
-                self._rect_list = self._surface_rect
+            self._rect_list = self._surface_rect
         try:
             SwingUtilities.invokeAndWait(self)
         except InterruptedException:
@@ -295,8 +294,7 @@ class Display(Runnable):
         for rect in self._rect_list:
             if isinstance(rect, Rect):
                 self.jpanel.repaint(rect.x,rect.y,rect.width,rect.height)
-            else:
-                if rect:
-                    self.jpanel.repaint(rect[0],rect[1],rect[2],rect[3])
+            elif rect:
+                self.jpanel.repaint(rect[0],rect[1],rect[2],rect[3])
         self.jpanel._repainting.set(True)
 
