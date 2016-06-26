@@ -159,7 +159,8 @@ class Display(Runnable):
         self.jpanel = self.jframe.jpanel
         self.surface = self.jpanel.surface
         self.surface._display = self
-        self._surface_rect = [self.surface.get_rect()]
+        self._surfaceRect = self.surface.get_rect()
+        self._surface_rect = [self._surfaceRect]
         self._rect_list = None
         self.clear()
         self.jframe.setVisible(True)
@@ -291,10 +292,16 @@ class Display(Runnable):
             Thread.currentThread().interrupt()
 
     def run(self):
+        repaint = False
         for rect in self._rect_list:
             if isinstance(rect, Rect):
-                self.jpanel.repaint(rect.x,rect.y,rect.width,rect.height)
+                if self._surfaceRect.intersects(rect):
+                    self.jpanel.repaint(rect)
+                    repaint = True
             elif rect:
-                self.jpanel.repaint(rect[0],rect[1],rect[2],rect[3])
-        self.jpanel._repainting.set(True)
+                if self._surfaceRect.intersects(rect[0],rect[1],rect[2],rect[3]):
+                    self.jpanel.repaint(rect[0],rect[1],rect[2],rect[3])
+                    repaint = True
+        if repaint:
+            self.jpanel._repainting.set(True)
 
