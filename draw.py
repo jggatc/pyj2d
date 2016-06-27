@@ -116,9 +116,9 @@ class Draw(object):
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
         if width:
             g.setStroke(BasicStroke(width))
-            g.drawArc(rect.x-(rect.width//8), rect.y-(rect.height//8), rect.width, rect.height, start_angle, stop_angle)
+            g.drawArc(rect.x, rect.y, rect.width-1, rect.height-1, start_angle, stop_angle)
         else:
-            g.fillArc(rect.x-(rect.width//8), rect.y-(rect.height//8), rect.width, rect.height, start_angle, stop_angle)
+            g.fillArc(rect.x, rect.y, rect.width-1, rect.height-1, start_angle, stop_angle)
         g.dispose()
         return surface.get_rect().clip(rect)
 

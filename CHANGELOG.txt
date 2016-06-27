@@ -12,6 +12,7 @@
 -update surface area blit to optimize.
 -update display update method to optimize.
 -add util timer for profiling.
+-update draw arc with dimension adjustment.
 
 0.27    2015-04-12
 -update font to enhance fonts access.
