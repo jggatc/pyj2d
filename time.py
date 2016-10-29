@@ -5,8 +5,8 @@ from __future__ import division
 from java.lang import Thread, System, InterruptedException
 from javax.swing import Timer
 from java.awt.event import ActionListener
+from pyj2d import env
 import pyj2d.event
-import pyj2d.env
 
 __docformat__ = 'restructuredtext'
 

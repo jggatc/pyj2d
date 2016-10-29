@@ -4,7 +4,7 @@
 from __future__ import division
 from java.lang import Thread
 from java.awt.event import MouseEvent, KeyEvent
-import locals as Const
+from pyj2d import locals as Const
 
 __docformat__ = 'restructuredtext'
 

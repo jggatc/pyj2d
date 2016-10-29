@@ -5,8 +5,8 @@ from __future__ import division
 from java.awt.image import BufferedImage
 from java.awt import Toolkit, Point, AWTError
 from java.awt import Cursor
-import cursors
-import env
+from pyj2d import cursors
+from pyj2d import env
 import pyj2d.event
 
 __docformat__ = 'restructuredtext'

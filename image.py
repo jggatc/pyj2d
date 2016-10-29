@@ -4,8 +4,8 @@
 from __future__ import division
 from javax.imageio import ImageIO
 from java.io import File, ByteArrayInputStream
-from surface import Surface
-import env
+from pyj2d.surface import Surface
+from pyj2d import env
 
 __docformat__ = 'restructuredtext'
 

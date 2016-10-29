@@ -13,10 +13,11 @@ from java.awt.event import MouseEvent, KeyEvent
 from java.lang import Thread, Runnable, InterruptedException
 from java.util.concurrent.atomic import AtomicBoolean
 from javax.swing import SwingUtilities
+from pyj2d.surface import Surface
+from pyj2d.rect import Rect
+from pyj2d.sprite import Sprite, Group, RenderUpdates, OrderedUpdates
+from pyj2d import env
 import pyj2d.event
-import pyj2d.surface
-import pyj2d.env
-from rect import Rect
 
 __docformat__ = 'restructuredtext'
 
@@ -40,7 +41,7 @@ class Panel(JPanel, MouseListener, MouseMotionListener, MouseWheelListener, KeyL
     def __init__(self, size):
         JPanel.__init__(self)
         self.setPreferredSize(Dimension(size[0],size[1]))
-        self.surface = pyj2d.surface.Surface(size, BufferedImage.TYPE_INT_RGB)
+        self.surface = Surface(size, BufferedImage.TYPE_INT_RGB)
         self.setBackground(Color.BLACK)
         self.addMouseListener(self)
         self.addMouseMotionListener(self)
@@ -149,13 +150,13 @@ class Display(Runnable):
         Return a display Surface.
         Argument: size (x,y) of surface.
         """
-        if pyj2d.env.japplet:
-            self.jframe = pyj2d.env.japplet
+        if env.japplet:
+            self.jframe = env.japplet
         else:
             self.jframe = Frame(self.caption, size)
             if self.icon:
                 self.jframe.setIconImage(self.icon)
-        pyj2d.env.jframe = self.jframe
+        env.jframe = self.jframe
         self.jpanel = self.jframe.jpanel
         self.surface = self.jpanel.surface
         self.surface._display = self
@@ -186,11 +187,6 @@ class Display(Runnable):
         return self.jpanel
 
     def _warmup(self):
-        Surface = pyj2d.surface.Surface
-        Sprite = pyj2d.sprite.Sprite
-        Group = pyj2d.sprite.Group
-        RenderUpdates = pyj2d.sprite.RenderUpdates
-        OrderedUpdates = pyj2d.sprite.OrderedUpdates
         surface = [Surface(size) for size in ((5,5), (5,5), (3,3))]
         for i, color in enumerate([(0,0,0), (0,0,0), (100,100,100)]):
             surface[i].fill(color)

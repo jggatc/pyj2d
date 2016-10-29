@@ -22,25 +22,25 @@
 #PyJ2D version 0.27
 #Project Site: http://gatc.ca/
 
-import util
-from display import Display
-from surface import Surface
-from rect import Rect
-from image import Image
-from draw import Draw
-from event import Event
-from key import Key
-from mouse import Mouse
-from transform import Transform
-from surfarray import Surfarray
-from color import Color
-from mixer import Mixer
-import time
-import mask
-import font
-import sprite
-import cursors
-from locals import *
+from pyj2d import util
+from pyj2d.display import Display
+from pyj2d.surface import Surface
+from pyj2d.rect import Rect
+from pyj2d.image import Image
+from pyj2d.draw import Draw
+from pyj2d.event import Event
+from pyj2d.key import Key
+from pyj2d.mouse import Mouse
+from pyj2d.transform import Transform
+from pyj2d.surfarray import Surfarray
+from pyj2d.color import Color
+from pyj2d.mixer import Mixer
+from pyj2d import time
+from pyj2d import mask
+from pyj2d import font
+from pyj2d import sprite
+from pyj2d import cursors
+from pyj2d.locals import *
 
 
 def init():

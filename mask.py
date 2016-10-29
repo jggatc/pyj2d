@@ -3,7 +3,7 @@
 
 from __future__ import division
 from java.util import BitSet
-from color import Color
+from pyj2d.color import Color
 
 __docformat__ = 'restructuredtext'
 

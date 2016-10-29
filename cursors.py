@@ -12,9 +12,9 @@ W_RESIZE_CURSOR, WAIT_CURSOR, CUSTOM_CURSOR]
 """
 
 from java.awt import Cursor
-from surface import Surface
-from color import Color
-import locals as Const
+from pyj2d.surface import Surface
+from pyj2d.color import Color
+from pyj2d import locals as Const
 
 
 DEFAULT_CURSOR = Cursor.DEFAULT_CURSOR

@@ -1,8 +1,8 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <http://gatc.ca/>
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
-from rect import rectPool
-import mask
+from pyj2d.rect import rectPool
+from pyj2d import mask
 
 __docformat__ = 'restructuredtext'
 

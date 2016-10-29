@@ -7,9 +7,9 @@ from javax.sound.sampled import LineUnavailableException
 from java.io import File, IOException
 from java.lang import Thread, Runnable, InterruptedException, IllegalArgumentException
 import jarray
-import env
+from pyj2d import env
 try:
-    import Mixer as AudioMixer
+    from pyj2d import Mixer as AudioMixer
 except ImportError:
     AudioMixer = None
 

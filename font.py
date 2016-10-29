@@ -2,14 +2,14 @@
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
 from __future__ import division
+import os
 from java.awt import Font as JFont
 from java.awt import BasicStroke, RenderingHints, GraphicsEnvironment
 from java.awt.image import BufferedImage
 from java.io import File
-import os
-import surface
-from color import Color
-import env
+from pyj2d.surface import Surface
+from pyj2d.color import Color
+from pyj2d import env
 
 __docformat__ = 'restructuredtext'
 
@@ -26,7 +26,7 @@ def init():
     Initialize font module.
     """
     global _surf, _g2d, _initialized, match_font
-    _surf = surface.Surface((1,1), BufferedImage.TYPE_INT_RGB)
+    _surf = Surface((1,1), BufferedImage.TYPE_INT_RGB)
     _g2d = _surf.createGraphics()
     _initialized = True
 init()
@@ -186,7 +186,7 @@ class Font(JFont):
         background color (R,G,B)
         """
         w,h = self.size(text)
-        surf = surface.Surface((w,h), BufferedImage.TYPE_INT_ARGB)
+        surf = Surface((w,h), BufferedImage.TYPE_INT_ARGB)
         g2d = surf.createGraphics()
         if background:
             g2d.setColor(Color(background))

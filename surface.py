@@ -5,9 +5,9 @@ from __future__ import division
 from java.awt.image import BufferedImage, RasterFormatException
 from java.util import Hashtable
 from java.lang import Thread
-from rect import Rect
-from color import Color
-import locals as Const
+from pyj2d.rect import Rect
+from pyj2d.color import Color
+from pyj2d import locals as Const
 
 __docformat__ = 'restructuredtext'
 

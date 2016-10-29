@@ -3,7 +3,7 @@
 
 from __future__ import division
 from java.awt.image import BufferedImage
-from surface import Surface
+from pyj2d.surface import Surface
 
 __docformat__ = 'restructuredtext'
 

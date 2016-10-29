@@ -3,7 +3,7 @@
 
 from java.awt.event import KeyEvent
 import pyj2d.event
-import locals as Const
+from pyj2d import locals as Const
 
 __docformat__ = 'restructuredtext'
 
