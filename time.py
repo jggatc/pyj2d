@@ -5,13 +5,11 @@ from __future__ import division
 from java.lang import Thread, System, InterruptedException
 from javax.swing import Timer
 from java.awt.event import ActionListener
+from java.util.concurrent.atomic import AtomicBoolean
 from pyj2d import env
 import pyj2d.event
 
 __docformat__ = 'restructuredtext'
-
-
-_time_init = System.nanoTime()/1000000
 
 
 class Clock(object):
@@ -24,6 +22,8 @@ class Clock(object):
     * Clock.get_fps
     """
 
+    _repaint_sync = None
+
     def __init__(self):
         """
         Return Clock.
@@ -32,7 +32,6 @@ class Clock(object):
         self._time_init = self._time
         self._time_diff = [33 for i in range(10)]
         self._pos = 0
-        self._frame_repaint = env.jframe.jpanel._repainting
         self._thread = Thread()
 
     def get_time(self):
@@ -46,7 +45,7 @@ class Clock(object):
         Call once per program cycle, returns ms since last call.
         An optional framerate will add pause to limit rate.
         """
-        while self._frame_repaint.get():
+        while self._repaint_sync.get():
             try:
                 self._thread.sleep(1)
             except InterruptedException:
@@ -82,50 +81,53 @@ class Clock(object):
         return 1000/(sum(self._time_diff)/10)
 
 
-def get_ticks():
-    """
-    **pyj2d.time.get_ticks**
-    
-    Return ms since program start.
-    """
-    return (System.nanoTime()/1000000) - _time_init
+class Time(object):
 
+    def __init__(self):
+        self._time_init = System.nanoTime()/1000000
+        self.Clock = Clock
+        self.Clock._repaint_sync = AtomicBoolean(False)
 
-def delay(time):
-    """
-    **pyj2d.time.delay**
-    
-    Pause for given time (in ms). Return ms paused.
-    """
-    start = System.nanoTime()/1000000
-    try:
-        Thread.sleep(time)
-    except InterruptedException:
-        Thread.currentThread().interrupt()
-    return (System.nanoTime()/1000000) - start
+    def get_ticks(self):
+        """
+        **pyj2d.time.get_ticks**
+        
+        Return ms since program start.
+        """
+        return (System.nanoTime()/1000000) - self._time_init
 
+    def delay(self, time):
+        """
+        **pyj2d.time.delay**
+        
+        Pause for given time (in ms). Return ms paused.
+        """
+        start = System.nanoTime()/1000000
+        try:
+            Thread.sleep(time)
+        except InterruptedException:
+            Thread.currentThread().interrupt()
+        return (System.nanoTime()/1000000) - start
 
-def wait(time):
-    """
-    **pyj2d.time.wait**
-    
-    Calls delay(). Return ms paused.
-    """
-    pause = delay(time)
-    return pause
+    def wait(self, time):
+        """
+        **pyj2d.time.wait**
+        
+        Calls delay(). Return ms paused.
+        """
+        return self.delay(time)
 
-
-def set_timer(eventid, time):
-    """
-    **pyj2d.time.set_timer**
-
-    Events of type eventid placed on queue at time (ms) intervals.
-    Disable by time of 0.
-    """
-    if eventid not in _EventTimer.timers:
-        _EventTimer.timers[eventid] = _EventTimer(eventid)
-    _EventTimer.timers[eventid].set_timer(time)
-    return None
+    def set_timer(self, eventid, time):
+        """
+        **pyj2d.time.set_timer**
+        
+        Events of type eventid placed on queue at time (ms) intervals.
+        Disable by time of 0.
+        """
+        if eventid not in _EventTimer.timers:
+            _EventTimer.timers[eventid] = _EventTimer(eventid)
+        _EventTimer.timers[eventid].set_timer(time)
+        return None
 
 
 class _EventTimer(ActionListener):

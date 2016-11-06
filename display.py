@@ -11,10 +11,10 @@ from java.awt.event import MouseWheelListener
 from java.awt.event import KeyListener
 from java.awt.event import MouseEvent, KeyEvent
 from java.lang import Thread, Runnable, InterruptedException
-from java.util.concurrent.atomic import AtomicBoolean
 from javax.swing import SwingUtilities
 from pyj2d.surface import Surface
 from pyj2d.rect import Rect
+from pyj2d.time import Clock
 from pyj2d.sprite import Sprite, Group, RenderUpdates, OrderedUpdates
 from pyj2d import env
 import pyj2d.event
@@ -51,7 +51,7 @@ class Panel(JPanel, MouseListener, MouseMotionListener, MouseWheelListener, KeyL
         self.requestFocusInWindow()
         self.event = pyj2d.event
         self.modKey = pyj2d.event.modKey
-        self._repainting = AtomicBoolean(False)
+        self._repainting = Clock._repaint_sync
 
     def mousePressed(self, event):
         self.event.mousePress[event.button] = True

@@ -35,7 +35,7 @@ from pyj2d.transform import Transform
 from pyj2d.surfarray import Surfarray
 from pyj2d.color import Color
 from pyj2d.mixer import Mixer
-from pyj2d import time
+from pyj2d.time import Time
 from pyj2d import mask
 from pyj2d import font
 from pyj2d import sprite
@@ -47,12 +47,13 @@ def init():
     """
     Initialize module.
     """
-    global display, image, draw, event, key, mouse, transform, surfarray, mixer, error, initialized
+    global time, display, image, draw, event, key, mouse, transform, surfarray, mixer, error, initialized
     try:
         if initialized:
             return
     except NameError:
         initialized = True
+    time = Time()
     display = Display()
     image = Image()
     draw = Draw()
