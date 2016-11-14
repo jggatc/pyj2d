@@ -28,7 +28,7 @@ class Clock(object):
         """
         Return Clock.
         """
-        self._time = System.nanoTime()/1000000
+        self._time = System.nanoTime()//1000000
         self._time_init = self._time
         self._time_diff = [33 for i in range(10)]
         self._pos = 0
@@ -51,18 +51,19 @@ class Clock(object):
             except InterruptedException:
                 Thread.currentThread().interrupt()
                 break
+        self._time = System.nanoTime()//1000000
         if framerate:
-            time_pause = long( ((1.0/framerate)*1000) - ((System.nanoTime()/1000000)-self._time_init) )
+            time_pause = (1000//framerate) - (self._time-self._time_init)
             if time_pause > 0:
                 try:
                     self._thread.sleep(time_pause)
                 except InterruptedException:
                     Thread.currentThread().interrupt()
+                self._time = System.nanoTime()//1000000
         if self._pos:
             self._pos -= 1
         else:
             self._pos = 9
-        self._time = System.nanoTime()/1000000
         self._time_diff[self._pos] = self._time-self._time_init
         self._time_init = self._time
         return self._time_diff[self._pos]
@@ -84,7 +85,7 @@ class Clock(object):
 class Time(object):
 
     def __init__(self):
-        self._time_init = System.nanoTime()/1000000
+        self._time_init = System.nanoTime()//1000000
         self.Clock = Clock
         self.Clock._repaint_sync = AtomicBoolean(False)
 
@@ -94,7 +95,7 @@ class Time(object):
         
         Return ms since program start.
         """
-        return (System.nanoTime()/1000000) - self._time_init
+        return (System.nanoTime()//1000000) - self._time_init
 
     def delay(self, time):
         """
@@ -102,12 +103,12 @@ class Time(object):
         
         Pause for given time (in ms). Return ms paused.
         """
-        start = System.nanoTime()/1000000
+        start = System.nanoTime()//1000000
         try:
             Thread.sleep(time)
         except InterruptedException:
             Thread.currentThread().interrupt()
-        return (System.nanoTime()/1000000) - start
+        return (System.nanoTime()//1000000) - start
 
     def wait(self, time):
         """
