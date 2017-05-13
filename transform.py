@@ -6,7 +6,6 @@ from math import pi as _pi, fabs as _fabs, sin as _sin, cos as _cos, ceil as _ce
 from java.awt.image import BufferedImage, AffineTransformOp
 from java.awt import RenderingHints
 from java.awt.geom import AffineTransform
-from java.lang import IllegalArgumentException
 from pyj2d.surface import Surface
 
 __docformat__ = 'restructuredtext'
