@@ -5,6 +5,9 @@ from __future__ import division
 import os
 from java.awt import Font as JFont
 from java.awt import BasicStroke, RenderingHints, GraphicsEnvironment
+from java.awt.font import TextAttribute
+from java.text import AttributedString
+from java.lang import IllegalArgumentException
 from java.awt.image import BufferedImage
 from java.io import File
 from pyj2d.surface import Surface
@@ -195,22 +198,29 @@ class Font(JFont):
         if antialias:
             g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
         g2d.setColor(Color(color))
-        g2d.drawString(text,0,(h//2)+(self.fontMetrics.getAscent()//2))
-        if self.underline:
-            g2d.setStroke(BasicStroke(1))
-            g2d.drawLine(0,h-1,w-1,h-1)
+        y = (h//2)-((self.fontMetrics.getAscent()+self.fontMetrics.getDescent())//2)+self.fontMetrics.getAscent()
+        if not self.underline:
+            g2d.drawString(text,0,y)
+        else:
+            try:
+                text = AttributedString(text)
+                text.addAttribute(TextAttribute.FONT,self.font)
+                text.addAttribute(TextAttribute.UNDERLINE,TextAttribute.UNDERLINE_ON)
+                g2d.drawString(text.getIterator(),0,y)
+            except IllegalArgumentException:
+                pass
         g2d.dispose()
         return surf
 
-    def size(self, text):       #use getBounds
+    def size(self, text):
         """
-        Return size x,y of a surface for of given text.
+        Return size (width,height) of rendered text.
         """
-        x = self.fontMetrics.stringWidth(text)
-        if x < 1:
-            x = 1
-        y = self.fontMetrics.getHeight()
-        return (x, y)
+        width = self.fontMetrics.stringWidth(text)
+        if width < 1:
+            width = 1
+        height = self.fontMetrics.getHeight()
+        return (width, height)
 
     def set_underline(self, setting=True):
         """
@@ -239,7 +249,9 @@ class Font(JFont):
             if self.font.isItalic():
                 self.font = self.deriveFont(JFont.ITALIC)
             else:
-                self.font = self
+                self.font = self.deriveFont(JFont.PLAIN)
+        _g2d.setFont(self.font)
+        self.fontMetrics = _g2d.getFontMetrics()
 
     def get_bold(self):
         """
@@ -247,7 +259,7 @@ class Font(JFont):
         """
         return self.font.isBold()
 
-    def set_italic(self, setting=True):     #redo metrics
+    def set_italic(self, setting=True):
         """
         Set font italic style.
         Optional setting, default to True.
@@ -261,7 +273,9 @@ class Font(JFont):
             if self.font.isBold():
                 self.font = self.deriveFont(JFont.BOLD)
             else:
-                self.font = self
+                self.font = self.deriveFont(JFont.PLAIN)
+        _g2d.setFont(self.font)
+        self.fontMetrics = _g2d.getFontMetrics()
 
     def get_italic(self):
         """
@@ -318,42 +332,4 @@ class SysFont(Font):
         if italic:
             self.fontstyle |= JFont.ITALIC
         Font.__init__(self,name,size)
-
-    def set_bold(self, setting=True):
-        """
-        Set font bold style.
-        Optional setting, default to True.
-        """
-        if setting:
-            if self.font.isItalic():
-                self.font = self.deriveFont(JFont.BOLD | JFont.ITALIC)
-            else:
-                self.font = self.deriveFont(JFont.BOLD)
-        else:
-            if self.font.isItalic():
-                self.font = self.deriveFont(JFont.ITALIC)
-            else:
-                if self._style:
-                    self.font = self.deriveFont(JFont.PLAIN)
-                else:
-                    self.font = self
-
-    def set_italic(self, setting=True):
-        """
-        Set font italic style.
-        Optional setting, default to True.
-        """
-        if setting:
-            if self.font.isBold():
-                self.font = self.deriveFont(JFont.BOLD | JFont.ITALIC)
-            else:
-                self.font = self.deriveFont(JFont.ITALIC)
-        else:
-            if self.font.isBold():
-                self.font = self.deriveFont(JFont.BOLD)
-            else:
-                if self._style:
-                    self.font = self.deriveFont(JFont.PLAIN)
-                else:
-                    self.font = self
 

@@ -15,6 +15,7 @@
 -update draw arc with dimension adjustment.
 -update time clock for accuracy.
 -revise with absolute import statements.
+-update font with rendering adjustment.
 
 0.27    2015-04-12
 -update font to enhance fonts access.
