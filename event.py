@@ -180,13 +180,15 @@ class Event(object):
                 self._unlock()
                 Thread.sleep(10)
 
-    def peek(self, eventType):
+    def peek(self, eventType=None):
         """
         Check if an event of given type is present.
-        The eventType argument can be a single event type or a list.
+        Optional eventType argument specifies event type or list, which defaults to all.
         """
         if not self.eventNum:
             return False
+        elif eventType is None:
+            return True
         self._lock()
         evt = [event.type for event in self.eventQueue[0:self.eventNum]]
         if self.eventNum > 250:
