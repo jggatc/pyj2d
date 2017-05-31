@@ -40,6 +40,8 @@ class Event(object):
         self.queueLock = False
         self.queueAccess = False
         self.queue = []
+        self.queueNil = []
+        self.queueTmp = []
         self.mousePress = {1:False, 2:False, 3:False}
         self._nonimplemented_methods()
         self.eventName = {MouseEvent.MOUSE_PRESSED:'MouseButtonDown', MouseEvent.MOUSE_RELEASED:'MouseButtonUp', MouseEvent.MOUSE_MOVED:'MouseMotion', KeyEvent.KEY_PRESSED:'KeyDown', KeyEvent.KEY_RELEASED:'KeyUp'}
@@ -118,29 +120,33 @@ class Event(object):
         Return list of events, and queue is reset.
         Optional eventType argument of single or list of event type(s) to return.
         """
+        if not self.eventNum:
+            return self.queueNil
         self._lock()
         if not eventType:
             self.queue = self.eventQueue[0:self.eventNum]
             self.eventNum = 0
         else:
-            queue = []
             self.queue = []
             try:
                 for i in range(self.eventNum):
                     if self.eventQueue[i].type not in eventType:
-                        queue.append(self.eventQueue[i])
+                        self.queueTmp.append(self.eventQueue[i])
                     else:
                         self.queue.append(self.eventQueue[i])
             except TypeError:
                 for i in range(self.eventNum):
                     if self.eventQueue[i].type != eventType:
-                        queue.append(self.eventQueue[i])
+                        self.queueTmp.append(self.eventQueue[i])
                     else:
                         self.queue.append(self.eventQueue[i])
-            if len(queue) != self.eventNum:
-                self.eventNum = len(queue)
+            if not self.queueTmp:
+                self.eventNum = 0
+            else:
+                self.eventNum = len(self.queueTmp)
                 for i in range(self.eventNum):
-                    self.eventQueue[i] = queue[i]
+                    self.eventQueue[i] = self.queueTmp[i]
+                self.queueTmp[:] = []
             if self.eventNum > 250:
                 self._pump()
         self._unlock()
@@ -214,19 +220,21 @@ class Event(object):
         if eventType is None:
             self.eventNum = 0
         else:
-            queue = []
             try:
                 for i in range(self.eventNum):
                     if self.eventQueue[i].type not in eventType:
-                        queue.append(self.eventQueue[i])
+                        self.queueTmp.append(self.eventQueue[i])
             except TypeError:
                 for i in range(self.eventNum):
                     if self.eventQueue[i].type != eventType:
-                        queue.append(self.eventQueue[i])
-            if len(queue) != self.eventNum:
-                self.eventNum = len(queue)
+                        self.queueTmp.append(self.eventQueue[i])
+            if not self.queueTmp:
+                self.eventNum = 0
+            else:
+                self.eventNum = len(self.queueTmp)
                 for i in range(self.eventNum):
-                    self.eventQueue[i] = queue[i]
+                    self.eventQueue[i] = self.queueTmp[i]
+                self.queueTmp[:] = []
             if self.eventNum > 250:
                 self._pump()
         self._unlock()
