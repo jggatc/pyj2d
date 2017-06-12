@@ -119,7 +119,6 @@ class Display(Runnable):
     * pyj2d.display.get_active
     * pyj2d.display.set_caption
     * pyj2d.display.set_icon
-    * pyj2d.display.clear
     * pyj2d.display.flip
     * pyj2d.display.update
     """
@@ -163,7 +162,6 @@ class Display(Runnable):
         self._surfaceRect = self.surface.get_rect()
         self._surface_rect = [self._surfaceRect]
         self._rect_list = None
-        self.clear()
         self.jframe.setVisible(True)
         self._warmup()
         return self.surface
@@ -251,15 +249,6 @@ class Display(Runnable):
         except AttributeError:
             pass
         return None
-
-    def clear(self):
-        """
-        Clear display surface.
-        """
-        g2d = self.surface.createGraphics()
-        g2d.setColor(Color.BLACK)
-        g2d.fillRect(0,0,self.surface.getWidth(),self.surface.getHeight())
-        g2d.dispose()
 
     def flip(self):
         """
