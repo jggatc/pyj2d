@@ -24,6 +24,7 @@ class Draw(object):
     * pyj2d.draw.lines
     * pyj2d.draw.aaline
     * pyj2d.draw.aalines
+    * pyj2d.draw.set_return
     """
 
     def __init__(self):
@@ -33,6 +34,7 @@ class Draw(object):
         Module initialization creates pyj2d.draw instance.
         """
         self.rad_deg = 180/_pi
+        self._return_rect = True
 
     def rect(self, surface, color, rect, width=0):
         """
@@ -53,6 +55,8 @@ class Draw(object):
         else:
             g.fillRect(rect.x, rect.y, rect.width, rect.height)
         g.dispose()
+        if not self._return_rect:
+            return None
         return surface.get_rect().clip(rect)
 
     def circle(self, surface, color, position, radius, width=0):
@@ -74,6 +78,8 @@ class Draw(object):
         else:
             g.fillOval(rect.x, rect.y, rect.width, rect.height)
         g.dispose()
+        if not self._return_rect:
+            return None
         return surface.get_rect().clip(rect)
 
     def ellipse(self, surface, color, rect, width=0):
@@ -96,6 +102,8 @@ class Draw(object):
         else:
             g.fill(ellipse)
         g.dispose()
+        if not self._return_rect:
+            return None
         return surface.get_rect().clip(rect)
 
     def arc(self, surface, color, rect, start_angle, stop_angle, width=1):
@@ -120,6 +128,8 @@ class Draw(object):
         else:
             g.fillArc(rect.x, rect.y, rect.width-1, rect.height-1, start_angle, stop_angle)
         g.dispose()
+        if not self._return_rect:
+            return None
         return surface.get_rect().clip(rect)
 
     def polygon(self, surface, color, pointlist, width=0):
@@ -137,16 +147,18 @@ class Draw(object):
         xpts = [int(pt[0]) for pt in pointlist]
         ypts = [int(pt[1]) for pt in pointlist]
         npts = len(pointlist)
-        xmin = min(xpts)
-        xmax = max(xpts)
-        ymin = min(ypts)
-        ymax = max(ypts)
         if width:
             g.setStroke(BasicStroke(width))
             g.drawPolygon(xpts,ypts,npts)
         else:
             g.fillPolygon(xpts,ypts,npts)
         g.dispose()
+        if not self._return_rect:
+            return None
+        xmin = min(xpts)
+        xmax = max(xpts)
+        ymin = min(ypts)
+        ymax = max(ypts)
         rect = Rect(xmin,ymin,xmax-xmin+1,ymax-ymin+1)
         return surface.get_rect().clip(rect)
 
@@ -165,6 +177,8 @@ class Draw(object):
         g.setStroke(BasicStroke(width))
         g.drawLine(int(point1[0]),int(point1[1]),int(point2[0]),int(point2[1]))
         g.dispose()
+        if not self._return_rect:
+            return None
         xpts = [pt[0] for pt in (point1,point2)]
         ypts = [pt[1] for pt in (point1,point2)]
         xmin = min(xpts)
@@ -196,6 +210,8 @@ class Draw(object):
         g.setStroke(BasicStroke(width))
         g.drawPolyline(xpoints, ypoints, npoints)
         g.dispose()
+        if not self._return_rect:
+            return None
         xmin = min(xpoints)
         xmax = max(xpoints)
         ymin = min(ypoints)
@@ -216,4 +232,10 @@ class Draw(object):
         """
         rect = self.lines(surface, color, closed, pointlist, blend)
         return rect
+
+    def set_return(self, setting):
+        """
+        Set whether draw methods return bounding Rect.
+        """
+        self._return_rect = setting
 
