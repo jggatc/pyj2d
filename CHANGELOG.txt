@@ -1,4 +1,4 @@
-0.27_dev
+0.28    2019-04-06
 -update jpanel with event handling that registers appropriate mouse position.
 -add time set_timer method.
 -update display repaint to sync with program iteration.
