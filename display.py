@@ -17,7 +17,6 @@ from pyj2d.rect import Rect
 from pyj2d.time import Clock
 from pyj2d.sprite import Sprite, Group, RenderUpdates, OrderedUpdates
 from pyj2d import env
-import pyj2d.event
 
 __docformat__ = 'restructuredtext'
 
@@ -49,8 +48,8 @@ class Panel(JPanel, MouseListener, MouseMotionListener, MouseWheelListener, KeyL
         self.addKeyListener(self)
         self.setFocusable(True)
         self.requestFocusInWindow()
-        self.event = pyj2d.event
-        self.modKey = pyj2d.event.modKey
+        self.event = env.event
+        self.modKey = env.event.modKey
         self._repainting = Clock._repaint_sync
 
     def mousePressed(self, event):

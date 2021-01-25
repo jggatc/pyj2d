@@ -4,6 +4,7 @@
 from __future__ import division
 from java.lang import Thread
 from java.awt.event import MouseEvent, KeyEvent
+from pyj2d import env
 from pyj2d import locals as Const
 
 __docformat__ = 'restructuredtext'
@@ -48,10 +49,12 @@ class Event(object):
         self.eventType = [MouseEvent.MOUSE_PRESSED, MouseEvent.MOUSE_RELEASED, MouseEvent.MOUSE_MOVED, KeyEvent.KEY_PRESSED, KeyEvent.KEY_RELEASED]
         try:
             self.events = set(self.eventType)
+            self.eventTypes = set(self.eventType)
             self.modKey = set([Const.K_ALT, Const.K_CTRL, Const.K_SHIFT])
         except NameError:
             from java.util import HashSet as set
             self.events = set(self.eventType)
+            self.eventTypes = set(self.eventType)
             self.modKey = set([Const.K_ALT, Const.K_CTRL, Const.K_SHIFT])
         self.keyPress = {Const.K_ALT:False, Const.K_CTRL:False, Const.K_SHIFT:False}
         self.keyMod = {Const.K_ALT:{True:Const.KMOD_ALT,False:0}, Const.K_CTRL:{True:Const.KMOD_CTRL,False:0}, Const.K_SHIFT:{True:Const.KMOD_SHIFT,False:0}}
@@ -298,9 +301,16 @@ class Event(object):
         Post event to queue.
         """
         self._lock()
-        self._append(event)
+        if event.type in self.events:
+            self._append(event)
         self._unlock()
         return None
+
+    def _register_event(self, eventType):
+        if eventType not in self.eventTypes:
+            self.eventTypes.add(eventType)
+            self.eventName[eventType] = 'UserEvent'
+            self.events.add(eventType)
 
     def _nonimplemented_methods(self):
         """
@@ -326,12 +336,13 @@ class UserEvent(object):
             attr = kwargs
         object.__setattr__(self, "type", eventType)
         object.__setattr__(self, "attr", attr)
+        env.event._register_event(eventType)
 
     def __repr__(self):
         """
         Return string representation of Event object.
         """
-        return "%s(%s-UserEvent %r)" % (self.__class__, self.type, self.attr)
+        return "<Event(%s-%s %r)>" % (self.type, self.toString(), self.attr)
 
     def __getattr__(self, attr):
         try:
@@ -340,7 +351,10 @@ class UserEvent(object):
             raise AttributeError("'Event' object has no attribute '%s'" % attr)
 
     def __setattr__(self, attr, value):
-        raise AttributeError("'Event' object has no attribute '%s'" % attr)
+        self.attr[attr] = value
+
+    def toString(self):
+        return env.event.event_name(self.type)
 
 
 class JEvent(object):
@@ -354,8 +368,7 @@ class JEvent(object):
             'key': lambda self: self.event.getKeyCode(),
             'unicode': lambda self: self._getUnicode(),
             'mod': lambda self: self.event.getModifiers(),
-            'loc': lambda self: self.event.getKeyLocation(),
-            'dict': lambda self: self._dict()
+            'loc': lambda self: self.event.getKeyLocation()
             }
     _mouseEvent = ('button', 'pos')
     _mouseMotionEvent = ('buttons', 'pos', 'rel')
@@ -388,7 +401,7 @@ class JEvent(object):
         """
         Return string representation of Event object.
         """
-        return "%s(%s)" % (self.__class__, self.event.toString())
+        return "<Event(%s-%s %r)>" % (self.type, self.toString(), self._dict())
 
     def __getattr__(self, attr):
         try:
@@ -423,13 +436,17 @@ class JEvent(object):
         return rel
 
     def _getUnicode(self):
-        char = self.event.getKeyChar()
-        if char == KeyEvent.CHAR_UNDEFINED:
+        try:
+            char = self.event.getKeyChar()
+        except:
             char = ''
         return char
 
     def __setattr__(self, attr, value):
         raise AttributeError("'Event' object has no attribute '%s'" % attr)
+
+    def toString(self):
+        return env.event.event_name(self.type)
 
     def getEvent(self):
         """

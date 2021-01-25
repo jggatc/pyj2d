@@ -6,3 +6,5 @@ jframe = None
 
 japplet = None
 
+event = None
+

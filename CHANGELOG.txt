@@ -1,3 +1,6 @@
+0.28-dev
+-update event handling.
+
 0.28    2019-04-06
 -update jpanel with event handling that registers appropriate mouse position.
 -add time set_timer method.

@@ -40,6 +40,7 @@ from pyj2d import mask
 from pyj2d import font
 from pyj2d import sprite
 from pyj2d import cursors
+from pyj2d import env
 from pyj2d.locals import *
 
 
@@ -53,11 +54,12 @@ def init():
             return
     except NameError:
         initialized = True
+    event = Event()
+    env.event = event
     time = Time()
     display = Display()
     image = Image()
     draw = Draw()
-    event = Event()
     key = Key()
     mouse = Mouse()
     transform = Transform()

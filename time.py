@@ -7,7 +7,6 @@ from javax.swing import Timer
 from java.awt.event import ActionListener
 from java.util.concurrent.atomic import AtomicBoolean
 from pyj2d import env
-import pyj2d.event
 
 __docformat__ = 'restructuredtext'
 
@@ -135,7 +134,7 @@ class _EventTimer(ActionListener):
     timers = {}
 
     def __init__(self, eventid):
-        self.event = pyj2d.event.Event(eventid)
+        self.event = env.event.Event(eventid)
         self.timer = Timer(0, self)
 
     def set_timer(self, time):
@@ -147,5 +146,5 @@ class _EventTimer(ActionListener):
             self.timer.start()
 
     def actionPerformed(self, evt):
-        pyj2d.event.post(self.event)
+        env.event.post(self.event)
 

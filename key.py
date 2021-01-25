@@ -2,7 +2,7 @@
 #Released under the MIT License <http://opensource.org/licenses/MIT>
 
 from java.awt.event import KeyEvent
-import pyj2d.event
+from pyj2d import env
 from pyj2d import locals as Const
 
 __docformat__ = 'restructuredtext'
@@ -22,8 +22,8 @@ class Key(object):
         
         Module initialization creates pyj2d.key instance.
         """
-        self.keyPress = pyj2d.event.keyPress
-        self.keyMod = pyj2d.event.keyMod
+        self.keyPress = env.event.keyPress
+        self.keyMod = env.event.keyMod
         self.alt = Const.K_ALT
         self.ctrl = Const.K_CTRL
         self.shift = Const.K_SHIFT

@@ -7,7 +7,6 @@ from java.awt import Toolkit, Point, AWTError
 from java.awt import Cursor
 from pyj2d import cursors
 from pyj2d import env
-import pyj2d.event
 
 __docformat__ = 'restructuredtext'
 
@@ -30,7 +29,7 @@ class Mouse(object):
         
         Module initialization creates pyj2d.mouse instance.
         """
-        self.mousePress = pyj2d.event.mousePress
+        self.mousePress = env.event.mousePress
         self.mousePos = {'x':0, 'y':0}
         self._cursorVisible = True
         self._cursorBlank = None
