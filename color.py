@@ -41,13 +41,13 @@ class Color(_Color):
         """
         Return string representation of Color object.
         """
-        return "(%d,%d,%d,%d)" % (self.getRed(), self.getGreen(), self.getBlue(), self.getAlpha())
+        return "(%d, %d, %d, %d)" % (self.getRed(), self.getGreen(), self.getBlue(), self.getAlpha())
 
     def __str__(self):
         """
         Return string representation of Color object.
         """
-        return "(%d,%d,%d,%d)" % (self.getRed(), self.getGreen(), self.getBlue(), self.getAlpha())
+        return "(%d, %d, %d, %d)" % (self.getRed(), self.getGreen(), self.getBlue(), self.getAlpha())
 
     def __getattr__(self, attr):
         """
