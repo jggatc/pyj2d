@@ -231,12 +231,10 @@ class Surface(BufferedImage):
         Return color of a surface pixel.
         The pos argument represents x,y position of pixel.
         """
-        x,y = pos       #*tuple unpack error in jython applet
         try:
-            color = Color(self.getRGB(x,y))
+            return Color(self.getRGB(pos[0],pos[1]))
         except:     #ArrayOutOfBoundsException
             raise IndexError
-        return color
 
     def set_at(self, pos, color):
         """
