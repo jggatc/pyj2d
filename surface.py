@@ -193,21 +193,23 @@ class Surface(BufferedImage):
         """
         if self._colorkey:
             r,g,b = self._colorkey.r,self._colorkey.g,self._colorkey.b
-            self.replace_color((r,g,b,0),(r,g,b,255))
+            self.replace_color((r,g,b,0),self._colorkey)
             self._colorkey = None
         if color:
-            color = Color(color)
-            self._colorkey = color
-            self.replace_color((color.r,color.g,color.b))
+            self._colorkey = Color(color)
+            self.replace_color(self._colorkey)
         return None
 
     def get_colorkey(self):
         """
         Return surface colorkey.
         """
-        try:
-            return self._colorkey.r, self._colorkey.g, self._colorkey.b, 255
-        except AttributeError:
+        if self._colorkey:
+            return ( self._colorkey.r,
+                     self._colorkey.g,
+                     self._colorkey.b,
+                     self._colorkey.a )
+        else:
             return None
 
     def replace_color(self, color, new_color=None):
@@ -215,11 +217,17 @@ class Surface(BufferedImage):
         Replace color with with new_color or with alpha.
         """
         pixels = self.getRGB(0,0,self.width,self.height,None,0,self.width)
-        color1 = Color(color)
-        if new_color:
-            color2 = Color(new_color)
+        if hasattr(color, 'a'):
+            color1 = color
         else:
+            color1 = Color(color)
+        if new_color is None:
             color2 = Color(color1.r,color1.g,color1.b,0)
+        else:
+            if hasattr(new_color, 'a'):
+                color2 = new_color
+            else:
+                color2 = Color(new_color)
         for i, pixel in enumerate(pixels):
             if pixel == color1.getRGB():
                 pixels[i] = color2.getRGB()
