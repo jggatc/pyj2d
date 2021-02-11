@@ -33,7 +33,7 @@ class Color(_Color):
             r,g,b,a = color[0],color[1],color[2],color[3]
         except IndexError:
             r,g,b,a = color[0],color[1],color[2],255
-        except TypeError:
+        except (TypeError, AttributeError):
             r,g,b,a = (color>>16) & 0xff, (color>>8) & 0xff, color & 0xff, (color>>24) & 0xff
         _Color.__init__(self,r,g,b,a)
 
