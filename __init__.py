@@ -86,6 +86,6 @@ def quit():
         pass
     for module in (display, sprite, image, draw, time, event, key, mouse, transform, font, surfarray, mask, mixer):
         del(module)
-    if not env.japplet:
-        env.jframe.dispose()
+    if env.jframe:
+        env.jframe.stop()
 

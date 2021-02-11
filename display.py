@@ -34,6 +34,9 @@ class Frame(JFrame):
         self.getContentPane().add(self.jpanel)
         self.pack()
 
+    def stop(self):
+        self.dispose()
+
 
 class Panel(JPanel, MouseListener, MouseMotionListener, MouseWheelListener, KeyListener):
 
