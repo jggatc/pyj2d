@@ -3,6 +3,7 @@
 
 from __future__ import division
 from java.awt.image import BufferedImage, RasterFormatException
+from java.lang import ArrayIndexOutOfBoundsException
 from java.util import Hashtable
 from java.lang import Thread
 from pyj2d.rect import Rect
@@ -241,8 +242,8 @@ class Surface(BufferedImage):
         """
         try:
             return Color(self.getRGB(pos[0],pos[1]))
-        except:     #ArrayOutOfBoundsException
-            raise IndexError
+        except ArrayIndexOutOfBoundsException:
+            raise IndexError('pixel index out of range')
 
     def set_at(self, pos, color):
         """
@@ -252,8 +253,8 @@ class Surface(BufferedImage):
         color = Color(color)
         try:
             self.setRGB(pos[0],pos[1],color.getRGB())
-        except:     #ArrayOutOfBoundsException
-            raise IndexError
+        except ArrayIndexOutOfBoundsException:
+            raise IndexError('pixel index out of range')
         return None
 
     def fill(self, color=(0,0,0), rect=None):
