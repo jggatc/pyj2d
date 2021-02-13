@@ -81,14 +81,14 @@ class Mask(object):
     * Mask.toString
     """
 
-    def __init__(self, (width, height)):
+    def __init__(self, size):
         """
-        Return a Mask of an image.
-        The arguments include width and height of the image.
-        The mask uses java.util.BitSet, and stored in the bit attribute as a list of bitset for each pixel row in the image.
+        Return a Mask object.
+        The size argument is (width, height) of the mask.
+        The mask is represented by a list of java.util.BitSet.
         """
-        self.width = int(width)
-        self.height = int(height)
+        self.width = int(size[0])
+        self.height = int(size[1])
         self.bit = []
         for bitset in range(self.height):
             self.bit.append(BitSet(self.width))
