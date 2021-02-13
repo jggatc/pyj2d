@@ -5,7 +5,6 @@ from __future__ import division
 from java.awt.image import BufferedImage, RasterFormatException
 from java.lang import ArrayIndexOutOfBoundsException
 from java.util import Hashtable
-from java.lang import Thread
 from pyj2d.rect import Rect
 from pyj2d.color import Color
 from pyj2d import locals as Const
