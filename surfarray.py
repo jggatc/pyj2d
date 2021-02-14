@@ -30,7 +30,7 @@ class Surfarray(object):
         Initialize surfarray module.
         """
         global numeric
-        from numeric import numeric
+        from pyj2d.numeric import numeric
         if not numeric:
             raise ImportError("JNumeric module is required.")
         self.initialized = True
