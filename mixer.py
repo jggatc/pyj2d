@@ -60,15 +60,15 @@ class Mixer(Runnable):
         Argument sampled frequency, bit size, channels, and buffer.
         Currently implements PCM 16-bit audio.
         Plays WAV, AIFF, and AU sampled audio.
-        To specify the BigEndian format of AIFF and AU, use -16L for size.
+        To specify BigEndian format of AIFF and AU, use size of float type.
         The mixing is done by Mixer.class, compiled with 'javac Mixer.java'.
-        When a JAR is created, include with 'jar uvf Pyj2d_App.jar pyj2d/Mixer.class'.
+        For JAR creation include with 'jar uvf App.jar pyj2d/Mixer.class'.
         """
         if not self._initialized:
             encoding = {True:AudioFormat.Encoding.PCM_SIGNED, False:AudioFormat.Encoding.PCM_UNSIGNED}[size<0]
             channels = {True:1, False:2}[channels<=1]
             framesize = int((abs(size)/8) * channels)
-            isBigEndian = isinstance(size,long)
+            isBigEndian = isinstance(size, float)
             self._audio_format = AudioFormat(encoding, int(frequency), int(abs(size)), channels, framesize, int(frequency), isBigEndian)
             self._bufferSize = buffer
             try:
