@@ -144,7 +144,7 @@ class Group(object):
         """
         Provides check if sprite is in Group.
         """
-        return id(sprite) in self._sprites.iterkeys()
+        return id(sprite) in self._sprites
 
     def __len__(self):
         """
@@ -244,7 +244,7 @@ class Group(object):
         """
         Update sprites in group by calling sprite.update.
         """
-        for sprite in self._sprites.values():
+        for sprite in self._sprites.itervalues():
             sprite.update(*args, **kwargs)  #*tuple unpack jythonc error, fix by adding **kwargs
         return None
 
@@ -289,7 +289,8 @@ class GroupSingle(Group):
         """
         Update sprite by calling Sprite.update.
         """
-        self._sprites.values()[0].update(*args, **kwargs)     #*tuple unpack error kwargs fix
+        if self._sprites:
+            self._sprites.values()[0].update(*args, **kwargs)     #*tuple unpack error kwargs fix
         return None
 
 
