@@ -150,8 +150,8 @@ class Surface(BufferedImage):
             try:
                 rect = self.get_rect().intersection(rect)
                 subsurf = self.getSubimage(rect.x, rect.y, rect.width, rect.height)
-            except:     #rect outside surface
-                return None
+            except:
+                raise ValueError('subsurface outside surface area')
         surface = Surface(subsurf)
         surface._super_surface = self
         surface._offset = (rect.x,rect.y)

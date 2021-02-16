@@ -1,5 +1,8 @@
 0.28-dev
 -update event handling.
+-update exception handling of color object.
+-update mixer endian setting.
+-update subsurface exception
 
 0.28    2019-04-06
 -update jpanel with event handling that registers appropriate mouse position.
@@ -32,7 +35,7 @@
 -add rect collide methods - collidelistall, collidedict, and collidedictall.
 -add sprite collide methods - collide_rect_ratio, collide_circle, and collide_circle_ratio.
 -add mousewheel event listener.
--released under MIT license.
+-release under MIT license.
 
 0.26    2014-11-09
 -add rect union methods.
@@ -56,14 +59,14 @@
 -update event object constructor to properly handle arguments.
 -add key.get_mods method.
 -update mouse.get_pressed to properly return state of all buttons.
--restructured event handler to capture all mouse motion events.
+-restructure event handler to capture all mouse motion events.
 -add event member buttons.
 -change event key location to event.loc (KEY_LOCATION_LEFT|RIGHT|STANDARD|NUMPAD|UNKNOWN).
 -correct event.pump to maintain queue.
 -add event.dict access.
 -update mouse.get_rel process on frame exit.
 -update event.rel to properly return with multiple access.
--update event modKey set to use Java HashSet with earlier Jython releases, defined in __init__.py (HashSet not sets import due to compile problem).
+-update event modKey set to use Java HashSet with earlier Jython releases, define in __init__.py (HashSet not sets import due to compile problem).
 -update event eventtype list as a set object.
 -update rect inflate/inflate_ip positioning.
 -update display to repaint on dispatch thread.
@@ -74,110 +77,110 @@
 -add mixer.
 
 0.23    2014-02-27
--updated Event.get to accept eventtype argument.
--updated Event.poll and Event.wait to return JEvent object.
--updated Event.poll noevent return.
--updated Rect.clip return for non-overlap.
--updated Rect attribute positioning.
--updated Rect inflate/inflate_ip positioning.
--added Rect equality and nonzero methods.
--added Color object.
--updated to use Color object.
--updated draw methods with minor adjustments.
--updated to use Rect object.
--updated Sprite group update to account for member changes.
--added Surfarray methods.
--added draw.ellipse method.
--changed license from GPL to LGPL.
+-update Event.get to accept eventtype argument.
+-update Event.poll and Event.wait to return JEvent object.
+-update Event.poll noevent return.
+-update Rect.clip return for non-overlap.
+-update Rect attribute positioning.
+-update Rect inflate/inflate_ip positioning.
+-add Rect equality and nonzero methods.
+-add Color object.
+-update to use Color object.
+-update draw methods with minor adjustments.
+-update to use Rect object.
+-update Sprite group update to account for member changes.
+-add Surfarray methods.
+-add draw.ellipse method.
+-change license from GPL to LGPL.
 
 0.22    2013-03-30
--added Font.get_linesize, Font.get_ascent, Font.get_descent
--updated Font.render to adjust rendering postion.
--updated Font.size to adjust surface size.
--updated Event/JEvent for proper function of UserEvent.
+-add Font.get_linesize, Font.get_ascent, Font.get_descent
+-update Font.render to adjust rendering postion.
+-update Font.size to adjust surface size.
+-update Event/JEvent for proper function of UserEvent.
 
 0.21    2012-02-08
--updated pyj2d.quit
--changed Mask.print to Mask.print_mask
+-update pyj2d.quit
+-change Mask.print to Mask.print_mask
 
 0.20    2012-01-10
--updated Event to properly handle UserEvent
--updated Font/SysFont __init__ to handle style
--updated Rect.__init__ for obj with rect attribute
--updated Sprite.__init__ to accept Group argument
--updated Sprite OrderedUpdates.__iter__ to return ordered iterator
--updated Sprite OrderedUpdates.sprites
--updated Surface set_at/get_at to raise IndexError on ArrayOutOfBoundsException
--refactored code
--generated documentation with Epydoc
+-update Event to properly handle UserEvent
+-update Font/SysFont __init__ to handle style
+-update Rect.__init__ for obj with rect attribute
+-update Sprite.__init__ to accept Group argument
+-update Sprite OrderedUpdates.__iter__ to return ordered iterator
+-update Sprite OrderedUpdates.sprites
+-update Surface set_at/get_at to raise IndexError on ArrayOutOfBoundsException
+-refactor code
+-generate documentation with Epydoc
 
 0.19    2012-01-05
--added key events
--updated Event object to include key events
--updated Event to use Java event constants
--updated Event object to include relative mouse position
--updated Sprite Group/GroupSingle/RenderUpdates to hold sprites in a dict attribute
--updated Surface to bit check type argument
--updated Time Clock.get_time and Clock.tick to return time between ticks
+-add key events
+-update Event object to include key events
+-update Event to use Java event constants
+-update Event object to include relative mouse position
+-update Sprite Group/GroupSingle/RenderUpdates to hold sprites in a dict attribute
+-update Surface to bit check type argument
+-update Time Clock.get_time and Clock.tick to return time between ticks
 
 0.18    2011-12-28
--updated Sprite Class
--updated Sprite Group/GroupSingle/RenderUpdates to subclass dict
--added Sprite OrderedUpdates
--updated Sprite collision methods to use iterator to sprites
+-update Sprite Class
+-update Sprite Group/GroupSingle/RenderUpdates to subclass dict
+-add Sprite OrderedUpdates
+-update Sprite collision methods to use iterator to sprites
 
 0.17    2011-12-23
--updated Frame to register mouse press event
--updated Mouse.get_pressed to use registered mouse press event instead of Event.poll_mouse
--updated Rect.__init__, several Rect methods to ensure type, and added Rect.clip
--updated Surface methods __init__, copy, subsurface, set_at, blit
--updated Event methods updateQueue (to check event allowed), post, clear, and added methods set_blocked, set_allowed, get_blocked, peek
--updated Sprite.spritecollide to use Sprite.collide_mask
--updated RenderUpdates.draw
--updated Draw.lines
--added Surfarray.blit_array
--added Mask
+-update Frame to register mouse press event
+-update Mouse.get_pressed to use registered mouse press event instead of Event.poll_mouse
+-update Rect.__init__, several Rect methods to ensure type, and add Rect.clip
+-update Surface methods __init__, copy, subsurface, set_at, blit
+-update Event methods updateQueue (to check event allowed), post, clear, and add methods set_blocked, set_allowed, get_blocked, peek
+-update Sprite.spritecollide to use Sprite.collide_mask
+-update RenderUpdates.draw
+-update Draw.lines
+-add Surfarray.blit_array
+-add Mask
 
 0.16    2011-12-14
--added Rect.__getattr__ to retrieve positional attributes
--updated Surface.__init__ to include bufferedimage argument to convert to Surface subclass, updated Surface.subsurface and Image.load to reflect change
--updated Surface.fill to return Rect
--updated Transform.rotate to properly center and resize image upon rotation.
--added Transform.scale2x and Transform.flip
+-add Rect.__getattr__ to retrieve positional attributes
+-update Surface.__init__ to include bufferedimage argument to convert to Surface subclass, update Surface.subsurface and Image.load to reflect change
+-update Surface.fill to return Rect
+-update Transform.rotate to properly center and resize image upon rotation.
+-add Transform.scale2x and Transform.flip
 
 0.15    2011-12-10
--updated Applet to launch Runnable Thread containing app
--updated Display to repaint to Jpanel instead of Jframe and repaint procedure
--updated Draw to include both filled and unfilled, and return bounding rect
--updated Transform to include scale
+-update Applet to launch Runnable Thread containing app
+-update Display to repaint to Jpanel instead of Jframe and repaint procedure
+-update Draw to include fill and outline, and return bounding rect
+-update Transform to include scale
 
 0.14    2011-12-06
--updated display.update
--fixed draw.polygon
--updated mouse.get_pos retrieve from panel instead of frame to correct alignment
--updated rect move/inflate to offset change
--updated Surface init
+-update display.update
+-fix draw.polygon
+-update mouse.get_pos retrieve from panel instead of frame to correct alignment
+-update rect move/inflate to offset change
+-update Surface init
 
 0.13    2011-12-04
--added font
--added direct mouse input
+-add font
+-add direct mouse input
 -module globals in env.py
--updated draw rect argument
--added draw.polygon
--updated event.get
--added event.poll_mouse
--updated rect to access data by index
--updated surface.blit to return Rect subclass
--updated surface get_at and set_at
+-update draw rect argument
+-add draw.polygon
+-update event.get
+-add event.poll_mouse
+-update rect to access data by index
+-update surface.blit to return Rect subclass
+-update surface get_at and set_at
     - *tuple error in Jython applet
 
 0.12    2011-12-01
--fixed time.py Clock.delay()
--added event handling
--added mouse events
+-fix time.py Clock.delay()
+-add event handling
+-add mouse events
 
 0.11    2011-11-28
--fixed image.py image loading from jar on Windows
+-fix image.py image loading from jar on Windows
     -os.path set path with \ but Java getResource needed /
 
 0.10    2011-11-21
