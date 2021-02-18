@@ -2,7 +2,8 @@
 -update event handling.
 -update exception handling of color object.
 -update mixer endian setting.
--update subsurface exception
+-update subsurface exception.
+-update for python 2/3 compatibility.
 
 0.28    2019-04-06
 -update jpanel with event handling that registers appropriate mouse position.
