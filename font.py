@@ -142,10 +142,10 @@ class Font(JFont):
         self.underline = False
         self._nonimplemented_methods()
 
+    def __str__(self):
+        return "%s(%r)" % (self.__class__, self.__dict__)
+
     def __repr__(self):
-        """
-        Return string representation of Font object.
-        """
         return "%s(%r)" % (self.__class__, self.__dict__)
 
     def _getFontName(self, name):
@@ -308,9 +308,6 @@ class Font(JFont):
         return self.fontMetrics.getDescent()
 
     def _nonimplemented_methods(self):
-        """
-        Non-implemented methods.
-        """
         self.metrics = lambda *arg: []
 
 

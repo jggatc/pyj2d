@@ -313,9 +313,6 @@ class Event(object):
             self.events.add(eventType)
 
     def _nonimplemented_methods(self):
-        """
-        Non-implemented methods.
-        """
         self.set_grab = lambda *arg: None
         self.get_grab = lambda *arg: False
 
@@ -338,10 +335,10 @@ class UserEvent(object):
         object.__setattr__(self, "attr", attr)
         env.event._register_event(eventType)
 
+    def __str__(self):
+        return "<Event(%s-%s %r)>" % (self.type, self.toString(), self.attr)
+
     def __repr__(self):
-        """
-        Return string representation of Event object.
-        """
         return "<Event(%s-%s %r)>" % (self.type, self.toString(), self.attr)
 
     def __getattr__(self, attr):
@@ -397,10 +394,10 @@ class JEvent(object):
         object.__setattr__(self, "event", event)
         object.__setattr__(self, "type", eventType)
 
+    def __str__(self):
+        return "<Event(%s-%s %r)>" % (self.type, self.toString(), self._dict())
+
     def __repr__(self):
-        """
-        Return string representation of Event object.
-        """
         return "<Event(%s-%s %r)>" % (self.type, self.toString(), self._dict())
 
     def __getattr__(self, attr):

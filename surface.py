@@ -76,10 +76,10 @@ class Surface(BufferedImage):
         self._colorkey = None
         self._nonimplemented_methods()
 
+    def __str__(self):
+        return "%s(%s, %r)" % (self.__class__, self.toString(), self.__dict__)
+
     def __repr__(self):
-        """
-        Return string representation of Surface object.
-        """
         return "%s(%s, %r)" % (self.__class__, self.toString(), self.__dict__)
 
     def get_size(self):
@@ -284,9 +284,6 @@ class Surface(BufferedImage):
         return self._offset
 
     def _nonimplemented_methods(self):
-        """
-        Non-implemented methods.
-        """
         self.convert = lambda *arg: self
         self.convert_alpha = lambda *arg: self
         self.set_alpha = lambda *arg: None

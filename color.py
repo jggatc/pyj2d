@@ -37,31 +37,19 @@ class Color(_Color):
             r,g,b,a = (color>>16) & 0xff, (color>>8) & 0xff, color & 0xff, (color>>24) & 0xff
         _Color.__init__(self,r,g,b,a)
 
-    def __repr__(self):
-        """
-        Return string representation of Color object.
-        """
+    def __str__(self):
         return "(%d, %d, %d, %d)" % (self.getRed(), self.getGreen(), self.getBlue(), self.getAlpha())
 
-    def __str__(self):
-        """
-        Return string representation of Color object.
-        """
+    def __repr__(self):
         return "(%d, %d, %d, %d)" % (self.getRed(), self.getGreen(), self.getBlue(), self.getAlpha())
 
     def __getattr__(self, attr):
-        """
-        Get Color attributes.
-        """
         try:
             return {'r':self.getRed, 'g':self.getGreen, 'b':self.getBlue, 'a':self.getAlpha}[attr]()
         except KeyError:
             raise AttributeError
 
     def __setattr__(self, attr, val):
-        """
-        Set Color attributes.
-        """
         if not hasattr(self, '_color'):
             color = {'r':self.getRed(), 'g':self.getGreen(), 'b':self.getBlue(), 'a':self.getAlpha()}
             object.__setattr__(self, '_color', color)
@@ -73,9 +61,6 @@ class Color(_Color):
         return None
 
     def __getitem__(self, index):
-        """
-        Get Color [r,g,b,a] attributes by index.
-        """
         return {0:self.getRed, 1:self.getGreen, 2:self.getBlue, 3:self.getAlpha}[index]()
 
     def __setitem__(self, index, val):

@@ -108,8 +108,5 @@ class Surfarray(object):
         return None
 
     def _nonimplemented_methods(self):
-        """
-        Non-implemented methods.
-        """
         self.use_arraytype = lambda *arg: None
 

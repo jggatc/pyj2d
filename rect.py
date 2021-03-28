@@ -127,30 +127,18 @@ class Rect(Rectangle):
             Rectangle.__init__(self, int(x), int(y), int(w), int(h))
 
     def __str__(self):
-        """
-        Return string representation of Rect object.
-        """
         return "<rect(%d, %d, %d, %d)>" % (self.x, self.y, self.width, self.height)
 
     def __repr__(self):
-        """
-        Return string representation of Rect object.
-        """
         return "%s(%s)" % (self.__class__, self.toString())
 
     def __getattr__(self, attr):
-        """
-        Get Rect attributes.
-        """
         try:
             return Rect._at[attr](self)
         except KeyError:
             raise AttributeError
 
     def __setattr__(self, attr, val):
-        """
-        Set Rect attributes.
-        """
         try:
             Rect._xy[attr](self, val)
         except TypeError:
@@ -161,52 +149,31 @@ class Rect(Rectangle):
         return None
 
     def __getitem__(self, key):
-        """
-        Get Rect [x,y,width,height] attributes by index.
-        """
         return [self.x, self.y, self.width, self.height][key]
 
     def __setitem__(self, key, val):
-        """
-        Set Rect [x,y,width,height] attributes by index.
-        """
         val = int(val)
         [lambda val: self.__setattr__("x", val), lambda val: self.__setattr__("y", val), lambda val: self.__setattr__("width", val), lambda val: self.__setattr__("height", val)][key](val)
 
     def __iter__(self):
-        """
-        Provides iterator to Rect.
-        """
         return iter([self.x, self.y, self.width, self.height])
 
     def __len__(self):
         return 4
 
     def __bool__(self):
-        """
-        Rect nonzero check.
-        """
         return self.width and self.height
 
     def __nonzero__(self):
-        """
-        Rect nonzero check.
-        """
         return self.width and self.height
 
     def __eq__(self, other):
-        """
-        Rects equality check.
-        """
         try:
             return self.x==other.x and self.y==other.y and self.width==other.width and self.height==other.height
         except AttributeError:
             return self.x==other[0] and self.y==other[1] and self.width==other[2] and self.height==other[3]
 
     def __ne__(self, other):
-        """
-        Rects equality check.
-        """
         try:
             return self.x!=other.x or self.y!=other.y or self.width!=other.width or self.height!=other.height
         except AttributeError:
