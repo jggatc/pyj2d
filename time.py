@@ -24,9 +24,6 @@ class Clock(object):
     _repaint_sync = None
 
     def __init__(self):
-        """
-        Return Clock.
-        """
         self._time = System.nanoTime()//1000000
         self._time_init = self._time
         self._time_diff = [33 for i in range(10)]
@@ -69,8 +66,8 @@ class Clock(object):
 
     def tick_busy_loop(self, framerate=0):
         """
-        Calls tick() with optional framerate.
-        Returns ms since last call.
+        Call once per program cycle, returns ms since last call.
+        An optional framerate will add pause to limit rate.
         """
         return self.tick(framerate)
 
@@ -113,7 +110,7 @@ class Time(object):
         """
         **pyj2d.time.wait**
         
-        Calls delay(). Return ms paused.
+        Pause for given time (in ms). Return ms paused.
         """
         return self.delay(time)
 

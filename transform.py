@@ -104,12 +104,12 @@ class Transform(object):
         g2d.dispose()
         return surf
 
-    def smoothscale(self, surface, size):
+    def smoothscale(self, surface, size, dest=None):
         """
-        Calls scale().
         Return Surface resized by the given size.
+        An optional destination surface can be provided.
         """
-        return self.scale(surface, size)
+        return self.scale(surface, size, dest)
 
     def scale2x(self, surface, dest=None):
         """

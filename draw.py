@@ -221,14 +221,18 @@ class Draw(object):
 
     def aaline(self, surface, color, point1, point2, blend=1):
         """
-        Calls line(), return bounding Rect.
+        Draw line, and returns bounding Rect.
+        Argument include surface to draw, color, point1, point2.
+        Optional width argument of line.
         """
         rect = self.line(surface, color, point1, point2, blend)
         return rect
 
     def aalines(self, surface, color, closed, pointlist, blend=1):
         """
-        Calls lines(), return bounding Rect.
+        Draw interconnected lines, and returns Rect bound.
+        Argument include surface to draw, color, closed, and pointlist.
+        Optional width argument of line.
         """
         rect = self.lines(surface, color, closed, pointlist, blend)
         return rect
