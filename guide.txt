@@ -4,5 +4,5 @@ PyJ2D module was modelled on Pygame commands that permits scripts coded in Pytho
 
 To launch a desktop application, JVM must be installed and have Jython. To obtain Jython, go to Jython website (www.jython.org), and follow the instructions to either install Jython or create a standalone jython.jar package. With Linux, Jython may be installable from the package manager. If Jython is installed use command 'jython script.py', or standalone method use command 'java -jar jython.jar script.py'. For information regarding online deployment check App.py, however this functionality has not been maintained. Running on JVM on the desktop was tested with Jython version 2.2.1, 2.5, and 2.7.
 
-Further information is available on the PyJ2D project page (http://gatc.ca/projects/pyj2d/) and in the API documentation (http://gatc.ca/projects/pyj2d/doc/).
+Further information is available on the PyJ2D project page (https://gatc.ca/projects/pyj2d/) and in the API documentation (https://gatc.ca/projects/pyj2d/doc/).
 

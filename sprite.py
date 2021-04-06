@@ -1,9 +1,10 @@
-#PyJ2D - Copyright (C) 2011 James Garnon <http://gatc.ca/>
-#Released under the MIT License <http://opensource.org/licenses/MIT>
+#PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
+#Released under the MIT License <https://opensource.org/licenses/MIT>
 
 from pyj2d.rect import rectPool
 from pyj2d import mask
 import sys
+
 if sys.version_info < (3,):
     range = xrange
 

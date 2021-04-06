@@ -19,8 +19,8 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #THE SOFTWARE.
 #
-#PyJ2D version 0.28
-#Project Site: http://gatc.ca/
+#PyJ2D version 0.29
+#Project Site: https://gatc.ca/
 
 from pyj2d import util
 from pyj2d.display import Display
