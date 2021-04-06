@@ -114,16 +114,18 @@ class Time(object):
         """
         return self.delay(time)
 
-    def set_timer(self, eventid, time):
+    def set_timer(self, eventid, time, once=False):
         """
         **pyj2d.time.set_timer**
-        
+
         Events of type eventid placed on queue at time (ms) intervals.
-        Disable by time of 0.
+        Optional argument once set no timer repeat, defaults to False.
+        Disable timer with time of 0. 
         """
         if eventid not in _EventTimer.timers:
             _EventTimer.timers[eventid] = _EventTimer(eventid)
-        _EventTimer.timers[eventid].set_timer(time)
+        repeat = not once
+        _EventTimer.timers[eventid].set_timer(time, repeat)
         return None
 
 
@@ -133,15 +135,19 @@ class _EventTimer(ActionListener):
     def __init__(self, eventid):
         self.event = env.event.Event(eventid)
         self.timer = Timer(0, self)
+        self.repeat = True
 
-    def set_timer(self, time):
+    def set_timer(self, time, repeat):
         if self.timer.isRunning():
             self.timer.stop()
         if time:
+            self.repeat = repeat
             self.timer.setInitialDelay(time)
             self.timer.setDelay(time)
             self.timer.start()
 
     def actionPerformed(self, evt):
         env.event.post(self.event)
+        if not self.repeat:
+            self.timer.stop()
 
