@@ -164,6 +164,7 @@ class Display(Runnable):
         self._surfaceRect = self.surface.get_rect()
         self._surface_rect = [self._surfaceRect]
         self._rect_list = None
+        self.jframe.setLocationRelativeTo(None)
         self.jframe.setVisible(True)
         self._warmup()
         return self.surface
