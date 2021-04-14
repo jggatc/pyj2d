@@ -69,5 +69,5 @@ def _next(obj):
 try:
     _range = xrange
 except NameError:
-    pass
+    _range = range
 
