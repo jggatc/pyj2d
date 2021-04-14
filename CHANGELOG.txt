@@ -1,3 +1,7 @@
+0.30_dev
+-center display frame.
+-update for python 2/3 compatibility.
+
 0.29    2021-04-06
 -update event handling.
 -update exception handling of color object.

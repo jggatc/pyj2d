@@ -1,7 +1,6 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
-from __future__ import division
 from java.lang import System
 
 
@@ -21,7 +20,7 @@ class Timer(object):
         """
         Get current time.
         """
-        return System.nanoTime()/1000000
+        return System.nanoTime()/1000000.0
 
     def set_time(self):
         """
@@ -55,4 +54,20 @@ class Timer(object):
         Print text to output.
         """
         print(text)
+
+
+class _dict(dict):
+    values = dict.itervalues
+    keys = dict.iterkeys
+    items = dict.iteritems
+
+
+def _next(obj):
+    return obj.next()
+
+
+try:
+    _range = xrange
+except NameError:
+    pass
 

@@ -1,7 +1,6 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
-from __future__ import division
 from javax.imageio import ImageIO
 from java.io import File, ByteArrayInputStream
 from pyj2d.surface import Surface

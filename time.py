@@ -1,7 +1,6 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
-from __future__ import division
 from java.lang import Thread, System, InterruptedException
 from javax.swing import Timer
 from java.awt.event import ActionListener
@@ -75,7 +74,7 @@ class Clock(object):
         """
         Return fps.
         """
-        return 1000/(sum(self._time_diff)/10)
+        return 1000.0/(sum(self._time_diff)/10)
 
 
 class Time(object):

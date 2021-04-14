@@ -1,7 +1,6 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
-from __future__ import division
 from math import pi as _pi
 from java.awt import BasicStroke, RenderingHints
 from java.awt.geom import Ellipse2D
@@ -33,7 +32,7 @@ class Draw(object):
         
         Module initialization creates pyj2d.draw instance.
         """
-        self.rad_deg = 180/_pi
+        self.rad_deg = 180.0/_pi
         self._return_rect = True
 
     def rect(self, surface, color, rect, width=0):

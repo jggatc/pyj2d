@@ -1,7 +1,6 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
-from __future__ import division
 from math import pi as _pi, fabs as _fabs, sin as _sin, cos as _cos, ceil as _ceil
 from java.awt.image import BufferedImage, AffineTransformOp
 from java.awt import RenderingHints
@@ -29,7 +28,7 @@ class Transform(object):
 
         Module initialization creates pyj2d.transform instance.
         """
-        self.deg_rad = _pi/180
+        self.deg_rad = _pi/180.0
 
     def rotate(self, surface, angle):
         """
@@ -46,7 +45,7 @@ class Transform(object):
         height_f = int( (width_i*sin_theta)+(height_i*cos_theta) )
         surf = Surface((width_f,height_f), BufferedImage.TYPE_INT_ARGB)
         at = AffineTransform()
-        at.translate(width_f/2, height_f/2)
+        at.translate(width_f/2.0, height_f/2.0)
         at.rotate(-theta)
         g2d = surf.createGraphics()
         ot = g2d.getTransform()
@@ -78,7 +77,7 @@ class Transform(object):
             height_f += 1
         surf = Surface((width_f,height_f), BufferedImage.TYPE_INT_ARGB)
         at = AffineTransform()
-        at.translate(width_f/2, height_f/2)
+        at.translate(width_f/2.0, height_f/2.0)
         at.rotate(-theta)
         g2d = surf.createGraphics()
         ot = g2d.getTransform()

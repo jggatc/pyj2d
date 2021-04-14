@@ -1,7 +1,6 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
-from __future__ import division
 from java.lang import Thread
 from java.awt.event import MouseEvent, KeyEvent
 from pyj2d import env

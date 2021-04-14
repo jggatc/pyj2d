@@ -1,7 +1,6 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
-from __future__ import division
 from javax.swing import JFrame, JPanel
 from java.awt import Color, Dimension, Toolkit
 from java.awt.image import BufferedImage
