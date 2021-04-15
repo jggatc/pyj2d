@@ -12,12 +12,12 @@ class Rect(Rectangle):
     **pyj2d.Rect**
     
     * Rect.copy
-    * Rect.movex
+    * Rect.move
     * Rect.move_ip
     * Rect.inflate
     * Rect.inflate_ip
     * Rect.contains
-    * Rect.unionx
+    * Rect.union
     * Rect.union_ip
     * Rect.unionall
     * Rect.unionall_ip
@@ -131,6 +131,15 @@ class Rect(Rectangle):
     def __repr__(self):
         return "%s(%s)" % (self.__class__, self.toString())
 
+    def setLocation(self, x, y):
+        Rectangle.move(self, x, y)
+        return None
+
+    def _getSize(self):
+        return self.width, self.height
+
+    size = property(_getSize)
+
     def __getattr__(self, attr):
         try:
             return Rect._at[attr](self)
@@ -184,7 +193,7 @@ class Rect(Rectangle):
         """
         return Rect(self.x, self.y, self.width, self.height)
 
-    def movex(self, x, y):      #super uses java.awt.Rectangle.move()
+    def move(self, x, y):
         """
         Return Rect of same dimension at position offset by x,y.
         """
@@ -231,36 +240,40 @@ class Rect(Rectangle):
         else:
             return Rect(0,0,0,0)
 
-    def unionx(self, rect):     #super uses java.awt.Rectangle.union()
+    def union(self, rect):
         """
         Return Rect representing the union of rect and this rect.
         """
-        unionRect = Rect((0,0,0,0))
-        self.union(self, rect, unionRect)
-        return unionRect
+        r = Rectangle.union(self, rect)
+        return Rect(r.x, r.y, r.width, r.height)
 
     def union_ip(self, rect):
         """
         Change this rect to represent the union of rect and this rect.
         """
-        self.union(self, rect, self)
+        r = Rectangle.union(self, rect)
+        self.setLocation(r.x, r.y)
+        self.setSize(r.width, r.height)
         return None
 
     def unionall(self, rect_list):
         """
         Return Rect representing the union of rect list and this rect.
         """
-        unionRect = Rect((self.x,self.y,self.width,self.height))
+        r = self
         for rect in rect_list:
-            self.union(unionRect, rect, unionRect)
-        return unionRect
+            r = Rectangle.union(r, rect)
+        return Rect(r.x, r.y, r.width, r.height)
 
     def unionall_ip(self, rect_list):
         """
         Change this rect to represent the union of rect list and this rect.
         """
+        r = self
         for rect in rect_list:
-            self.union(self, rect, self)
+            r = Rectangle.union(r, rect)
+        self.setLocation(r.x, r.y)
+        self.setSize(r.width, r.height)
         return None
 
     def clamp(self, rect):
