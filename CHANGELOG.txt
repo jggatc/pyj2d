@@ -1,6 +1,7 @@
 0.30_dev
 -center display frame.
 -revise rect move and union methods.
+-revise rect attributes.
 -update for python 2/3 compatibility.
 
 0.29    2021-04-06

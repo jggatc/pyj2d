@@ -106,7 +106,7 @@ class Surface(BufferedImage):
         """
         rect = Rect(0, 0, self.width, self.height)
         for key in attr:
-            rect.__setattr__(key,attr[key])
+            getattr(rect, '_set_'+key)(attr[key])
         return rect
 
     def copy(self):

@@ -32,50 +32,6 @@ class Rect(Rectangle):
     * Rect.collidedictall
     """
 
-    _xy = {
-        'center': lambda self,val: self.setLocation( val[0]-(self.width//2), val[1]-(self.height//2) ),
-        'centerx': lambda self,val: self.setLocation( val-(self.width//2), self.y ),
-        'centery': lambda self,val: self.setLocation( self.x, val-(self.height//2) ),
-        'top': lambda self,val: self.setLocation( self.x, val ),
-        'left': lambda self,val: self.setLocation( val, self.y ),
-        'bottom': lambda self,val: self.setLocation( self.x, val-self.height ),
-        'right': lambda self,val: self.setLocation( val-self.width, self.y ),
-        'topleft': lambda self,val: self.setLocation( val[0], val[1] ),
-        'bottomleft': lambda self,val: self.setLocation( val[0], val[1]-self.height ),
-        'topright': lambda self,val: self.setLocation( val[0]-self.width, val[1] ),
-        'bottomright': lambda self,val: self.setLocation( val[0]-self.width, val[1]-self.height ),
-        'midtop': lambda self,val: self.setLocation( val[0]-(self.width//2), val[1] ),
-        'midleft': lambda self,val: self.setLocation( val[0], val[1]-(self.height//2) ),
-        'midbottom': lambda self,val: self.setLocation( val[0]-(self.width//2), val[1]-self.height ),
-        'midright': lambda self,val: self.setLocation( val[0]-self.width, val[1]-(self.height//2) ),
-        'size': lambda self,val: self.setSize( val[0], val[1] ),
-        'width': lambda self,val: self.setSize( val, self.height ),
-        'height':lambda self,val: self.setSize( self.width, val ),
-        'w': lambda self,val: self.setSize( val, self.height ),
-        'h': lambda self,val: self.setSize( self.width, val ),
-        'x': lambda self,val: self.setLocation( val, self.y ),
-        'y': lambda self,val: self.setLocation( self.x, val )
-          }
-    _at = {
-        'center': lambda self: (self.x+(self.width//2), self.y+(self.height//2)),
-        'centerx': lambda self: self.x+(self.width//2),
-        'centery': lambda self: self.y+(self.height//2),
-        'top': lambda self: self.y,
-        'left': lambda self: self.x,
-        'bottom': lambda self: self.y+self.height,
-        'right': lambda self: self.x+self.width,
-        'topleft': lambda self: (self.x, self.y),
-        'bottomleft': lambda self: (self.x, self.y+self.height),
-        'topright': lambda self: (self.x+self.width, self.y),
-        'bottomright': lambda self: (self.x+self.width, self.y+self.height),
-        'midtop': lambda self: (self.x+(self.width//2), self.y),
-        'midleft': lambda self: (self.x, self.y+(self.height//2)),
-        'midbottom': lambda self: (self.x+(self.width//2), self.y+self.height),
-        'midright': lambda self: (self.x+self.width, self.y+(self.height//2)),
-        'w': lambda self: self.width,
-        'h': lambda self: self.height
-          }
-
     def __init__(self, *arg):
         """
         Return Rect that is subclassed from java.awt.Rectangle.
@@ -135,33 +91,26 @@ class Rect(Rectangle):
         Rectangle.move(self, x, y)
         return None
 
-    def _getSize(self):
-        return self.width, self.height
-
-    size = property(_getSize)
-
     def __getattr__(self, attr):
         try:
-            return Rect._at[attr](self)
-        except KeyError:
-            raise AttributeError
+            return getattr(self, '_get_'+attr)()
+        except:
+            msg = 'Rect instance has no attribute %s' % attr
+            raise AttributeError(msg)
 
     def __setattr__(self, attr, val):
         try:
-            Rect._xy[attr](self, val)
-        except TypeError:
-            try:
-                Rect._xy[attr](self, int(val))
-            except TypeError:
-                Rect._xy[attr](self, (int(val[0]), int(val[1])))
-        return None
+            getattr(self, '_set_'+attr)(val)
+        except:
+            msg = 'Rect instance has no attribute %s' % attr
+            raise AttributeError(msg)
 
     def __getitem__(self, key):
         return [self.x, self.y, self.width, self.height][key]
 
     def __setitem__(self, key, val):
         val = int(val)
-        [lambda val: self.__setattr__("x", val), lambda val: self.__setattr__("y", val), lambda val: self.__setattr__("width", val), lambda val: self.__setattr__("height", val)][key](val)
+        self.__setattr__({0:'x',1:'y',2:'width',3:'height'}[key], val)
 
     def __iter__(self):
         return iter([self.x, self.y, self.width, self.height])
@@ -369,6 +318,145 @@ class Rect(Rectangle):
             if self.colliderect(rects[rect]):
                 collided.append((rect,rects[rect]))
         return collided
+
+    def _get_center(self):
+        return (self.x+(self.width//2), self.y+(self.height//2))
+
+    def _get_centerx(self):
+        return self.x+(self.width//2)
+
+    def _get_centery(self):
+        return self.y+(self.height//2)
+
+    def _get_top(self):
+        return self.y
+
+    def _get_left(self):
+        return self.x
+
+    def _get_bottom(self):
+        return self.y+self.height
+
+    def _get_right(self):
+        return self.x+self.width
+
+    def _get_topleft(self):
+        return (self.x, self.y)
+
+    def _get_bottomleft(self):
+        return (self.x, self.y+self.height)
+
+    def _get_topright(self):
+        return (self.x+self.width, self.y)
+
+    def _get_bottomright(self):
+        return (self.x+self.width, self.y+self.height)
+
+    def _get_midtop(self):
+        return (self.x+(self.width//2), self.y)
+
+    def _get_midleft(self):
+        return (self.x, self.y+(self.height//2))
+
+    def _get_midbottom(self):
+        return (self.x+(self.width//2), self.y+self.height)
+
+    def _get_midright(self):
+        return (self.x+self.width, self.y+(self.height//2))
+
+    def _get_size(self):
+        return (self.width, self.height)
+
+    def _get_w(self):
+        return self.width
+
+    def _get_h(self):
+        return self.height
+
+    def _set_x(self, val):
+        self.setLocation(val, self.y)
+
+    def _set_y(self, val):
+        self.setLocation(self.x, val)
+
+    def _set_width(self, val):
+        self.setSize(val, self.height)
+
+    def _set_height(self, val):
+        self.setSize(self.width, val)
+
+    def _set_center(self, val):
+        self.setLocation(val[0]-(self.width//2), val[1]-(self.height//2))
+
+    def _set_centerx(self, val):
+        self.setLocation(val-(self.width//2), self.y)
+
+    def _set_centery(self, val):
+        self.setLocation(self.x, val-(self.height//2))
+
+    def _set_top(self, val):
+        self.setLocation(self.x, val)
+
+    def _set_left(self, val):
+        self.setLocation(val, self.y)
+
+    def _set_bottom(self, val):
+        self.setLocation(self.x, val-self.height)
+
+    def _set_right(self, val):
+        self.setLocation(val-self.width, self.y)
+
+    def _set_topleft(self, val):
+        self.setLocation(val[0], val[1])
+
+    def _set_bottomleft(self, val):
+        self.setLocation(val[0], val[1]-self.height)
+
+    def _set_topright(self, val):
+        self.setLocation(val[0]-self.width, val[1])
+
+    def _set_bottomright(self, val):
+        self.setLocation(val[0]-self.width, val[1]-self.height)
+
+    def _set_midtop(self, val):
+        self.setLocation(val[0]-(self.width//2), val[1])
+
+    def _set_midleft(self, val):
+        self.setLocation(val[0], val[1]-(self.height//2))
+
+    def _set_midbottom(self, val):
+        self.setLocation(val[0]-(self.width//2), val[1]-self.height)
+
+    def _set_midright(self, val):
+        self.setLocation(val[0]-self.width, val[1]-(self.height//2))
+
+    def _set_size(self, val):
+        self.setSize(val[0], val[1])
+
+    def _set_w(self, val):
+        self.setSize(val, self.height)
+
+    def _set_h(self, val):
+        self.setSize(self.width, val)
+
+    size = property(_get_size, _set_size)
+    center = property(_get_center, _set_center)
+    centerx = property(_get_centerx, _set_centerx)
+    centery = property(_get_centery, _set_centery)
+    top = property(_get_top, _set_top)
+    left = property(_get_left, _set_left)
+    bottom = property(_get_bottom, _set_bottom)
+    right = property(_get_right, _set_right)
+    topleft = property(_get_topleft, _set_topleft)
+    bottomleft = property(_get_bottomleft, _set_bottomleft)
+    topright = property(_get_topright, _set_topright)
+    bottomright = property(_get_bottomright, _set_bottomright)
+    midtop = property(_get_midtop, _set_midtop)
+    midleft = property(_get_midleft, _set_midleft)
+    midbottom = property(_get_midbottom, _set_midbottom)
+    midright = property(_get_midright, _set_midright)
+    w = property(_get_w, _set_w)
+    h = property(_get_h, _set_h)
 
 
 class RectPool(ConcurrentLinkedQueue):
