@@ -46,13 +46,13 @@ class Rect(Rectangle):
 
         Rect has the attributes::
         
-            x, y, width, height
+        x, y, width, height
         
         Additional Rect attributes::
         
-            top, left, bottom, right, topleft, bottomleft, topright, bottomright,
-            midtop, midleft, midbottom, midright, center, centerx, centery,
-            size, w, h.
+        top, left, bottom, right, topleft, bottomleft, topright, bottomright,
+        midtop, midleft, midbottom, midright, center, centerx, centery,
+        size, w, h.
         
         Module initialization places pyj2d.Rect in module's namespace.
         """
@@ -88,29 +88,30 @@ class Rect(Rectangle):
         return "%s(%s)" % (self.__class__, self.toString())
 
     def setLocation(self, x, y):
-        Rectangle.move(self, x, y)
+        try:
+            Rectangle.move(self, x, y)
+        except TypeError:
+            Rectangle.move(self, int(x), int(y))
         return None
 
-    def __getattr__(self, attr):
+    def setSize(self, width, height):
         try:
-            return getattr(self, '_get_'+attr)()
-        except:
-            msg = 'Rect instance has no attribute %s' % attr
-            raise AttributeError(msg)
+            Rectangle.setSize(self, width, height)
+        except TypeError:
+            Rectangle.setSize(self, int(width), int(height))
+        return None
 
     def __setattr__(self, attr, val):
         try:
             getattr(self, '_set_'+attr)(val)
-        except:
-            msg = 'Rect instance has no attribute %s' % attr
-            raise AttributeError(msg)
+        except AttributeError:
+            setattr(Rectangle, attr, val)
 
     def __getitem__(self, key):
-        return [self.x, self.y, self.width, self.height][key]
+        return getattr(self, ('x','y','width','height')[key])
 
     def __setitem__(self, key, val):
-        val = int(val)
-        self.__setattr__({0:'x',1:'y',2:'width',3:'height'}[key], val)
+        setattr(self, ('x','y','width','height')[key], val)
 
     def __iter__(self):
         return iter([self.x, self.y, self.width, self.height])
