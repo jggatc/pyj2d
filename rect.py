@@ -38,21 +38,20 @@ class Rect(Rectangle):
         
         Alternative arguments:
         
-        * x,y,w,h
-        * (x,y),(w,h)
-        * (x,y,w,h)
+        * x, y, width, height
+        * (x, y), (width, height)
+        * (x, y, width, height)
         * Rect
         * Obj with rect attribute
 
         Rect has the attributes::
         
         x, y, width, height
-        
-        Additional Rect attributes::
-        
-        top, left, bottom, right, topleft, bottomleft, topright, bottomright,
-        midtop, midleft, midbottom, midright, center, centerx, centery,
-        size, w, h.
+        top, left, bottom, right
+        topleft, bottomleft, topright, bottomright
+        midtop, midleft, midbottom, midright
+        center, centerx, centery
+        size, w, h
         
         Module initialization places pyj2d.Rect in module's namespace.
         """
@@ -105,7 +104,7 @@ class Rect(Rectangle):
         try:
             getattr(self, '_set_'+attr)(val)
         except AttributeError:
-            setattr(Rectangle, attr, val)
+            self.__dict__[attr] = val
 
     def __getitem__(self, key):
         return getattr(self, ('x','y','width','height')[key])
