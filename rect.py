@@ -142,10 +142,14 @@ class Rect(Rectangle):
         """
         return Rect(self.x, self.y, self.width, self.height)
 
-    def move(self, x, y):
+    def move(self, *pos):
         """
         Return Rect of same dimension at position offset by x,y.
         """
+        try:
+            x, y = pos
+        except ValueError:
+            x, y = pos[0]
         return Rect(self.x+x, self.y+y, self.width, self.height)
 
     def move_ip(self, *pos):
@@ -156,27 +160,29 @@ class Rect(Rectangle):
             x, y = pos
         except ValueError:
             x, y = pos[0]
-        try:
-            self.setLocation(self.x+x, self.y+y)
-        except TypeError:
-            self.setLocation(self.x+int(x), self.y+int(y))
+        self.setLocation(self.x+x, self.y+y)
         return None
 
-    def inflate(self, x, y):
+    def inflate(self, *pos):
         """
         Return Rect at same position but size offset by x,y.
         """
-        return Rect(self.x-int(float(x)/2), self.y-int(float(y)/2), self.width+x, self.height+y)
+        try:
+            x, y = pos
+        except ValueError:
+            x, y = pos[0]
+        return Rect(self.x-x//2, self.y-y//2, self.width+x, self.height+y)
 
-    def inflate_ip(self, x, y):
+    def inflate_ip(self, *pos):
         """
         Change size of this rect offset by x,y.
         """
         try:
-            self.setSize(self.width+x, self.height+y)
-        except TypeError:
-            self.setSize(self.width+int(x), self.height+int(y))
-        self.setLocation(self.x-int(float(x)/2), self.y-int(float(y)/2))
+            x, y = pos
+        except ValueError:
+            x, y = pos[0]
+        self.setSize(self.width+x, self.height+y)
+        self.setLocation(self.x-x//2, self.y-y//2)
         return None
 
     def clip(self, rect):
