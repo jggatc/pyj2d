@@ -142,45 +142,45 @@ class Rect(Rectangle):
         """
         return Rect(self.x, self.y, self.width, self.height)
 
-    def move(self, *pos):
+    def move(self, *offset):
         """
         Return Rect of same dimension at position offset by x,y.
         """
         try:
-            x, y = pos
+            x, y = offset
         except ValueError:
-            x, y = pos[0]
+            x, y = offset[0]
         return Rect(self.x+x, self.y+y, self.width, self.height)
 
-    def move_ip(self, *pos):
+    def move_ip(self, *offset):
         """
         Moves this rect to position offset by x,y.
         """
         try:
-            x, y = pos
+            x, y = offset
         except ValueError:
-            x, y = pos[0]
+            x, y = offset[0]
         self.setLocation(self.x+x, self.y+y)
         return None
 
-    def inflate(self, *pos):
+    def inflate(self, *offset):
         """
         Return Rect at same position but size offset by x,y.
         """
         try:
-            x, y = pos
+            x, y = offset
         except ValueError:
-            x, y = pos[0]
+            x, y = offset[0]
         return Rect(self.x-x//2, self.y-y//2, self.width+x, self.height+y)
 
-    def inflate_ip(self, *pos):
+    def inflate_ip(self, *offset):
         """
         Change size of this rect offset by x,y.
         """
         try:
-            x, y = pos
+            x, y = offset
         except ValueError:
-            x, y = pos[0]
+            x, y = offset[0]
         self.setSize(self.width+x, self.height+y)
         self.setLocation(self.x-x//2, self.y-y//2)
         return None
