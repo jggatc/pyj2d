@@ -104,7 +104,8 @@ class Rect(Rectangle):
         try:
             getattr(self, '_set_'+attr)(val)
         except AttributeError:
-            self.__dict__[attr] = val
+            msg = 'Rect object has no attribute %s' % attr
+            raise AttributeError(msg)
 
     def __getitem__(self, key):
         return getattr(self, ('x','y','width','height')[key])
