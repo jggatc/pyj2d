@@ -3,6 +3,7 @@
 -revise rect move and union methods.
 -revise rect attributes.
 -revise rect move/inflate args processing.
+-add env check.
 -update for python 2/3 compatibility.
 
 0.29    2021-04-06

@@ -22,6 +22,7 @@
 #PyJ2D version 0.29
 #Project Site: https://gatc.ca/
 
+from pyj2d import env
 from pyj2d import util
 from pyj2d.display import Display
 from pyj2d.surface import Surface
@@ -40,7 +41,6 @@ from pyj2d import mask
 from pyj2d import font
 from pyj2d import sprite
 from pyj2d import cursors
-from pyj2d import env
 from pyj2d.locals import *
 
 
