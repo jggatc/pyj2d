@@ -4,6 +4,7 @@
 -revise rect attributes.
 -revise rect move/inflate args processing.
 -add env check.
+-revise quit method to stop timers.
 -update for python 2/3 compatibility.
 
 0.29    2021-04-06

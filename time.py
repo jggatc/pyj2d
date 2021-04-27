@@ -127,6 +127,10 @@ class Time(object):
         _EventTimer.timers[eventid].set_timer(time, repeat)
         return None
 
+    def _stop_timers(self):
+        for eventid in _EventTimer.timers:
+            _EventTimer.timers[eventid].set_timer(0, False)
+
 
 class _EventTimer(ActionListener):
     timers = {}
