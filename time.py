@@ -78,11 +78,23 @@ class Clock(object):
 
 
 class Time(object):
+    """
+    **pyj2d.time**
+    
+    * time.get_ticks
+    * time.delay
+    * time.wait
+    * time.set_timer
+    * time.time
+    * time.timeout
+    * time.Clock
+    """
 
     def __init__(self):
         self._time_init = System.nanoTime()//1000000
         self.Clock = Clock
         self.Clock._repaint_sync = AtomicBoolean(False)
+        self._timers = {}
 
     def get_ticks(self):
         """
@@ -113,30 +125,36 @@ class Time(object):
         """
         return self.delay(time)
 
-    def set_timer(self, eventid, time, once=False):
+    def set_timer(self, event, time, once=False):
         """
         **pyj2d.time.set_timer**
 
-        Events of type eventid placed on queue at time (ms) intervals.
+        Post event on queue at time (ms) intervals.
         Optional argument once set no timer repeat, defaults to False.
         Disable timer with time of 0. 
         """
-        if eventid not in _EventTimer.timers:
-            _EventTimer.timers[eventid] = _EventTimer(eventid)
+        if hasattr(event, 'type'):
+            eventType = event.type
+            if eventType not in self._timers:
+                self._timers[eventType] = _EventTimer(event)
+        else:
+            eventType = event
+            if eventType not in self._timers:
+                evt = env.event.Event(eventType)
+                self._timers[eventType] = _EventTimer(evt)
         repeat = not once
-        _EventTimer.timers[eventid].set_timer(time, repeat)
+        self._timers[eventType].set_timer(time, repeat)
         return None
 
     def _stop_timers(self):
-        for eventid in _EventTimer.timers:
-            _EventTimer.timers[eventid].set_timer(0, False)
+        for eventType in self._timers:
+            self._timers[eventType].set_timer(0, False)
 
 
 class _EventTimer(ActionListener):
-    timers = {}
 
-    def __init__(self, eventid):
-        self.event = env.event.Event(eventid)
+    def __init__(self, event):
+        self.event = event
         self.timer = Timer(0, self)
         self.repeat = True
 
