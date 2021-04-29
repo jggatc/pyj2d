@@ -1,4 +1,4 @@
-0.30_dev
+0.30    2021-04-28
 -center display frame.
 -revise rect move and union methods.
 -revise rect attributes.

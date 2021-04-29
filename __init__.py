@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #THE SOFTWARE.
 #
-#PyJ2D version 0.29
+#PyJ2D version 0.30
 #Project Site: https://gatc.ca/
 
 from pyj2d import env
