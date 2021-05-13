@@ -349,12 +349,6 @@ class OrderedUpdates(RenderUpdates):
         self.range = 1000
         self.index = iter(range(self.range))
         self.sort = None
-        for sprite in sprites:
-            if sprite not in self._sprites:
-                spriteID = id(sprite)
-                index = next(self.index)
-                self.order[index] = spriteID
-                self.place[spriteID] = index
         RenderUpdates.__init__(self, *sprites, **kwargs)     #*tuple unpack error kwargs fix
 
     def __iter__(self):
@@ -385,10 +379,11 @@ class OrderedUpdates(RenderUpdates):
         Return copy of group.
         """
         newgroup = RenderUpdates.copy(self)
-        newgroup.order = self.order.copy()
-        newgroup.place = self.place.copy()
-        newgroup.range = self.range
-        newgroup.index = iter(range(max(self.order.keys())+1,self.range))
+        if self.sprites():
+            newgroup.order = self.order.copy()
+            newgroup.place = self.place.copy()
+            newgroup.range = self.range
+            newgroup.index = iter(range(max(self.order.keys())+1,self.range))
         return newgroup
 
     def add(self, *sprites, **kwargs):
@@ -396,50 +391,55 @@ class OrderedUpdates(RenderUpdates):
         Add sprite(s) to group, maintaining order of addition.
         """
         for sprite in sprites:
-            if sprite not in self._sprites:
-                index = self._get_index()
-                if index is not None:
-                    spriteID = id(sprite)
+            if hasattr(sprite, '_groups'):
+                spriteID = id(sprite)
+                if spriteID not in self._sprites:
+                    self._sprites[spriteID] = sprite
+                    sprite._groups[id(self)] = self
+                    index = self._get_index()
                     self.order[index] = spriteID
                     self.place[spriteID] = index
-                else:
-                    keys = list(self.order.keys())
-                    keys.sort()
-                    if len(keys)*2 > self.range:
-                        self.range = len(keys)*2
-                    self.index = iter(range(self.range))
-                    order = self.order
-                    self.order = dict()
-                    self.place = dict()
-                    for key in keys:
-                        index = next(self.index)
-                        self.order[index] = order[key]
-                        self.place[order[key]] = index
-                    index = next(self.index)
-                    spriteID = id(sprite)
-                    self.order[index] = spriteID
-                    self.place[spriteID] = index
+            else:
+                self.add(*sprite)
         self.sort = None
-        RenderUpdates.add(self, *sprites, **kwargs)     #*tuple unpack error kwargs fix
         return None
 
     def _get_index(self):
         try:
             return next(self.index)
         except StopIteration:
-            return None
+            self._reset_index()
+            return next(self.index)
+
+    def _reset_index(self):
+        keys = list(self.order.keys())
+        keys.sort()
+        if len(keys)*2 > self.range:
+            self.range = len(keys)*2
+        self.index = iter(range(self.range))
+        order = self.order
+        self.order = dict()
+        self.place = dict()
+        for key in keys:
+            index = next(self.index)
+            self.order[index] = order[key]
+            self.place[order[key]] = index
 
     def remove(self, *sprites, **kwargs):
         """
         Remove sprite(s) from group.
         """
         for sprite in sprites:
-            spriteID = id(sprite)
-            if spriteID in self.place:
-                del self.order[self.place[spriteID]]
-                del self.place[spriteID]
+            if hasattr(sprite, '_groups'):
+                spriteID = id(sprite)
+                if spriteID in self._sprites:
+                    del self._sprites[spriteID]
+                    del sprite._groups[id(self)]
+                    del self.order[self.place[spriteID]]
+                    del self.place[spriteID]
+            else:
+                self.remove(*sprite)
         self.sort = None
-        RenderUpdates.remove(self, *sprites, **kwargs)     #*tuple unpack error kwargs fix
         return None
 
     def empty(self):
