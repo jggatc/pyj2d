@@ -247,6 +247,24 @@ class Group(object):
         return None
 
 
+class RenderPlain(Group):
+    """
+    **pyj2d.sprite.RenderPlain**
+
+    Same as sprite.Group.
+    """
+    pass
+
+
+class RenderClear(Group):
+    """
+    **pyj2d.sprite.RenderClear**
+
+    Same as sprite.Group.
+    """
+    pass
+
+
 class GroupSingle(Group):
     """
     **pyj2d.sprite.GroupSingle**
