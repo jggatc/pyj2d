@@ -1,6 +1,7 @@
 0.30-dev
 -revise sprite orderedupdates.
 -add sprite group alias.
+-refactor sprite collide methods.
 
 0.30    2021-04-28
 -center display frame.
