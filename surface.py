@@ -76,10 +76,11 @@ class Surface(BufferedImage):
         self._nonimplemented_methods()
 
     def __str__(self):
-        return "%s(%s, %r)" % (self.__class__, self.toString(), self.__dict__)
+        s = '<%s(%dx%d)>'
+        return s % (self.__class__.__name__, self.width, self.height)
 
     def __repr__(self):
-        return "%s(%s, %r)" % (self.__class__, self.toString(), self.__dict__)
+        return self.__str__()
 
     def get_size(self):
         """
