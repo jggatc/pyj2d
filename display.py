@@ -228,7 +228,7 @@ class Display(Runnable):
             else:
                 return False
 
-    def set_caption(self, caption, *args, **kwargs):
+    def set_caption(self, caption, *args):
         """
         Set display caption.
         Argument: caption for JFrame title.

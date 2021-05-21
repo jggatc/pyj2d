@@ -103,11 +103,11 @@ class DirtySprite(Sprite):
     * subclass not implemented
     """
 
-    def __init__(self, *groups, **kwargs):
+    def __init__(self, *groups):
         """
         Return Sprite.
         """
-        Sprite.__init__(self, *groups, **kwargs)     #*tuple unpack error kwargs fix)
+        Sprite.__init__(self, *groups)
 
 
 class Group(object):
@@ -240,12 +240,12 @@ class Group(object):
         self._sprites.clear()
         return None
 
-    def update(self, *args, **kwargs):
+    def update(self, *args):
         """
         Update sprites in group by calling sprite.update.
         """
         for sprite in list(self._sprites.values()):
-            sprite.update(*args, **kwargs)  #*tuple unpack jythonc error, fix by adding **kwargs
+            sprite.update(*args)
         return None
 
 
@@ -300,12 +300,12 @@ class GroupSingle(Group):
         sprite._groups[id(self)] = self
         return None
 
-    def update(self, *args, **kwargs):
+    def update(self, *args):
         """
         Update sprite by calling Sprite.update.
         """
         if self._sprites:
-            list(self._sprites.values())[0].update(*args, **kwargs)     #*tuple unpack error kwargs fix
+            list(self._sprites.values())[0].update(*args)
         return None
 
 
@@ -316,12 +316,12 @@ class RenderUpdates(Group):
     * Group subclass
     """
 
-    def __init__(self, *sprites, **kwargs):
+    def __init__(self, *sprites):
         """
         Return RenderUpdates, a Group subsclass that provides dirty draw functions.
         Can optionally be called with sprite(s) to add.
         """
-        Group.__init__(self, *sprites, **kwargs)     #*tuple unpack error kwargs fix
+        Group.__init__(self, *sprites)
         self.changed_areas = []
 
     def draw(self, surface):
@@ -359,13 +359,13 @@ class OrderedUpdates(RenderUpdates):
     * RenderUpdates subclass
     """
 
-    def __init__(self, *sprites, **kwargs):
+    def __init__(self, *sprites):
         """
         Return OrderedUpdates, a RenderUpdates subclass that maintains order of sprites.
         Can optionally be called with sprite(s) to add.
         """
         self._orderedsprites = []
-        RenderUpdates.__init__(self, *sprites, **kwargs)     #*tuple unpack error kwargs fix
+        RenderUpdates.__init__(self, *sprites)
 
     def __iter__(self):
         return iter(self._orderedsprites)
@@ -384,7 +384,7 @@ class OrderedUpdates(RenderUpdates):
         newgroup._orderedsprites = self._orderedsprites[:]
         return newgroup
 
-    def add(self, *sprites, **kwargs):
+    def add(self, *sprites):
         """
         Add sprite(s) to group, maintaining order of addition.
         """
@@ -399,7 +399,7 @@ class OrderedUpdates(RenderUpdates):
                 self.add(*sprite)
         return None
 
-    def remove(self, *sprites, **kwargs):
+    def remove(self, *sprites):
         """
         Remove sprite(s) from group.
         """
@@ -430,11 +430,11 @@ class LayeredUpdates(OrderedUpdates):
     * subclass not implemented
     """
 
-    def __init__(self, *sprites, **kwargs):
+    def __init__(self, *sprites):
         """
         Return OrderedUpdates - subclass not implemented.
         """
-        OrderedUpdates(self, *sprites, **kwargs)
+        OrderedUpdates(self, *sprites)
 
 
 class LayeredDirty(LayeredUpdates):
@@ -445,11 +445,11 @@ class LayeredDirty(LayeredUpdates):
     * subclass not implemented
     """
 
-    def __init__(self, *sprites, **kwargs):
+    def __init__(self, *sprites):
         """
         Return LayeredUpdates - subclass not implemented.
         """
-        LayeredUpdates(self, *sprites, **kwargs)
+        LayeredUpdates(self, *sprites)
 
 
 def spritecollide(sprite, group, dokill, collided=None):
