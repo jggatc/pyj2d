@@ -22,21 +22,22 @@
 #PyJ2D version 0.30
 #Project Site: https://gatc.ca/
 
+
 from pyj2d import env
 from pyj2d import util
 from pyj2d.display import Display
 from pyj2d.surface import Surface
 from pyj2d.rect import Rect
 from pyj2d.image import Image
-from pyj2d.draw import Draw
 from pyj2d.event import Event
 from pyj2d.key import Key
 from pyj2d.mouse import Mouse
-from pyj2d.transform import Transform
-from pyj2d.surfarray import Surfarray
 from pyj2d.color import Color
 from pyj2d.mixer import Mixer
 from pyj2d.time import Time
+from pyj2d import draw
+from pyj2d import transform
+from pyj2d import surfarray
 from pyj2d import mask
 from pyj2d import font
 from pyj2d import sprite
@@ -48,7 +49,7 @@ def init():
     """
     Initialize module.
     """
-    global time, display, image, draw, event, key, mouse, transform, surfarray, mixer, error, initialized
+    global time, display, image, event, key, mouse, mixer, error, initialized
     try:
         if initialized:
             return
@@ -59,11 +60,8 @@ def init():
     time = Time()
     display = Display()
     image = Image()
-    draw = Draw()
     key = Key()
     mouse = Mouse()
-    transform = Transform()
-    surfarray = Surfarray()
     mixer = Mixer()
     error = None
     return
@@ -75,7 +73,7 @@ def quit():
     """
     Uninitialize module.
     """
-    global display, sprite, image, draw, time, event, key, mouse, transform, font, surfarray, mask, mixer, initialized
+    global display, sprite, image, time, event, key, mouse, font, mask, mixer, initialized
     if not initialized:
         return
     else:
@@ -85,7 +83,7 @@ def quit():
     except:
         pass
     time._stop_timers()
-    for module in (display, sprite, image, draw, time, event, key, mouse, transform, font, surfarray, mask, mixer):
+    for module in (display, sprite, image, time, event, key, mouse, font, mask, mixer):
         del(module)
     if env.jframe:
         env.jframe.stop()
