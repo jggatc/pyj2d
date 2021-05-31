@@ -1,16 +1,6 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
-"""
-java.awt.Cursor API
-http://docs.oracle.com/javase/7/docs/api/java/awt/Cursor.html
-
-TYPES = [DEFAULT_CURSOR, CROSSHAIR_CURSOR, E_RESIZE_CURSOR, HAND_CURSOR,
-MOVE_CURSOR, N_RESIZE_CURSOR, NE_RESIZE_CURSOR, NW_RESIZE_CURSOR,
-S_RESIZE_CURSOR, SE_RESIZE_CURSOR, SW_RESIZE_CURSOR, TEXT_CURSOR,
-W_RESIZE_CURSOR, WAIT_CURSOR, CUSTOM_CURSOR]
-"""
-
 from java.awt import Cursor
 from pyj2d.surface import Surface
 from pyj2d.color import Color
@@ -90,4 +80,13 @@ def create_cursor(size, data, mask):
             x = 0
             y += 1
     return surface
+
+
+def get_cursor_types():
+    #https://docs.oracle.com/javase/8/docs/api/java/awt/Cursor.html
+    """
+    Return list of cursor type names from java.awt.Cursor API.
+    """
+    types = ['DEFAULT_CURSOR', 'CROSSHAIR_CURSOR', 'E_RESIZE_CURSOR', 'HAND_CURSOR', 'MOVE_CURSOR', 'N_RESIZE_CURSOR', 'NE_RESIZE_CURSOR', 'NW_RESIZE_CURSOR', 'S_RESIZE_CURSOR', 'SE_RESIZE_CURSOR', 'SW_RESIZE_CURSOR', 'TEXT_CURSOR', 'W_RESIZE_CURSOR', 'WAIT_CURSOR', 'CUSTOM_CURSOR']
+    return types
 

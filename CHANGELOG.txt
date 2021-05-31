@@ -3,6 +3,7 @@
 -add sprite group alias.
 -refactor sprite collide methods.
 -add sprite layeredupdates.
+-add cursors get_cursor_types.
 
 0.30    2021-04-28
 -center display frame.
