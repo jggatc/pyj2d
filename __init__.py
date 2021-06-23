@@ -35,6 +35,7 @@ from pyj2d.mouse import Mouse
 from pyj2d.color import Color
 from pyj2d.mixer import Mixer
 from pyj2d.time import Time
+from pyj2d.vector import Vector2
 from pyj2d import draw
 from pyj2d import transform
 from pyj2d import surfarray
