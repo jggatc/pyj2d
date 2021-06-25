@@ -55,8 +55,14 @@ class Vector2(object):
         except ValueError:
             raise TypeError('float is required')
 
-    x = property(_get_x, _set_x)
-    y = property(_get_y, _set_y)
+    def _del_x(self):
+        raise TypeError('Cannot delete the x attribute')
+
+    def _del_y(self):
+        raise TypeError('Cannot delete the y attribute')
+
+    x = property(_get_x, _set_x, _del_x)
+    y = property(_get_y, _set_y, _del_y)
 
     def __str__(self):
         return '[%g, %g]' % (self._x, self._y)
@@ -95,6 +101,9 @@ class Vector2(object):
         else:
             raise IndexError
 
+    def __delitem__(self, index):
+        raise TypeError('Deletion of vector components is not supported')
+
     def __getslice__(self, start, stop):
         return [self._x, self._y][start:stop]
 
@@ -105,9 +114,6 @@ class Vector2(object):
             raise ValueError
         self._x = float(l[0])
         self._y = float(l[1])
-
-    def __delitem__(self):
-        pass
 
     def __iter__(self):
         for val in (self._x, self._y):
