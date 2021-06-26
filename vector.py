@@ -10,6 +10,8 @@ class Vector2(object):
     Vector2 - 2-dimensional vector.
     """
 
+    __slots__ = ['_x', '_y']
+
     def __init__(self, *args, **kwargs):
         l = len(args)
         if l == 2:
@@ -46,6 +48,9 @@ class Vector2(object):
         except ValueError:
             raise TypeError('float is required')
 
+    def _del_x(self):
+        raise TypeError('Cannot delete the x attribute')
+
     def _get_y(self):
         return self._y
 
@@ -54,9 +59,6 @@ class Vector2(object):
             self._y = float(val)
         except ValueError:
             raise TypeError('float is required')
-
-    def _del_x(self):
-        raise TypeError('Cannot delete the x attribute')
 
     def _del_y(self):
         raise TypeError('Cannot delete the y attribute')
@@ -88,7 +90,7 @@ class Vector2(object):
                 raise TypeError
         elif index == 1:
             try:
-                self.y = float(val)
+                self._y = float(val)
             except ValueError:
                 raise TypeError
         elif isinstance(index, slice):
@@ -286,7 +288,7 @@ class Vector2(object):
         """
         Elementwice operation.
         """
-        return VectorElementwiseProxy(self)
+        return VectorElementwiseProxy(self._x, self._y)
 
     def rotate(self, angle):
         """
@@ -344,7 +346,7 @@ class Vector2(object):
         Return radial distance and azimuthal angle.
         """
         r = self.magnitude()
-        phi = atan2(self._y, self.x) * (180/pi)
+        phi = atan2(self._y, self._x) * (180.0/pi)
         return (r, phi)
 
     def from_polar(self, coordinate):
@@ -354,7 +356,7 @@ class Vector2(object):
         if len(coordinate) != 2:
             raise TypeError('coodinate must be of length 2')
         r = coordinate[0]
-        phi = coordinate[1] * (pi/180)
+        phi = coordinate[1] * (pi/180.0)
         self._x = round(r * cos(phi), 6)
         self._y = round(r * sin(phi), 6)
         return None
@@ -409,7 +411,7 @@ class Vector2(object):
 
     def __mul__(self, other):
         if hasattr(other, '__len__'):
-            if not hasattr(other, '_vector'):
+            if not isinstance(other, VectorElementwiseProxy):
                 return (self._x * other[0]) + (self._y * other[1])
             else:
                 return Vector2(self._x * other[0], self._y * other[1])
@@ -457,25 +459,25 @@ class Vector2(object):
                      abs(self._y-other) > 0.000001 )
 
     def __gt__(self, other):
-        if not hasattr(other, '_vector'):
+        if not isinstance(other, VectorElementwiseProxy):
             msg = 'This operation is not supported by vectors'
             raise TypeError(msg)
         return NotImplemented
 
     def __ge__(self, other):
-        if not hasattr(other, '_vector'):
+        if not isinstance(other, VectorElementwiseProxy):
             msg = 'This operation is not supported by vectors'
             raise TypeError(msg)
         return NotImplemented
 
     def __lt__(self, other):
-        if not hasattr(other, '_vector'):
+        if not isinstance(other, VectorElementwiseProxy):
             msg = 'This operation is not supported by vectors'
             raise TypeError(msg)
         return NotImplemented
 
     def __le__(self, other):
-        if not hasattr(other, '_vector'):
+        if not isinstance(other, VectorElementwiseProxy):
             msg = 'This operation is not supported by vectors'
             raise TypeError(msg)
         return NotImplemented
@@ -494,7 +496,7 @@ class Vector2(object):
 
     def __rmul__(self, other):
         if hasattr(other, '__len__'):
-            if not hasattr(other, '_vector'):
+            if not isinstance(other, VectorElementwiseProxy):
                 return (self._x * other[0]) + (self._y * other[1])
             else:
                 return Vector2(self._x * other[0], self._y * other[1])
@@ -576,17 +578,9 @@ class Vector2(object):
 
 class VectorElementwiseProxy(object):
 
-    def __init__(self, vector):
-        self._vector = vector
-
-    def _get_x(self):
-        return self._vector._x
-
-    def _get_y(self):
-        return self._vector._y
-
-    _x = property(_get_x)
-    _y = property(_get_y)
+    def __init__(self, x, y):
+        self._x = x
+        self._y = y
 
     def __getitem__(self, index):
         if index in (0, -2):
