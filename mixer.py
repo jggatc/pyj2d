@@ -484,9 +484,6 @@ class Channel(Runnable):
             return (self._data, self._data_len, 1.0, 1.0)
 
     def _play(self):
-        self._volume = 1.0
-        self._lvolume = 1.0
-        self._rvolume = 1.0
         self._active = True
 
     def _play_repeat(self, loops):
@@ -522,6 +519,9 @@ class Channel(Runnable):
         self._sound = None
         self._pause = False
         self._loops = 0
+        self._volume = 1.0
+        self._lvolume = 1.0
+        self._rvolume = 1.0
         self._active = False
         return None
 
