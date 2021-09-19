@@ -311,7 +311,7 @@ class Mixer(Runnable):
         self.fadeout = lambda *arg: None
 
 
-class Sound:
+class Sound(object):
     """
     **pyj2d.mixer.Sound**
     
@@ -418,7 +418,7 @@ class Sound:
         self.get_buffer = lambda *arg: None
 
 
-class Channel(Runnable):
+class Channel(object):
     """
     **pyj2d.mixer.Channel**
     
@@ -448,15 +448,10 @@ class Channel(Runnable):
         self._rvolume = 1.0
         self._mixer._register_channel(self)
         self._nonimplemented_methods()
-        self._thread = Thread(self)
-        self._thread.start()
 
     def _set_sound(self, sound):
         self._sound = sound
         self._stream = AudioSystem.getAudioInputStream(sound._sound_object)
-
-    def run(self):
-        return
 
     def _get(self):
         try:
