@@ -32,6 +32,7 @@ class Mixer(Runnable):
     * pyj2d.mixer.get_busy
     * pyj2d.mixer.Sound
     * pyj2d.mixer.Channel
+    * pyj2d.mixer.music
     """
 
     def __init__(self):
@@ -40,6 +41,7 @@ class Mixer(Runnable):
         Channel._mixer = self
         self.Sound = Sound
         self.Channel = Channel
+        self.music = None
         self._channel_max = 8
         self._channels = {}
         self._sounds = {}
@@ -79,6 +81,9 @@ class Mixer(Runnable):
                 return None
             self._bufferSize = self._mixer.getBufferSize()
             self._byteArray = jarray.zeros(self._bufferSize, 'b')
+            self.music = Music()
+            self._channel_reserved.append(self.music._channel._id)
+            self._channel_pool.remove(self.music._channel._id)
             self._initialized = True
             self._thread = Thread(self)
             self._thread.start()
@@ -99,6 +104,7 @@ class Mixer(Runnable):
 
     def _quit(self):
         self.stop()
+        self.music._channel.stop()
         try:
             self._mixer.quit()
         except AttributeError:
@@ -185,6 +191,7 @@ class Mixer(Runnable):
         elif count < 0:
             count = 0
         self._channel_reserved = []
+        self._channel_reserved.append(self.music._channel._id)
         for id in range(count):
             self._channel_reserved.append(id)
             if id in self._channel_reserves:
@@ -241,6 +248,8 @@ class Mixer(Runnable):
     def run(self):
         while self._initialized:
             channel_active = [self._channels[id] for id in self._channel_pool if self._channels[id]._active]
+            if self.music._channel._active:
+                channel_active.append(self.music._channel)
             if not channel_active:
                 try:
                     self._thread.sleep(1)
@@ -577,4 +586,89 @@ class Channel(object):
         self.get_queue = lambda *arg: None
         self.set_endevent = lambda *arg: None
         self.get_endevent = lambda *arg: 0
+
+
+class Music(object):
+    """
+    **pyj2d.mixer.music**
+
+    * music.load
+    * music.unload
+    * music.play
+    * music.stop
+    * music.pause
+    * music.unpause
+    * music.set_volume
+    * music.get_volume
+    * music.get_busy
+    """
+
+    def __init__(self):
+        self._channel = Channel(-1)
+        self._sound = None
+
+    def load(self, sound_file):
+        """
+        Load music file.
+        """
+        self._sound = Sound(sound_file)
+        self._channel._set_sound(self._sound)
+        return None
+
+    def unload(self):
+        """
+        Unload music file.
+        """
+        self._channel.stop()
+        self._sound = None
+        return None
+
+    def play(self, loops=0, maxtime=0, fade_ms=0):
+        """
+        Play music.
+        Argument loops is number of repeats or -1 for continuous.
+        """
+        self._channel.play(self._sound, loops)
+        return None
+
+    def stop(self):
+        """
+        Stop music.
+        """
+        self._channel.stop()
+        return None
+
+    def pause(self):
+        """
+        Pause music.
+        """
+        self._channel.pause()
+        return None
+
+    def unpause(self):
+        """
+        Unpause music.
+        """
+        self._channel.unpause()
+        return None
+
+    def set_volume(self, volume):
+        """
+        Set music volume.
+        Argument volume of value 0.0 to 1.0.
+        """
+        self._sound.set_volume(volume)
+        return None
+
+    def get_volume(self):
+        """
+        Get volume for current music.
+        """
+        return self._sound.get_volume()
+
+    def get_busy(self):
+        """
+        Check if music playing.
+        """
+        return self._channel.get_busy()
 

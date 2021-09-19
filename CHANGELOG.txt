@@ -6,6 +6,7 @@
 -add cursors get_cursor_types.
 -add vector object.
 -revise mixer processing.
+-add mixer music object.
 
 0.30    2021-04-28
 -center display frame.
