@@ -44,7 +44,6 @@ class Mixer(Runnable):
         self.music = None
         self._channel_max = 8
         self._channels = {}
-        self._sounds = {}
         self._channel_reserved = []
         self._channel_paused = []
         self._channel_reserves = [id for id in range(self._channel_max-1,-1,-1)]
@@ -313,9 +312,6 @@ class Mixer(Runnable):
         else:
             raise AttributeError("Channel not available.")
 
-    def _register_sound(self, sound):
-        self._sounds[sound._id] = sound
-
     def _nonimplemented_methods(self):
         self.fadeout = lambda *arg: None
 
@@ -349,7 +345,6 @@ class Sound(object):
             self._sound_object = sound_file
         self._channel = None
         self._volume = 1.0
-        self._mixer._register_sound(self)
         self._nonimplemented_methods()
 
     def play(self, loops=0, maxtime=0, fade_ms=0):
