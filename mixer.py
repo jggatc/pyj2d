@@ -236,10 +236,9 @@ class Mixer(Runnable):
                 else:
                     channel = 0
             try:
-                return self._channels[channel]
+                channel = self._channels[channel]
             except KeyError:
                 channel = Channel(channel)
-                return channel
             channel.stop()
             return channel
 
