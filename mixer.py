@@ -5,6 +5,8 @@ from javax.sound.sampled import AudioSystem, AudioFormat
 from javax.sound.sampled import LineUnavailableException
 from java.io import File, IOException
 from java.lang import Thread, Runnable, InterruptedException, IllegalArgumentException
+from java.util.concurrent import ConcurrentLinkedDeque
+from java.util import NoSuchElementException
 import jarray
 from pyj2d import env
 try:
@@ -40,14 +42,17 @@ class Mixer(Runnable):
         Sound._mixer = self
         Channel._mixer = self
         self.Sound = Sound
-        self.Channel = Channel
+        self.Channel = self._get_channel
         self.music = None
         self._channel_max = 8
         self._channels = {}
         self._channel_reserved = []
+        self._channel_reserves = ConcurrentLinkedDeque()
+        self._channel_reserves.addAll([id for id in range(self._channel_max)])
+        self._channel_active = ConcurrentLinkedDeque()
         self._channel_paused = []
-        self._channel_reserves = [id for id in range(self._channel_max-1,-1,-1)]
         self._channel_pool = []
+        self._channel_reserved_num = 0
         self._lines = {}
         self._line_num = 0
         self._thread = None
@@ -159,7 +164,7 @@ class Mixer(Runnable):
         """
         if count >= self._channel_max:
             for id in range(self._channel_max, count):
-                self._channel_reserves.insert(0, id)
+                self._channel_reserves.add(id)
             self._channel_max = count
         elif count >= 0:
             for id in range(count, self._channel_max):
@@ -189,12 +194,12 @@ class Mixer(Runnable):
             count = self._channel_max
         elif count < 0:
             count = 0
+        self._channel_reserved_num = count
         self._channel_reserved = []
         self._channel_reserved.append(self.music._channel._id)
-        for id in range(count):
+        for id in range(self._channel_reserved_num):
             self._channel_reserved.append(id)
-            if id in self._channel_reserves:
-                self._channel_reserves.remove(id)
+            self._channel_reserves.remove(id)
         return None
 
     def find_channel(self, force=False):
@@ -209,28 +214,34 @@ class Mixer(Runnable):
             except KeyError:
                 channel = Channel(channel)
                 return channel
-        except IndexError:
-            if force:
-                channel = None
-                longest = 0
-                for id in self._channel_pool:
-                    if id in self._channel_reserved:
-                        continue
-                    try:
-                        duration = self._channels[id]._stream.getMicrosecondPosition()
-                        if duration > longest:
-                            longest = duration
-                            channel = self._channels[id]
-                    except AttributeError:
-                        channel = self._channels[id]
-                        break
-                try:
-                    channel.stop()
-                    return channel
-                except AttributeError:
-                    return None
-            else:
+        except NoSuchElementException:
+            if not force:
                 return None
+            longest = None
+            longest_reserved = None
+            for id in self._channel_active.iterator():
+                if id > self._channel_reserved_num-1:
+                    longest = id
+                    break
+                elif id == -1:
+                    continue
+                else:
+                    if longest_reserved is None:
+                        longest_reserved = id
+            if longest is not None:
+                channel = longest
+            else:
+                if longest_reserved is not None:
+                    channel = longest_reserved
+                else:
+                    channel = 0
+            try:
+                return self._channels[channel]
+            except KeyError:
+                channel = Channel(channel)
+                return channel
+            channel.stop()
+            return channel
 
     def get_busy(self):
         """
@@ -246,62 +257,83 @@ class Mixer(Runnable):
 
     def run(self):
         while self._initialized:
-            channel_active = [self._channels[id] for id in self._channel_pool if self._channels[id]._active]
-            if self.music._channel._active:
-                channel_active.append(self.music._channel)
-            if not channel_active:
+            if self._channel_active.isEmpty():
                 try:
                     self._thread.sleep(1)
                 except InterruptedException:
                     Thread.currentThread().interrupt()
                     self.quit()
                 continue
-            if len(channel_active) > 1:
-                for channel in channel_active:
-                    try:
-                        data, data_len, lvol, rvol = channel._get()
-                    except AttributeError:
-                        continue
-                    self._mixer.setAudioData(data, data_len, lvol, rvol)
-                data_len = self._mixer.getAudioData(self._byteArray)
+            elif self._channel_active.size() > 1:
+                data, data_len = self._mix(self._channel_active)
                 if data_len > 0:
-                    try:
-                        self._mixer.write(self._byteArray, 0, data_len)
-                    except IllegalArgumentException:
-                        nonIntegralByte = data_len % self._audio_format.getFrameSize()
-                        if nonIntegralByte:
-                            data_len -= nonIntegralByte
-                            try:
-                                self._mixer.write(self._byteArray, 0, data_len)
-                            except (IllegalArgumentException, LineUnavailableException):
-                                pass
-                    except LineUnavailableException:
-                        pass
+                    self._write(data, data_len)
             else:
                 try:
-                    data, data_len, lvol, rvol = channel_active[0]._get()
-                except AttributeError:
+                    channel = self._channel_active.getFirst()
+                    data, data_len = self._read(channel)
+                except NoSuchElementException:
                     data_len = 0
                 if data_len > 0:
-                    if lvol < 1.0 or rvol < 1.0:
-                        data = self._mixer.processVolume(data, data_len, lvol, rvol)
-                    try:
-                        self._mixer.write(data, 0, data_len)
-                    except IllegalArgumentException:
-                        nonIntegralByte = data_len % self._audio_format.getFrameSize()
-                        if nonIntegralByte:
-                            data_len -= nonIntegralByte
-                            try:
-                                self._mixer.write(data, 0, data_len)
-                            except (IllegalArgumentException, LineUnavailableException):
-                                pass
-                    except LineUnavailableException:
-                        pass
+                    self._write(data, data_len)
         self._quit()
 
+    def _mix(self, channels):
+        for id in channels.iterator():
+            channel = self._channels[id]
+            if not channel._active:
+                continue
+            try:
+                data, data_len, lvol, rvol = channel._get()
+            except AttributeError:
+                continue
+            self._mixer.setAudioData(data, data_len, lvol, rvol)
+        data_len = self._mixer.getAudioData(self._byteArray)
+        return self._byteArray, data_len
+
+    def _read(self, channel):
+        channel = self._channels[channel]
+        if not channel._active:
+            data, data_len = None, 0
+        else:
+            try:
+                data, data_len, lvol, rvol = channel._get()
+            except AttributeError:
+                data, data_len = None, 0
+        if data_len:
+            if lvol < 1.0 or rvol < 1.0:
+                data = self._mixer.processVolume(data, data_len, lvol, rvol)
+        return data, data_len
+
+    def _write(self, data, data_len):
+        try:
+            self._mixer.write(data, 0, data_len)
+        except IllegalArgumentException:
+            nonIntegralByte = data_len % self._audio_format.getFrameSize()
+            if nonIntegralByte:
+                data_len -= nonIntegralByte
+                try:
+                    self._mixer.write(data, 0, data_len)
+                except (IllegalArgumentException, LineUnavailableException):
+                    pass
+        except LineUnavailableException:
+            pass
+
+    def _activate_channel(self, id):
+        self._channel_active.add(id)
+
+    def _deactivate_channel(self, id):
+        self._channel_active.remove(id)
+
     def _restore_channel(self, id):
-        if id not in self._channel_reserved:
-            self._channel_reserves.append(id)
+        if id > self._channel_reserved_num-1:
+            self._channel_reserves.add(id)
+
+    def _get_channel(self, id):
+        if id in self._channels:
+            return self._channels[id]
+        else:
+            return Channel(id)
 
     def _register_channel(self, channel):
         id = channel._id
@@ -476,6 +508,7 @@ class Channel(object):
 
     def _play(self):
         self._active = True
+        self._mixer._activate_channel(self._id)
 
     def _play_repeat(self, loops):
         if loops > 0:
@@ -502,6 +535,8 @@ class Channel(object):
         """
         Stop sound on channel.
         """
+        self._active = False
+        self._mixer._deactivate_channel(self._id)
         try:
             self._stream.close()
             self._stream = None
@@ -513,7 +548,6 @@ class Channel(object):
         self._volume = 1.0
         self._lvolume = 1.0
         self._rvolume = 1.0
-        self._active = False
         self._mixer._restore_channel(self._id)
         return None
 
@@ -607,7 +641,6 @@ class Music(object):
         Load music file.
         """
         self._sound = Sound(sound_file)
-        self._channel._set_sound(self._sound)
         return None
 
     def unload(self):
