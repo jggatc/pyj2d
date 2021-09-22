@@ -371,7 +371,7 @@ class JEvent(object):
     _keyEvent = ('key', 'unicode', 'mod', 'loc')
     _mousePos = {'x':0, 'y':0}
     _mouseRel = {'x':0, 'y':0}
-    _mouseButton = {1:1, 2:2, 3:3, 4:6, 5:7}
+    _mouseButton = {1:1, 2:2, 3:3, 4:6, 5:7, 6:8, 7:9}
     _mouseWheelButton = {-1:4, 1:5}
 
     def __init__(self, event, eventType):
@@ -381,7 +381,7 @@ class JEvent(object):
         Event object attributes:
         
         * type: MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, KEYDOWN, KEYUP
-        * button: mouse button pressed (1-7)
+        * button: mouse button pressed (1-9)
         * buttons: mouse buttons pressed (1,2,3)
         * pos: mouse position (x,y)
         * rel: mouse relative position change (x,y)
