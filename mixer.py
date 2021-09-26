@@ -46,13 +46,11 @@ class Mixer(Runnable):
         self.music = None
         self._channel_max = 8
         self._channels = {}
-        self._channel_pool = []
         self._channel_available = ConcurrentLinkedDeque()
-        self._channel_available.addAll([id for id in range(self._channel_max)])
+        self._channel_available.addAll(list(range(self._channel_max)))
         self._channel_active = ConcurrentLinkedDeque()
         self._channel_reserved = ConcurrentLinkedDeque()
         self._channel_reserved_num = 0
-        self._channel_paused = []
         self._thread = None
         self._active = False
         self._initialized = False
@@ -85,7 +83,6 @@ class Mixer(Runnable):
             self._bufferSize = self._mixer.getBufferSize()
             self._byteArray = jarray.zeros(self._bufferSize, 'b')
             self.music = Music()
-            self._channel_pool.remove(self.music._channel._id)
             self._initialized = True
             self._thread = Thread(self)
             self._thread.start()
@@ -103,6 +100,7 @@ class Mixer(Runnable):
         Stop mixer processing and release resources.
         """
         self._initialized = False
+        return None
 
     def _quit(self):
         self.stop()
@@ -129,30 +127,27 @@ class Mixer(Runnable):
         """
         Stop mixer channels.
         """
-        for id in self._channel_pool:
-            self._channels[id].stop()
+        for id in self._channel_active.iterator():
+            if id > -1:
+                self._channels[id].stop()
         return None
 
     def pause(self):
         """
         Pause mixer channels.
         """
-        for id in self._channel_pool:
-            try:
-                if self._channels[id]._active:
-                    self._channel_paused.append(id)
-                    self._channels[id].pause()
-            except AttributeError:
-                continue
+        for id in self._channel_active.iterator():
+            if id > -1:
+                self._channels[id].pause()
         return None
 
     def unpause(self):
         """
         Unpause mixer channels.
         """
-        for id in self._channel_paused:
-            self._channels[id].unpause()
-        self._channel_paused[:] = []
+        for id in self._channel_active:
+            if id > -1:
+                self._channels[id].unpause()
         return None
 
     def set_num_channels(self, count):
@@ -170,8 +165,6 @@ class Mixer(Runnable):
                     if self._channels[id] is not None:
                         self._channels[id].stop()
                     del self._channels[id]
-                if id in self._channel_pool:
-                    self._channel_pool.remove(id)
                 if id in self._channel_available:
                     self._channel_available.remove(id)
             self._channel_max = count
@@ -207,20 +200,14 @@ class Mixer(Runnable):
         try:
             id = self._channel_available.pop()
             self._channel_available.add(id)
-            try:
-                return self._channels[id]
-            except KeyError:
-                return Channel(id)
+            return self._get_channel(id)
         except NoSuchElementException:
             pass
         try:
             if self._channel_reserved_num:
                 id = self._channel_reserved.pop()
                 self._channel_reserved.add(id)
-                try:
-                    return self._channels[id]
-                except KeyError:
-                    return Channel(id)
+                return self._get_channel(id)
         except NoSuchElementException:
             if not force:
                 return None
@@ -240,19 +227,13 @@ class Mixer(Runnable):
                 channel = longest_reserved
             else:
                 channel = 0
-        try:
-            channel = self._channels[channel]
-        except KeyError:
-            channel = Channel(channel)
+        channel = self._get_channel(channel)
         return channel
 
     def _retrieve_channel(self):
         try:
             id = self._channel_available.pop()
-            try:
-                channel = self._channels[id]
-            except KeyError:
-                channel = Channel(id)
+            channel = self._get_channel(id)
             self._channel_active.add(id)
             self._active = True
         except NoSuchElementException:
@@ -263,12 +244,10 @@ class Mixer(Runnable):
         """
         Check if mixer channels are actively processing.
         """
-        for id in self._channel_pool:
-            try:
+        for id in self._channel_active.iterator():
+            if id > -1:
                 if self._channels[id]._active:
                     return True
-            except AttributeError:
-                continue
         return False
 
     def run(self):
@@ -360,17 +339,15 @@ class Mixer(Runnable):
                 self._channel_reserved.add(id)
 
     def _get_channel(self, id):
-        if id in self._channels:
+        try:
             return self._channels[id]
-        else:
+        except KeyError:
             return Channel(id)
 
     def _register_channel(self, channel):
         id = channel._id
         if id < self._channel_max:
             self._channels[id] = channel
-            if id not in self._channel_pool:
-                self._channel_pool.append(id)
         else:
             raise AttributeError("Channel not available.")
 
@@ -425,12 +402,15 @@ class Sound(object):
         """
         Stop sound on active channels.
         """
-        for id in self._mixer._channel_pool:
-            try:
-                if self._mixer._channels[id]._sound._id == self._id:
-                    self._mixer._channels[id].stop()
-            except AttributeError:
-                continue
+        channels = self._mixer._channels
+        for id in self._mixer._channel_active.iterator():
+            if id > -1:
+                try:
+                    if channels[id]._sound._id == self._id:
+                        channels[id].stop()
+                except AttributeError:
+                    continue
+        return None
 
     def set_volume(self, volume):
         """
@@ -454,13 +434,15 @@ class Sound(object):
         """
         Get number of channels sound is active.
         """
+        channels = self._mixer._channels
         channel = 0
-        for id in self._mixer._channel_pool:
-            try:
-                if self._mixer._channels[id]._sound._id == self._id:
-                    channel += 1
-            except AttributeError:
-                continue
+        for id in self._mixer._channel_active.iterator():
+            if id > -1:
+                try:
+                    if channels[id]._sound._id == self._id:
+                        channel += 1
+                except AttributeError:
+                    continue
         return channel
 
     def get_length(self):
@@ -539,7 +521,9 @@ class Channel(object):
         Argument sound to play and loops is number of repeats or -1 for continuous.
         """
         if self._sound:
+            lv, rv = self._lvolume, self._rvolume
             self.stop()
+            self.set_volume(lv, rv)
         self._set_sound(sound)
         self._loops = loops
         self._active = True
