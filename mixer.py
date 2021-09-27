@@ -7,6 +7,7 @@ from java.io import File, IOException
 from java.lang import Thread, Runnable, InterruptedException, IllegalArgumentException
 from java.util.concurrent import ConcurrentLinkedDeque
 from java.util import NoSuchElementException
+from java.util.concurrent.atomic import AtomicBoolean
 import jarray
 from pyj2d import env
 try:
@@ -52,7 +53,7 @@ class Mixer(Runnable):
         self._channel_reserved = ConcurrentLinkedDeque()
         self._channel_reserved_num = 0
         self._thread = None
-        self._active = False
+        self._active = AtomicBoolean(False)
         self._initialized = False
         self._nonimplemented_methods()
 
@@ -145,7 +146,7 @@ class Mixer(Runnable):
         """
         Unpause mixer channels.
         """
-        for id in self._channel_active:
+        for id in self._channel_active.iterator():
             if id > -1:
                 self._channels[id].unpause()
         return None
@@ -165,8 +166,7 @@ class Mixer(Runnable):
                     if self._channels[id] is not None:
                         self._channels[id].stop()
                     del self._channels[id]
-                if id in self._channel_available:
-                    self._channel_available.remove(id)
+                self._channel_available.remove(id)
             self._channel_max = count
         return None
 
@@ -209,8 +209,9 @@ class Mixer(Runnable):
                 self._channel_reserved.add(id)
                 return self._get_channel(id)
         except NoSuchElementException:
-            if not force:
-                return None
+            pass
+        if not force:
+            return None
         longest = None
         longest_reserved = None
         for id in self._channel_active.iterator():
@@ -235,7 +236,7 @@ class Mixer(Runnable):
             id = self._channel_available.pop()
             channel = self._get_channel(id)
             self._channel_active.add(id)
-            self._active = True
+            self._active.set(True)
         except NoSuchElementException:
             channel = None
         return channel
@@ -252,7 +253,7 @@ class Mixer(Runnable):
 
     def run(self):
         while self._initialized:
-            if not self._active:
+            if not self._active.get():
                 self._thread_sleep()
                 continue
             if self._channel_active.size() > 1:
@@ -279,7 +280,7 @@ class Mixer(Runnable):
     def _mix(self, channels):
         for id in channels.iterator():
             channel = self._channels[id]
-            if not channel._active:
+            if not channel._active.get():
                 continue
             try:
                 data, data_len, lvol, rvol = channel._get()
@@ -291,7 +292,7 @@ class Mixer(Runnable):
 
     def _read(self, channel):
         channel = self._channels[channel]
-        if not channel._active:
+        if not channel._active.get():
             data, data_len = None, 0
         else:
             try:
@@ -323,20 +324,18 @@ class Mixer(Runnable):
         else:
             self._channel_reserved.remove(id)
         self._channel_active.add(id)
-        self._active = True
+        self._active.set(True)
 
     def _deactivate_channel(self, id):
         self._channel_active.remove(id)
         if self._channel_active.isEmpty():
-            self._active = False
+            self._active.set(False)
 
     def _restore_channel(self, id):
         if id > self._channel_reserved_num-1:
-            if not self._channel_available.contains(id):
-                self._channel_available.add(id)
+            self._channel_available.add(id)
         elif id > -1:
-            if not self._channel_reserved.contains(id):
-                self._channel_reserved.add(id)
+            self._channel_reserved.add(id)
 
     def _get_channel(self, id):
         try:
@@ -481,7 +480,7 @@ class Channel(object):
         self._stream = None
         self._data = jarray.zeros(self._mixer._bufferSize, 'b')
         self._data_len = 0
-        self._active = False
+        self._active = AtomicBoolean(False)
         self._pause = False
         self._loops = 0
         self._volume = 1.0
@@ -513,7 +512,7 @@ class Channel(object):
     def _play(self, sound, loops):
         self._set_sound(sound)
         self._loops = loops
-        self._active = True
+        self._active.set(True)
 
     def play(self, sound, loops=0, maxtime=0, fade_ms=0):
         """
@@ -526,7 +525,7 @@ class Channel(object):
             self.set_volume(lv, rv)
         self._set_sound(sound)
         self._loops = loops
-        self._active = True
+        self._active.set(True)
         self._mixer._activate_channel(self._id)
         return None
 
@@ -534,7 +533,9 @@ class Channel(object):
         """
         Stop sound on channel.
         """
-        self._active = False
+        if not self._active.get():
+            return None
+        self._active.set(False)
         self._mixer._deactivate_channel(self._id)
         try:
             self._stream.close()
@@ -554,8 +555,8 @@ class Channel(object):
         """
         Pause sound on channel.
         """
-        if self._active:
-            self._active = False
+        if self._active.get():
+            self._active.set(False)
             self._pause = True
         return None
 
@@ -564,9 +565,8 @@ class Channel(object):
         Unpause sound on channel.
         """
         if self._pause:
-            if self._stream:
-                self._active = True
-                self._pause = False
+            self._active.set(True)
+            self._pause = False
         return None
 
     def set_volume(self, volume, volume2=None):
@@ -600,7 +600,7 @@ class Channel(object):
         """
         Check if channel is processing sound.
         """
-        return self._active
+        return self._active.get()
 
     def get_sound(self):
         """
