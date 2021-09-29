@@ -53,6 +53,7 @@ class Mixer(Runnable):
         self._channel_reserved = ConcurrentLinkedDeque()
         self._channel_reserved_num = 0
         self._thread = None
+        self.run = self._process
         self._active = AtomicBoolean(False)
         self._initialized = False
         self._nonimplemented_methods()
@@ -83,6 +84,8 @@ class Mixer(Runnable):
                 return None
             self._bufferSize = self._mixer.getBufferSize()
             self._byteArray = jarray.zeros(self._bufferSize, 'b')
+            for id in range(self._channel_max):
+                self._get_channel(id)
             self.music = Music()
             self._initialized = True
             self._thread = Thread(self)
@@ -158,6 +161,7 @@ class Mixer(Runnable):
         """
         if count >= self._channel_max:
             for id in range(self._channel_max, count):
+                self._get_channel(id)
                 self._channel_available.add(id)
             self._channel_max = count
         elif count >= 0:
@@ -200,14 +204,14 @@ class Mixer(Runnable):
         try:
             id = self._channel_available.pop()
             self._channel_available.add(id)
-            return self._get_channel(id)
+            return self._channels[id]
         except NoSuchElementException:
             pass
         try:
             if self._channel_reserved_num:
                 id = self._channel_reserved.pop()
                 self._channel_reserved.add(id)
-                return self._get_channel(id)
+                return self._channels[id]
         except NoSuchElementException:
             pass
         if not force:
@@ -228,18 +232,7 @@ class Mixer(Runnable):
                 channel = longest_reserved
             else:
                 channel = 0
-        channel = self._get_channel(channel)
-        return channel
-
-    def _retrieve_channel(self):
-        try:
-            id = self._channel_available.pop()
-            channel = self._get_channel(id)
-            self._channel_active.add(id)
-            self._active.set(True)
-        except NoSuchElementException:
-            channel = None
-        return channel
+        return self._channels[channel]
 
     def get_busy(self):
         """
@@ -251,10 +244,10 @@ class Mixer(Runnable):
                     return True
         return False
 
-    def run(self):
+    def _process(self):
         while self._initialized:
             if not self._active.get():
-                self._thread_sleep()
+                self._idle()
                 continue
             if self._channel_active.size() > 1:
                 data, data_len = self._mix(self._channel_active)
@@ -270,7 +263,7 @@ class Mixer(Runnable):
                     self._write(data, data_len)
         self._quit()
 
-    def _thread_sleep(self):
+    def _idle(self):
         try:
             self._thread.sleep(10)
         except InterruptedException:
@@ -337,10 +330,19 @@ class Mixer(Runnable):
         elif id > -1:
             self._channel_reserved.add(id)
 
-    def _get_channel(self, id):
+    def _retrieve_channel(self):
         try:
+            id = self._channel_available.pop()
+            self._channel_active.add(id)
+            self._active.set(True)
             return self._channels[id]
-        except KeyError:
+        except NoSuchElementException:
+            return None
+
+    def _get_channel(self, id):
+        if id in self._channels:
+            return self._channels[id]
+        else:
             return Channel(id)
 
     def _register_channel(self, channel):
@@ -374,11 +376,11 @@ class Sound(object):
         Sound._id += 1
         if isinstance(sound_file, str):
             try:
-                self._sound_object = env.japplet.getClass().getResource(sound_file.replace('\\','/'))    #java uses /, not os.path Windows \
+                self._sound_object = env.japplet.getClass().getResource(sound_file.replace('\\','/'))
                 if not self._sound_object:
                     raise IOError
             except:
-                self._sound_object = File(sound_file)      #make path os independent
+                self._sound_object = File(sound_file)
         else:
             self._sound_object = sound_file
         self._channel = None
