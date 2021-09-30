@@ -10,6 +10,7 @@ from java.util import NoSuchElementException
 from java.util.concurrent.atomic import AtomicBoolean
 import jarray
 from pyj2d import env
+from pyj2d import locals as Const
 try:
     from pyj2d import Mixer as AudioMixer
 except ImportError:
@@ -472,6 +473,8 @@ class Channel(object):
     * Channel.get_volume
     * Channel.get_busy
     * Channel.get_sound
+    * Channel.set_endevent
+    * Channel.get_endevent
     """
 
     _mixer = None
@@ -488,6 +491,7 @@ class Channel(object):
         self._volume = 1.0
         self._lvolume = 1.0
         self._rvolume = 1.0
+        self._endevent = None
         self._mixer._register_channel(self)
         self._nonimplemented_methods()
 
@@ -610,12 +614,31 @@ class Channel(object):
         """
         return self._sound
 
+    def set_endevent(self, eventType=None):
+        """
+        Set endevent for sound channel.
+        Argument eventType is event type (eg. USEREVENT+num).
+        Without an argument resets endevent to NOEVENT type.
+        """
+        if eventType is not None:
+            if self._endevent is None or self._endevent.type != eventType:
+                self._endevent = env.event.Event(eventType)
+        else:
+            self._endevent = None
+
+    def get_endevent(self):
+        """
+        Get endevent type for sound channel.
+        """
+        if self._endevent is not None:
+            return self._endevent.type
+        else:
+            return Const.NOEVENT
+
     def _nonimplemented_methods(self):
         self.fadeout = lambda *arg: None
         self.queue = lambda *arg: None
         self.get_queue = lambda *arg: None
-        self.set_endevent = lambda *arg: None
-        self.get_endevent = lambda *arg: 0
 
 
 class Music(object):
@@ -631,6 +654,8 @@ class Music(object):
     * music.set_volume
     * music.get_volume
     * music.get_busy
+    * music.set_endevent
+    * music.get_endevent
     """
 
     def __init__(self):
@@ -700,4 +725,19 @@ class Music(object):
         Check if music playing.
         """
         return self._channel.get_busy()
+
+    def set_endevent(self, eventType=None):
+        """
+        Set endevent for music channel.
+        Argument eventType is event type (eg. USEREVENT+num).
+        Without an argument resets endevent to NOEVENT type.
+        """
+        self._channel.set_endevent(eventType)
+        return None
+
+    def get_endevent(self):
+        """
+        Get endevent type for music channel.
+        """
+        return self._channel.get_endevent()
 
