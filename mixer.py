@@ -535,7 +535,7 @@ class Channel(object):
         """
         Stop sound on channel.
         """
-        if not self._active.get():
+        if not self._active.get() and not self._pause:
             return None
         self._active.set(False)
         self._mixer._deactivate_channel(self._id)
