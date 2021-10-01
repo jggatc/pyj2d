@@ -9,6 +9,7 @@
 -add mixer music object.
 -add hscroll mouseevent.
 -add mixer channel endevent.
+-add mixer channel queue.
 
 0.30    2021-04-28
 -center display frame.

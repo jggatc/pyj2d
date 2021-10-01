@@ -473,6 +473,8 @@ class Channel(object):
     * Channel.get_volume
     * Channel.get_busy
     * Channel.get_sound
+    * Channel.queue
+    * Channel.get_queue
     * Channel.set_endevent
     * Channel.get_endevent
     """
@@ -491,6 +493,7 @@ class Channel(object):
         self._volume = 1.0
         self._lvolume = 1.0
         self._rvolume = 1.0
+        self._queue = None
         self._endevent = None
         self._mixer._register_channel(self)
         self._nonimplemented_methods()
@@ -508,7 +511,10 @@ class Channel(object):
             return (self._data, self._data_len, self._lvolume*self._sound._volume, self._rvolume*self._sound._volume)
         else:
             if not self._loops:
-                self.stop()
+                if not self._queue:
+                    self.stop()
+                else:
+                    self.play(self._queue)
             else:
                 self._stream.close()
                 self._set_sound(self._sound)
@@ -549,13 +555,14 @@ class Channel(object):
         except AttributeError:
             pass
         self._sound = None
+        self._queue = None
         self._pause = False
         self._loops = 0
         self._volume = 1.0
         self._lvolume = 1.0
         self._rvolume = 1.0
         self._mixer._restore_channel(self._id)
-        if self._endevent is not None:      ###endevent
+        if self._endevent is not None:
             env.event.post(self._endevent)
         return None
 
@@ -616,6 +623,21 @@ class Channel(object):
         """
         return self._sound
 
+    def queue(self, sound):
+        """
+        Queue sound to play after current sound ends.
+        """
+        if not self._sound:
+            self.play(sound)
+        else:
+            self._queue = sound
+
+    def get_queue(self):
+        """
+        Return queue sound.
+        """
+        return self._queue
+
     def set_endevent(self, eventType=None):
         """
         Set endevent for sound channel.
@@ -639,8 +661,6 @@ class Channel(object):
 
     def _nonimplemented_methods(self):
         self.fadeout = lambda *arg: None
-        self.queue = lambda *arg: None
-        self.get_queue = lambda *arg: None
 
 
 class Music(object):
@@ -656,6 +676,7 @@ class Music(object):
     * music.set_volume
     * music.get_volume
     * music.get_busy
+    * music.queue
     * music.set_endevent
     * music.get_endevent
     """
@@ -663,6 +684,7 @@ class Music(object):
     def __init__(self):
         self._channel = Channel(-1)
         self._sound = None
+        self._queue = None
         self._volume = None
 
     def load(self, sound_file):
@@ -687,6 +709,10 @@ class Music(object):
         """
         self._channel.set_volume(self._volume)
         self._channel.play(self._sound, loops)
+        if self._queue:
+            self._channel.queue(self._queue)
+            self._sound = self._queue
+            self._queue = None
         return None
 
     def stop(self):
@@ -735,6 +761,18 @@ class Music(object):
         Check if music playing.
         """
         return self._channel.get_busy()
+
+    def queue(self, sound_file):
+        """
+        Queue sound to play after current sound ends.
+        """
+        if not self._sound:
+            return None
+        if not self._channel.get_busy():
+            self._queue = Sound(sound_file)
+        else:
+            self._sound = Sound(sound_file)
+            self._channel.queue(self._sound)
 
     def set_endevent(self, eventType=None):
         """
