@@ -685,7 +685,7 @@ class Music(object):
         self._channel = Channel(-1)
         self._sound = None
         self._queue = None
-        self._volume = None
+        self._volume = 1.0
 
     def load(self, sound_file):
         """
