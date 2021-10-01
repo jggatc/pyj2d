@@ -555,6 +555,8 @@ class Channel(object):
         self._lvolume = 1.0
         self._rvolume = 1.0
         self._mixer._restore_channel(self._id)
+        if self._endevent is not None:      ###endevent
+            env.event.post(self._endevent)
         return None
 
     def pause(self):
