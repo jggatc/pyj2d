@@ -564,19 +564,8 @@ class Channel(object):
         if self._data_len > 0:
             return (self._data, self._data_len, self._lvolume*self._sound._volume, self._rvolume*self._sound._volume)
         else:
-            self._end()
+            self._onended()
             return (self._data, self._data_len, 1.0, 1.0)
-
-    def _end(self):
-        if not self._loops:
-            if not self._queue:
-                self.stop()
-            else:
-                self.play(self._queue)
-        else:
-            self._stream.close()
-            self._set_sound(self._sound)
-            self._loops -= 1
 
     def _play(self, sound, loops):
         self._set_sound(sound)
@@ -597,6 +586,17 @@ class Channel(object):
         self._active.set(True)
         self._mixer._activate_channel(self._id)
         return None
+
+    def _onended(self):
+        if not self._loops:
+            if not self._queue:
+                self.stop()
+            else:
+                self.play(self._queue)
+        else:
+            self._stream.close()
+            self._set_sound(self._sound)
+            self._loops -= 1
 
     def stop(self):
         """
