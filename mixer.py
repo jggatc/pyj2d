@@ -3,8 +3,10 @@
 
 from javax.sound.sampled import AudioSystem, AudioFormat
 from javax.sound.sampled import LineUnavailableException
+from java.io import ByteArrayInputStream
 from java.io import File, IOException
-from java.lang import Thread, Runnable, InterruptedException, IllegalArgumentException
+from java.lang import Thread, Runnable
+from java.lang import InterruptedException, IllegalArgumentException
 from java.util.concurrent import ConcurrentLinkedDeque
 from java.util import NoSuchElementException
 from java.util.concurrent.atomic import AtomicBoolean
@@ -57,7 +59,6 @@ class Mixer(Runnable):
         self.run = self._process
         self._active = AtomicBoolean(False)
         self._initialized = False
-        self._nonimplemented_methods()
 
     def init(self, frequency=22050, size=-16, channels=2, buffer=4096):
         """
@@ -353,9 +354,6 @@ class Mixer(Runnable):
         else:
             raise AttributeError("Channel not available.")
 
-    def _nonimplemented_methods(self):
-        self.fadeout = lambda *arg: None
-
 
 class Sound(object):
     """
@@ -367,6 +365,7 @@ class Sound(object):
     * Sound.get_volume
     * Sound.get_num_channels
     * Sound.get_length
+    * Sound.get_raw
     """
 
     _id = 0
@@ -376,17 +375,31 @@ class Sound(object):
         self._id = Sound._id
         Sound._id += 1
         if isinstance(sound_file, str):
-            try:
-                self._sound_object = env.japplet.getClass().getResource(sound_file.replace('\\','/'))
-                if not self._sound_object:
-                    raise IOError
-            except:
-                self._sound_object = File(sound_file)
+            _sound_file = self._get_sound_file(sound_file)
+            self._sound_object = self._get_sound_object(_sound_file)
         else:
             self._sound_object = sound_file
         self._channel = None
         self._volume = 1.0
-        self._nonimplemented_methods()
+
+    def _get_sound_file(self, sound_file):
+        try:
+            _sound_file = env.japplet.getClass().getResource(sound_file.replace('\\','/'))
+            if not _sound_file:
+                raise IOError
+        except:
+            _sound_file = File(sound_file)
+        return _sound_file
+
+    def _get_sound_object(self, sound_file):
+        stream = AudioSystem.getAudioInputStream(sound_file)
+        sound_object = jarray.zeros(stream.available(), 'b')
+        stream.read(sound_object)
+        stream.close()
+        return sound_object
+
+    def _get_stream(self):
+        return ByteArrayInputStream(self._sound_object)
 
     def play(self, loops=0, maxtime=0, fade_ms=0):
         """
@@ -451,14 +464,41 @@ class Sound(object):
         """
         Get length of sound sample.
         """
-        stream = AudioSystem.getAudioInputStream(self._sound_object)
-        length = stream.getFrameLength() / stream.getFormat().getFrameRate()
-        stream.close()
-        return length
+        f = self._mixer._audio_format
+        return len(self._sound_object) / ( f.getSampleRate() * f.getChannels() * (f.getSampleSizeInBits()/8) )
 
-    def _nonimplemented_methods(self):
-        self.fadeout = lambda *arg: None
-        self.get_buffer = lambda *arg: None
+    def get_raw(self):
+        data = jarray.zeros(len(self._sound_object), 'b')
+        for i in range(len(self._sound_object)):
+            data[i] = self._sound_object[i]
+        return data
+
+
+class _SoundStream(Sound):
+
+    def _get_sound_object(self, sound_file):
+        return sound_file
+
+    def _get_stream(self):
+        if isinstance(self._sound_object, File):
+            return AudioSystem.getAudioInputStream(self._sound_object)
+        else:
+            return ByteArrayInputStream(self._sound_object)
+
+    def get_length(self):
+        if not isinstance(self._sound_object, File):
+            return Sound.get_length(self)
+        else:
+            stream = self._get_stream()
+            length = stream.getFrameLength() / stream.getFormat().getFrameRate()
+            stream.close()
+            return length
+
+    def get_raw(self):
+        if not isinstance(self._sound_object, File):
+            return Sound.get_raw(self)
+        else:
+            return Sound._get_sound_object(self, self._sound_object)
 
 
 class Channel(object):
@@ -485,7 +525,8 @@ class Channel(object):
         self._id = id
         self._sound = None
         self._stream = None
-        self._data = jarray.zeros(self._mixer._bufferSize, 'b')
+        self._len = self._mixer._bufferSize
+        self._data = jarray.zeros(self._len, 'b')
         self._data_len = 0
         self._active = AtomicBoolean(False)
         self._pause = False
@@ -496,30 +537,46 @@ class Channel(object):
         self._queue = None
         self._endevent = None
         self._mixer._register_channel(self)
-        self._nonimplemented_methods()
 
     def _set_sound(self, sound):
         self._sound = sound
-        self._stream = AudioSystem.getAudioInputStream(sound._sound_object)
+        self._stream = sound._get_stream()
+
+    def _reset_sound(self):
+        self._active.set(False)
+        restart = not self._pause
+        if not self._sound:
+            return
+        try:
+            sound = self._sound
+            self._stream.close()
+            self._set_sound(self._sound)
+        except AttributeError:
+            restart = False
+        if restart:
+            self._active.set(True)
 
     def _get(self):
         try:
-            self._data_len = self._stream.read(self._data)
+            self._data_len = self._stream.read(self._data, 0, self._len)
         except IOException:
             self._data_len = 0
         if self._data_len > 0:
             return (self._data, self._data_len, self._lvolume*self._sound._volume, self._rvolume*self._sound._volume)
         else:
-            if not self._loops:
-                if not self._queue:
-                    self.stop()
-                else:
-                    self.play(self._queue)
-            else:
-                self._stream.close()
-                self._set_sound(self._sound)
-                self._loops -= 1
+            self._end()
             return (self._data, self._data_len, 1.0, 1.0)
+
+    def _end(self):
+        if not self._loops:
+            if not self._queue:
+                self.stop()
+            else:
+                self.play(self._queue)
+        else:
+            self._stream.close()
+            self._set_sound(self._sound)
+            self._loops -= 1
 
     def _play(self, sound, loops):
         self._set_sound(sound)
@@ -615,7 +672,7 @@ class Channel(object):
         """
         Check if channel is processing sound.
         """
-        return self._active.get()
+        return self._active.get() or self._pause
 
     def get_sound(self):
         """
@@ -659,9 +716,6 @@ class Channel(object):
         else:
             return Const.NOEVENT
 
-    def _nonimplemented_methods(self):
-        self.fadeout = lambda *arg: None
-
 
 class Music(object):
     """
@@ -670,6 +724,7 @@ class Music(object):
     * music.load
     * music.unload
     * music.play
+    * music.rewind
     * music.stop
     * music.pause
     * music.unpause
@@ -691,7 +746,9 @@ class Music(object):
         """
         Load music file.
         """
-        self._sound = Sound(sound_file)
+        if self._channel.get_busy():
+            self._channel.stop()
+        self._sound = _SoundStream(sound_file)
         return None
 
     def unload(self):
@@ -714,6 +771,13 @@ class Music(object):
             self._sound = self._queue
             self._queue = None
         return None
+
+    def rewind(self):
+        """
+        Rewind music.
+        """
+        if self._channel.get_busy():
+            self._channel._reset_sound()
 
     def stop(self):
         """
@@ -769,9 +833,9 @@ class Music(object):
         if not self._sound:
             return None
         if not self._channel.get_busy():
-            self._queue = Sound(sound_file)
+            self._queue = _SoundStream(sound_file)
         else:
-            self._sound = Sound(sound_file)
+            self._sound = _SoundStream(sound_file)
             self._channel.queue(self._sound)
 
     def set_endevent(self, eventType=None):
