@@ -86,7 +86,6 @@ class Time(object):
     * time.wait
     * time.set_timer
     * time.time
-    * time.timeout
     * time.Clock
     """
 
@@ -149,6 +148,12 @@ class Time(object):
     def _stop_timers(self):
         for eventType in self._timers:
             self._timers[eventType].set_timer(0, False)
+
+    def time(self):
+        """
+        Return system time (in ms).
+        """
+        return System.nanoTime()/1000000.0
 
 
 class _EventTimer(ActionListener):
