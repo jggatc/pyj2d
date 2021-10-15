@@ -628,9 +628,16 @@ class Channel(object):
             self._onended()
             return (self._data, self._data_len, 1.0, 1.0)
 
-    def _play(self, sound, loops):
+    def _play(self, sound, loops, maxtime, fade_ms):
         self._set_sound(sound)
         self._loops = loops
+        if maxtime:
+            self._maxtime = int(maxtime * self._data_rate)
+            self._process = True
+        if fade_ms:
+            self._fadein = fade_ms * self._data_rate
+            self._process = True
+        self._data_sum = 0
         self._active.set(True)
 
     def play(self, sound, loops=0, maxtime=0, fade_ms=0):
