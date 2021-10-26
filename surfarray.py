@@ -16,7 +16,7 @@ def _init():
     """
     Initialize surfarray module.
     """
-    global _initialized
+    global numeric, _initialized
     from pyj2d.numeric import numeric
     if not numeric:
         raise ImportError("JNumeric module is required.")
