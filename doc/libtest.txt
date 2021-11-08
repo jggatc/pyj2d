@@ -1,0 +1,14 @@
+Libtest
+
+The libtest script tests the functionality of the PyJ2D library, capable of running with Jython/PyJ2D or Python/Pygame. To test PyJ2D, the system should have JavaVM with Jython (installed or standalone jar package) and the pyj2d folder on script path. The libtest.py script in package root executes the tests in the test folder. Tests are run with Jython installation with command:
+
+'jython libtest.py'
+
+or with Jython standalone:
+
+'java -jar jython.jar libtest.py'
+
+Tests that require Jnumeric (refer to pyj2d/numeric.py) are skipped unless Jnumeric is imported with command:
+
+'java -cp jython.jar:jnumeric-0.1.jar:$CLASSPATH org.python.util.jython libtest.py'
+
