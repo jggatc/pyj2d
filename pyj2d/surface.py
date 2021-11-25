@@ -6,7 +6,7 @@ from java.lang import ArrayIndexOutOfBoundsException
 from java.util import Hashtable
 from pyj2d.rect import Rect
 from pyj2d.color import Color
-from pyj2d import locals as Const
+from pyj2d import constants as Const
 
 __docformat__ = 'restructuredtext'
 

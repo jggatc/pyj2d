@@ -4,7 +4,7 @@
 from java.awt import Cursor
 from pyj2d.surface import Surface
 from pyj2d.color import Color
-from pyj2d import locals as Const
+from pyj2d import constants as Const
 
 
 DEFAULT_CURSOR = Cursor.DEFAULT_CURSOR

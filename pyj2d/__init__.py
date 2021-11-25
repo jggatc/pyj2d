@@ -43,7 +43,7 @@ from pyj2d import mask
 from pyj2d import font
 from pyj2d import sprite
 from pyj2d import cursors
-from pyj2d.locals import *
+from pyj2d.constants import *
 
 
 def init():

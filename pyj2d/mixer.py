@@ -12,7 +12,7 @@ from java.util import NoSuchElementException
 from java.util.concurrent.atomic import AtomicBoolean
 import jarray
 from pyj2d import env
-from pyj2d import locals as Const
+from pyj2d import constants as Const
 try:
     from pyj2d import Mixer as AudioMixer
 except ImportError:

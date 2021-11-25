@@ -4,7 +4,7 @@
 from java.lang import Thread
 from java.awt.event import MouseEvent, KeyEvent
 from pyj2d import env
-from pyj2d import locals as Const
+from pyj2d import constants as Const
 
 __docformat__ = 'restructuredtext'
 
