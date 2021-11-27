@@ -14,6 +14,8 @@ class Key(object):
     
     * pyj2d.key.name
     * pyj2d.key.get_mods
+    * pyj2d.key.set_repeat
+    * pyj2d.key.get_repeat
     """
 
     def __init__(self):
@@ -41,10 +43,32 @@ class Key(object):
         """
         return self.keyMod[self.alt][self.keyPress[self.alt]] | self.keyMod[self.ctrl][self.keyPress[self.ctrl]] | self.keyMod[self.shift][self.keyPress[self.shift]]
 
+    def set_repeat(self, delay=0, interval=0):
+        """
+        Set key repeat delay (ms) and interval (ms) settings.
+        Key repeat initially disabled.
+        """
+        if delay < 0 or interval < 0:
+            raise ValueError('repeat settings must be positive integers')
+        if not delay:
+            env.event.keyRepeat[0] = 0
+            env.event.keyRepeat[1] = 0
+        else:
+            env.event.keyRepeat[0] = delay
+            if interval:
+                env.event.keyRepeat[1] = interval
+            else:
+                env.event.keyRepeat[1] = delay
+        return None
+
+    def get_repeat(self):
+        """
+        Get key repeat settings.
+        """
+        return env.event.keyRepeat
+
     def _nonimplemented_methods(self):
         self.get_focused = lambda *arg: None
         self.get_pressed = lambda *arg: None
         self.set_mods = lambda *arg: None
-        self.set_repeat = lambda *arg: None
-        self.get_repeat = lambda *arg: True
 

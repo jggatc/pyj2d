@@ -9,6 +9,7 @@ from java.awt.event import MouseMotionListener
 from java.awt.event import MouseWheelListener
 from java.awt.event import KeyListener
 from java.awt.event import MouseEvent, KeyEvent
+from java.lang import System
 from java.lang import Thread, Runnable, InterruptedException
 from javax.swing import SwingUtilities
 from pyj2d.surface import Surface
@@ -51,7 +52,9 @@ class Panel(JPanel, MouseListener, MouseMotionListener, MouseWheelListener, KeyL
         self.setFocusable(True)
         self.requestFocusInWindow()
         self.event = env.event
-        self.modKey = env.event.modKey
+        self.modKey = self.event.modKey
+        self.keyRepeat = self.event.keyRepeat
+        self.keyHeld = self.event.keyHeld
         self._repainting = Clock._repaint_sync
 
     def mousePressed(self, event):
@@ -86,12 +89,38 @@ class Panel(JPanel, MouseListener, MouseMotionListener, MouseWheelListener, KeyL
     def keyPressed(self, event):
         if event.keyCode in self.modKey:
             self.event.keyPress[event.keyCode] = True
-        self.event._updateQueue(event, KeyEvent.KEY_PRESSED)
+        if not self._isPaused(event.keyCode):
+            self.event._updateQueue(event, KeyEvent.KEY_PRESSED)
 
     def keyReleased(self, event):
         if event.keyCode in self.modKey:
             self.event.keyPress[event.keyCode] = False
+        self.keyHeld[event.keyCode]['pressed'] = False
         self.event._updateQueue(event, KeyEvent.KEY_RELEASED)
+
+    def _isPaused(self, keycode):
+        if keycode not in self.keyHeld:
+            self.keyHeld[keycode] = {'pressed':False, 'delay':False, 'time':0}
+        key = self.keyHeld[keycode]
+        if not key['pressed']:
+            key['pressed'] = True
+            paused = False
+            if self.keyRepeat[0]:
+                key['delay'] = True
+                key['time'] = System.nanoTime()//1000000
+        else:
+            paused = True
+            if self.keyRepeat[0]:
+                time = System.nanoTime()//1000000
+                if key['delay']:
+                    if time - key['time'] > self.keyRepeat[0]:
+                        key['time'] = time
+                        key['delay'] = False
+                        paused = False
+                elif time - key['time'] > self.keyRepeat[1]:
+                    key['time'] = time
+                    paused = False
+        return paused
 
     def keyTyped(self, event):
         pass
