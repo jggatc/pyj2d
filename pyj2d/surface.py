@@ -11,6 +11,9 @@ from pyj2d import constants as Const
 __docformat__ = 'restructuredtext'
 
 
+_return_rect = True
+
+
 class Surface(BufferedImage):
     """
     **pyj2d.Surface**
@@ -163,6 +166,16 @@ class Surface(BufferedImage):
         Draw given surface on this surface at position.
         Optional area delimitates the region of given surface to draw.
         """
+        if not _return_rect:
+            g2d = self.createGraphics()
+            if not area:
+                g2d.drawImage(surface, position[0], position[1], None)
+            else:
+                g2d.drawImage(surface,
+                    position[0],position[1],position[0]+area[2],position[1]+area[3],
+                    area[0],area[1],area[0]+area[2],area[1]+area[3], None)
+            g2d.dispose()
+            return None
         g2d = self.createGraphics()
         if not area:
             rect = Rect(position[0],position[1],surface.width,surface.height)
@@ -293,4 +306,13 @@ class Surface(BufferedImage):
         self.mustlock = lambda *arg: False
         self.get_locked = lambda *arg: False
         self.get_locks = lambda *arg: ()
+
+
+def bounding_rect_return(setting):
+    """
+    Set whether surface blit function returns bounding Rect.
+    Setting (bool) defaults to True on module initialization.
+    """
+    global _return_rect
+    _return_rect = setting
 

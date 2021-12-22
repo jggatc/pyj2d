@@ -38,6 +38,7 @@ from pyj2d.time import Time
 from pyj2d.vector import Vector2
 from pyj2d import draw
 from pyj2d import transform
+from pyj2d import surface
 from pyj2d import surfarray
 from pyj2d import mask
 from pyj2d import font
@@ -88,4 +89,13 @@ def quit():
         del(module)
     if env.jframe:
         env.jframe.stop()
+
+
+def bounding_rect_return(setting):
+    """
+    Set whether blit/draw return bounding Rect.
+    Setting (bool) defaults to True on module initialization.
+    """
+    surface.bounding_rect_return(setting)
+    draw.bounding_rect_return(setting)
 
