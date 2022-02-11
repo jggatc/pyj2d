@@ -31,10 +31,10 @@ def array2d(surface):
     """
     if not _initialized:
         _init()
-    data = numeric.zeros((surface.width*surface.height), 'i')
+    data = numeric.zeros((surface.width * surface.height), 'i')
     data = surface.getRGB(0, 0, surface.width, surface.height,
                           data, 0, surface.width)
-    array = numeric.reshape(data, (surface.width,surface.height))
+    array = numeric.reshape(data, (surface.width, surface.height))
     return array
 
 
@@ -50,7 +50,7 @@ def array3d(surface):
                           None, 0, surface.width)
     data = numeric.array([(dat>>16 & 0xff, dat>>8 & 0xff, dat & 0xff)
                           for dat in data])
-    array = numeric.reshape(data, (surface.width,surface.height,3))
+    array = numeric.reshape(data, (surface.width, surface.height,3))
     return array
 
 
@@ -65,7 +65,7 @@ def array_alpha(surface):
     data = surface.getRGB(0, 0, surface.width, surface.height,
                           None, 0, surface.width)
     data = numeric.array([dat>>24 & 0xff for dat in data], numeric.Int8)
-    array = numeric.reshape(data, (surface.width,surface.height))
+    array = numeric.reshape(data, (surface.width, surface.height))
     return array
 
 
@@ -102,7 +102,7 @@ def blit_array(surface, array):
         surface.setRGB(0, 0, surface.width, surface.height,
                        data, 0, surface.width)
     else:
-        surf = Surface((surface.width,surface.height),
+        surf = Surface((surface.width, surface.height),
                        BufferedImage.TYPE_INT_RGB)
         surf.setRGB(0, 0, surface.width, surface.height,
                     data, 0, surface.width)

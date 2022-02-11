@@ -729,17 +729,18 @@ class collide_rect_ratio(object):
 
     def __call__(self, sprite1, sprite2):
         r = sprite1.rect
-        x = (r.width*self.ratio)-r.width
-        y = (r.height*self.ratio)-r.height
+        x = (r.width * self.ratio) - r.width
+        y = (r.height * self.ratio) - r.height
         r1 = rectPool.get(
             r.x-int(x*0.5), r.y-int(y*0.5), r.width+int(x), r.height+int(y))
         r = sprite2.rect
-        x = (r.width*self.ratio)-r.width
-        y = (r.height*self.ratio)-r.height
+        x = (r.width * self.ratio) - r.width
+        y = (r.height * self.ratio) - r.height
         r2 = rectPool.get(
             r.x-int(x*0.5), r.y-int(y*0.5), r.width+int(x), r.height+int(y))
         collide = r1.intersects(r2)
-        rectPool.extend((r1,r2))
+        rectPool.append(r1)
+        rectPool.append(r2)
         return collide
 
 
@@ -761,11 +762,11 @@ def collide_circle(sprite1, sprite2):
     else:
         radius2 = (((((sprite2.rect.width)**2)
                    + ((sprite2.rect.height)**2))**0.5) * 0.5)
-    sx1 = (sprite1.rect.x+int(sprite1.rect.width*0.5))
-    sy1 = (sprite1.rect.y+int(sprite1.rect.height*0.5))
-    sx2 = (sprite2.rect.x+int(sprite2.rect.width*0.5))
-    sy2 = (sprite2.rect.y+int(sprite2.rect.height*0.5))
-    return ( ((sx1-sx2)**2 + (sy1-sy2)**2) ) < (radius1**2+radius2**2)
+    sx1 = (sprite1.rect.x + int(sprite1.rect.width * 0.5))
+    sy1 = (sprite1.rect.y + int(sprite1.rect.height * 0.5))
+    sx2 = (sprite2.rect.x + int(sprite2.rect.width * 0.5))
+    sy2 = (sprite2.rect.y + int(sprite2.rect.height * 0.5))
+    return (((sx1 - sx2)**2 + (sy1 - sy2)**2)) < (radius1**2 + radius2**2)
 
 
 class collide_circle_ratio(object):
@@ -794,11 +795,11 @@ class collide_circle_ratio(object):
         else:
             radius2 = (((((sprite2.rect.width)**2)
                        + ((sprite2.rect.height)**2))**0.5) * 0.5 * self.ratio)
-        sx1 = (sprite1.rect.x+int(sprite1.rect.width*0.5))
-        sy1 = (sprite1.rect.y+int(sprite1.rect.height*0.5))
-        sx2 = (sprite2.rect.x+int(sprite2.rect.width*0.5))
-        sy2 = (sprite2.rect.y+int(sprite2.rect.height*0.5))
-        return ( ((sx1-sx2)**2 + (sy1-sy2)**2) ) < (radius1**2+radius2**2)
+        sx1 = (sprite1.rect.x + int(sprite1.rect.width * 0.5))
+        sy1 = (sprite1.rect.y + int(sprite1.rect.height * 0.5))
+        sx2 = (sprite2.rect.x + int(sprite2.rect.width * 0.5))
+        sy2 = (sprite2.rect.y + int(sprite2.rect.height * 0.5))
+        return (((sx1 - sx2)**2 + (sy1 - sy2)**2)) < (radius1**2 + radius2**2)
 
 
 def collide_mask(sprite1, sprite2):
@@ -818,7 +819,7 @@ def collide_mask(sprite1, sprite2):
     else:
         mask2 = mask.from_surface(sprite2.image)
     if mask1.overlap(mask2,
-            (sprite2.rect.x-sprite1.rect.x,sprite2.rect.y-sprite1.rect.y)):
+        (sprite2.rect.x-sprite1.rect.x,sprite2.rect.y-sprite1.rect.y)):
         return True
     else:
         return False

@@ -53,7 +53,8 @@ class Surface(BufferedImage):
                     BufferedImage.__init__(self, width, height,
                                            BufferedImage.TYPE_INT_ARGB)
                 else:
-                    BufferedImage.__init__(self, width, height, BufferedImage.TYPE_INT_RGB)
+                    BufferedImage.__init__(self, width, height,
+                                           BufferedImage.TYPE_INT_RGB)
             except IndexError:
                 BufferedImage.__init__(self, width, height,
                                        BufferedImage.TYPE_INT_ARGB)
@@ -70,7 +71,7 @@ class Surface(BufferedImage):
                 keys = arg[0].getPropertyNames()
                 if keys != None:
                     for key in keys:
-                        properties.put(key,arg[0].getProperty(key))
+                        properties.put(key, arg[0].getProperty(key))
             except AttributeError:
                 cm, raster, isRasterPremultiplied, properties = arg
             BufferedImage.__init__(self, cm, raster,
@@ -125,7 +126,7 @@ class Surface(BufferedImage):
             keys = self.getPropertyNames()
             if keys != None:
                 for key in keys:
-                    img_properties.put(key,self.getProperty(key))
+                    img_properties.put(key, self.getProperty(key))
             surface = Surface(
                               self.getColorModel(),
                               self.getData(),
@@ -134,7 +135,7 @@ class Surface(BufferedImage):
                              )
             surface._colorkey = self._colorkey
         else:
-            surface = Surface((self.width,self.height),
+            surface = Surface((self.width, self.height),
                               BufferedImage.TYPE_INT_ARGB)
             g2d = surface.createGraphics()
             g2d.drawImage(self, 0, 0, None)
@@ -186,8 +187,9 @@ class Surface(BufferedImage):
             g2d.drawImage(surface, rect.x, rect.y, None)
         else:
             rect = Rect(position[0],position[1],area[2],area[3])
-            g2d.drawImage(surface, rect.x,rect.y,rect.x+area[2],rect.y+area[3],
-                                   area[0],area[1],area[0]+area[2],area[1]+area[3], None)
+            g2d.drawImage(surface,
+                          rect.x,rect.y,rect.x+area[2],rect.y+area[3],
+                          area[0],area[1],area[0]+area[2],area[1]+area[3], None)
         g2d.dispose()
         return self.get_rect().clip(rect)
 
@@ -200,8 +202,9 @@ class Surface(BufferedImage):
     def _blit_clear(self, surface, rect_list):
         g2d = self.createGraphics()
         for r in rect_list:
-            g2d.drawImage(surface, r.x,r.y,r.x+r.width,r.y+r.height,
-                                   r.x,r.y,r.x+r.width,r.y+r.height, None)
+            g2d.drawImage(surface,
+                          r.x, r.y, r.x+r.width, r.y+r.height,
+                          r.x, r.y, r.x+r.width, r.y+r.height, None)
         g2d.dispose()
 
     def set_colorkey(self, color, flags=None):
@@ -209,8 +212,10 @@ class Surface(BufferedImage):
         Set surface colorkey.
         """
         if self._colorkey:
-            r,g,b = self._colorkey.r,self._colorkey.g,self._colorkey.b
-            self.replace_color((r,g,b,0),self._colorkey)
+            r = self._colorkey.r
+            g = self._colorkey.g
+            b = self._colorkey.b
+            self.replace_color((r,g,b,0), self._colorkey)
             self._colorkey = None
         if color:
             self._colorkey = Color(color)
@@ -233,13 +238,14 @@ class Surface(BufferedImage):
         """
         Replace color with with new_color or with alpha.
         """
-        pixels = self.getRGB(0,0,self.width,self.height,None,0,self.width)
+        pixels = self.getRGB(0, 0, self.width, self.height,
+                             None,0,self.width)
         if hasattr(color, 'a'):
             color1 = color
         else:
             color1 = Color(color)
         if new_color is None:
-            color2 = Color(color1.r,color1.g,color1.b,0)
+            color2 = Color(color1.r, color1.g, color1.b, 0)
         else:
             if hasattr(new_color, 'a'):
                 color2 = new_color
@@ -248,7 +254,8 @@ class Surface(BufferedImage):
         for i, pixel in enumerate(pixels):
             if pixel == color1.getRGB():
                 pixels[i] = color2.getRGB()
-        self.setRGB(0,0,self.width,self.height,pixels,0,self.width)
+        self.setRGB(0, 0, self.width, self.height,
+                    pixels, 0, self.width)
         return None
 
     def get_at(self, pos):
@@ -257,7 +264,7 @@ class Surface(BufferedImage):
         The pos argument represents x,y position of pixel.
         """
         try:
-            return Color(self.getRGB(pos[0],pos[1]))
+            return Color(self.getRGB(pos[0], pos[1]))
         except ArrayIndexOutOfBoundsException:
             raise IndexError('pixel index out of range')
 
@@ -268,7 +275,7 @@ class Surface(BufferedImage):
         """
         color = Color(color)
         try:
-            self.setRGB(pos[0],pos[1],color.getRGB())
+            self.setRGB(pos[0], pos[1], color.getRGB())
         except ArrayIndexOutOfBoundsException:
             raise IndexError('pixel index out of range')
         return None

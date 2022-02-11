@@ -139,9 +139,9 @@ def polygon(surface, color, pointlist, width=0):
     npts = len(pointlist)
     if width:
         g.setStroke(BasicStroke(width))
-        g.drawPolygon(xpts,ypts,npts)
+        g.drawPolygon(xpts, ypts, npts)
     else:
-        g.fillPolygon(xpts,ypts,npts)
+        g.fillPolygon(xpts, ypts, npts)
     g.dispose()
     if not _return_rect:
         return None
@@ -149,7 +149,7 @@ def polygon(surface, color, pointlist, width=0):
     xmax = max(xpts)
     ymin = min(ypts)
     ymax = max(ypts)
-    rect = Rect(xmin,ymin,xmax-xmin+1,ymax-ymin+1)
+    rect = Rect(xmin, ymin, xmax-xmin+1, ymax-ymin+1)
     return surface.get_rect().clip(rect)
 
 
@@ -167,12 +167,13 @@ def line(surface, color, point1, point2, width=1):
     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                        RenderingHints.VALUE_ANTIALIAS_ON)
     g.setStroke(BasicStroke(width))
-    g.drawLine(int(point1[0]),int(point1[1]),int(point2[0]),int(point2[1]))
+    g.drawLine(int(point1[0]), int(point1[1]),
+               int(point2[0]), int(point2[1]))
     g.dispose()
     if not _return_rect:
         return None
-    xpts = [pt[0] for pt in (point1,point2)]
-    ypts = [pt[1] for pt in (point1,point2)]
+    xpts = [pt[0] for pt in (point1, point2)]
+    ypts = [pt[1] for pt in (point1, point2)]
     xmin = min(xpts)
     xmax = max(xpts)
     ymin = min(ypts)

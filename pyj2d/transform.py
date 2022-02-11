@@ -21,21 +21,22 @@ def rotate(surface, angle):
     """
     if not angle:
         return surface.copy()
-    theta = angle*_deg_rad
+    theta = angle * _deg_rad
     width_i = surface.getWidth()
     height_i = surface.getHeight()
     cos_theta = _fabs( _cos(theta) )
     sin_theta = _fabs( _sin(theta) )
     width_f = int( (width_i * cos_theta) + (height_i * sin_theta) )
     height_f = int( (width_i * sin_theta) + (height_i * cos_theta) )
-    surf = Surface((width_f,height_f), BufferedImage.TYPE_INT_ARGB)
+    surf = Surface((width_f, height_f), BufferedImage.TYPE_INT_ARGB)
     at = AffineTransform()
     at.translate(width_f/2.0, height_f/2.0)
     at.rotate(-theta)
     g2d = surf.createGraphics()
     ot = g2d.getTransform()
     g2d.setTransform(at)
-    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR)
+    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                         RenderingHints.VALUE_INTERPOLATION_BILINEAR)
     g2d.drawImage(surface, -width_i//2, -height_i//2, None)
     g2d.setTransform(ot)
     g2d.dispose()
@@ -47,10 +48,10 @@ def rotozoom(surface, angle, size):
     Return Surface rotated and resized by the given angle and size.
     """
     if not angle:
-        width = int(surface.getWidth()*size)
-        height = int(surface.getHeight()*size)
+        width = int(surface.getWidth() * size)
+        height = int(surface.getHeight() * size)
         return scale(surface, (width, height))
-    theta = angle*_deg_rad
+    theta = angle * _deg_rad
     width_i = int(surface.getWidth() * size)
     height_i = int(surface.getHeight() * size)
     cos_theta = _fabs( _cos(theta) )
@@ -61,14 +62,15 @@ def rotozoom(surface, angle, size):
     height_f = int( _ceil((width_i * sin_theta) + (height_i * cos_theta)) )
     if height_f % 2:
         height_f += 1
-    surf = Surface((width_f,height_f), BufferedImage.TYPE_INT_ARGB)
+    surf = Surface((width_f, height_f), BufferedImage.TYPE_INT_ARGB)
     at = AffineTransform()
     at.translate(width_f/2.0, height_f/2.0)
     at.rotate(-theta)
     g2d = surf.createGraphics()
     ot = g2d.getTransform()
     g2d.setTransform(at)
-    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR)
+    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                         RenderingHints.VALUE_INTERPOLATION_BILINEAR)
     g2d.drawImage(surface, -width_i//2, -height_i//2, width_i, height_i, None)
     g2d.setTransform(ot)
     g2d.dispose()
@@ -105,7 +107,8 @@ def scale2x(surface, dest=None):
     Return Surface resized to twice its size.
     An optional destination surface can be provided.
     """
-    return scale(surface, (surface.getWidth()*2,surface.getHeight()*2), dest)
+    return scale(surface,
+                 (surface.getWidth()*2, surface.getHeight()*2), dest)
 
 
 def flip(surface, xbool=True, ybool=False):

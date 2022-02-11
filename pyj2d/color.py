@@ -94,7 +94,10 @@ class Color(_Color):
                           3: 'a'}[index], val)
 
     def __iter__(self):
-        return iter([self.getRed(), self.getGreen(), self.getBlue(), self.getAlpha()])
+        return iter([self.getRed(),
+                     self.getGreen(),
+                     self.getBlue(),
+                     self.getAlpha()])
 
     def __len__(self):
         return 4
