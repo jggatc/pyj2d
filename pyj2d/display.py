@@ -38,7 +38,10 @@ class Frame(JFrame):
         self.dispose()
 
 
-class Panel(JPanel, MouseListener, MouseMotionListener, MouseWheelListener, KeyListener):
+class Panel(JPanel, MouseListener,
+                    MouseMotionListener,
+                    MouseWheelListener,
+                    KeyListener):
 
     def __init__(self, size):
         JPanel.__init__(self)
@@ -69,7 +72,9 @@ class Panel(JPanel, MouseListener, MouseMotionListener, MouseWheelListener, KeyL
         pass
 
     def mouseExited(self, event):
-        self.event.mousePress[1], self.event.mousePress[2], self.event.mousePress[3] = False, False, False
+        self.event.mousePress[1] = False
+        self.event.mousePress[2] = False
+        self.event.mousePress[3] = False
         for keycode in self.modKey:
             if self.event.keyPress[keycode]:
                 self.event.keyPress[keycode] = False
@@ -100,7 +105,9 @@ class Panel(JPanel, MouseListener, MouseMotionListener, MouseWheelListener, KeyL
 
     def _isPaused(self, keycode):
         if keycode not in self.keyHeld:
-            self.keyHeld[keycode] = {'pressed':False, 'delay':False, 'time':0}
+            self.keyHeld[keycode] = {'pressed':False,
+                                     'delay':False,
+                                     'time':0}
         key = self.keyHeld[keycode]
         if not key['pressed']:
             key['pressed'] = True

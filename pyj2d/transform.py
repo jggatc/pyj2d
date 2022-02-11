@@ -26,8 +26,8 @@ def rotate(surface, angle):
     height_i = surface.getHeight()
     cos_theta = _fabs( _cos(theta) )
     sin_theta = _fabs( _sin(theta) )
-    width_f = int( (width_i*cos_theta)+(height_i*sin_theta) )
-    height_f = int( (width_i*sin_theta)+(height_i*cos_theta) )
+    width_f = int( (width_i * cos_theta) + (height_i * sin_theta) )
+    height_f = int( (width_i * sin_theta) + (height_i * cos_theta) )
     surf = Surface((width_f,height_f), BufferedImage.TYPE_INT_ARGB)
     at = AffineTransform()
     at.translate(width_f/2.0, height_f/2.0)
@@ -51,14 +51,14 @@ def rotozoom(surface, angle, size):
         height = int(surface.getHeight()*size)
         return scale(surface, (width, height))
     theta = angle*_deg_rad
-    width_i = int(surface.getWidth()*size)
-    height_i = int(surface.getHeight()*size)
+    width_i = int(surface.getWidth() * size)
+    height_i = int(surface.getHeight() * size)
     cos_theta = _fabs( _cos(theta) )
     sin_theta = _fabs( _sin(theta) )
-    width_f = int( _ceil((width_i*cos_theta)+(height_i*sin_theta)) )
+    width_f = int( _ceil((width_i * cos_theta) + (height_i * sin_theta)) )
     if width_f % 2:
         width_f += 1
-    height_f = int( _ceil((width_i*sin_theta)+(height_i*cos_theta)) )
+    height_f = int( _ceil((width_i * sin_theta) + (height_i * cos_theta)) )
     if height_f % 2:
         height_f += 1
     surf = Surface((width_f,height_f), BufferedImage.TYPE_INT_ARGB)
@@ -85,7 +85,8 @@ def scale(surface, size, dest=None):
     else:
         surf = dest
     g2d = surf.createGraphics()
-    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR)
+    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                         RenderingHints.VALUE_INTERPOLATION_BILINEAR)
     g2d.drawImage(surface, 0, 0, size[0], size[1], None)
     g2d.dispose()
     return surf

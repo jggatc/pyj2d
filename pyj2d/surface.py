@@ -50,11 +50,13 @@ class Surface(BufferedImage):
             width, height = arg[0]
             try:
                 if arg[1] & (BufferedImage.TYPE_INT_ARGB | Const.SRCALPHA):
-                    BufferedImage.__init__(self, width, height, BufferedImage.TYPE_INT_ARGB)
+                    BufferedImage.__init__(self, width, height,
+                                           BufferedImage.TYPE_INT_ARGB)
                 else:
                     BufferedImage.__init__(self, width, height, BufferedImage.TYPE_INT_RGB)
             except IndexError:
-                BufferedImage.__init__(self, width, height, BufferedImage.TYPE_INT_ARGB)
+                BufferedImage.__init__(self, width, height,
+                                       BufferedImage.TYPE_INT_ARGB)
                 graphics2D = self.createGraphics()
                 graphics2D.setColor(Color(0,0,0))
                 graphics2D.fillRect(0, 0, width, height)
@@ -71,7 +73,8 @@ class Surface(BufferedImage):
                         properties.put(key,arg[0].getProperty(key))
             except AttributeError:
                 cm, raster, isRasterPremultiplied, properties = arg
-            BufferedImage.__init__(self, cm, raster, isRasterPremultiplied, properties)
+            BufferedImage.__init__(self, cm, raster,
+                                   isRasterPremultiplied, properties)
         self._display = None    #display surface
         self._super_surface = None
         self._offset = (0,0)
@@ -131,7 +134,8 @@ class Surface(BufferedImage):
                              )
             surface._colorkey = self._colorkey
         else:
-            surface = Surface((self.width,self.height), BufferedImage.TYPE_INT_ARGB)
+            surface = Surface((self.width,self.height),
+                              BufferedImage.TYPE_INT_ARGB)
             g2d = surface.createGraphics()
             g2d.drawImage(self, 0, 0, None)
             g2d.dispose()

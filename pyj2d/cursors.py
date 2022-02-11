@@ -87,6 +87,20 @@ def get_cursor_types():
     """
     Return list of cursor type names from java.awt.Cursor API.
     """
-    types = ['DEFAULT_CURSOR', 'CROSSHAIR_CURSOR', 'E_RESIZE_CURSOR', 'HAND_CURSOR', 'MOVE_CURSOR', 'N_RESIZE_CURSOR', 'NE_RESIZE_CURSOR', 'NW_RESIZE_CURSOR', 'S_RESIZE_CURSOR', 'SE_RESIZE_CURSOR', 'SW_RESIZE_CURSOR', 'TEXT_CURSOR', 'W_RESIZE_CURSOR', 'WAIT_CURSOR', 'CUSTOM_CURSOR']
+    types = ['DEFAULT_CURSOR',
+             'CROSSHAIR_CURSOR',
+             'E_RESIZE_CURSOR',
+             'HAND_CURSOR',
+             'MOVE_CURSOR',
+             'N_RESIZE_CURSOR',
+             'NE_RESIZE_CURSOR',
+             'NW_RESIZE_CURSOR',
+             'S_RESIZE_CURSOR',
+             'SE_RESIZE_CURSOR',
+             'SW_RESIZE_CURSOR',
+             'TEXT_CURSOR',
+             'W_RESIZE_CURSOR',
+             'WAIT_CURSOR',
+             'CUSTOM_CURSOR']
     return types
 

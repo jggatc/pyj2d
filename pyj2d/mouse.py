@@ -82,7 +82,8 @@ class Mouse(object):
                 hotspot = Point(0,0)
                 name = 'Blank Cursor'
                 try:
-                    self._cursorBlank = Toolkit.getDefaultToolkit().createCustomCursor(image, hotspot, name)
+                    tk = Toolkit.getDefaultToolkit()
+                    self._cursorBlank = tk.createCustomCursor(image, hotspot, name)
                 except AWTError:
                     return visible_pre
             env.jframe.getContentPane().setCursor(self._cursorBlank)
@@ -111,7 +112,8 @@ class Mouse(object):
                 name = 'Custom Cursor'
             else:
                 name = cursor[2]
-            self._cursor = Toolkit.getDefaultToolkit().createCustomCursor(image, hotspot, name)
+            tk = Toolkit.getDefaultToolkit()
+            self._cursor = tk.createCustomCursor(image, hotspot, name)
         elif args in (4,5):
             size = cursor[0]
             hotspot = Point(*cursor[1])
@@ -122,7 +124,8 @@ class Mouse(object):
             else:
                 name = cursor[4]
             surface = cursors.create_cursor(size, data, mask)
-            self._cursor = Toolkit.getDefaultToolkit().createCustomCursor(surface, hotspot, name)
+            tk = Toolkit.getDefaultToolkit()
+            self._cursor = tk.createCustomCursor(surface, hotspot, name)
         else:
             self._cursor = Cursor(Cursor.DEFAULT_CURSOR)
         if self._cursorVisible:

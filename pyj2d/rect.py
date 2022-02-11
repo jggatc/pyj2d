@@ -63,25 +63,40 @@ class Rect(Rectangle):
                     lst = unpack(x, lst)
             return lst
         try:
-            x,y,w,h = arg[0], arg[1], arg[2], arg[3]
+            x = arg[0]
+            y = arg[1]
+            w = arg[2]
+            h = arg[3]
         except IndexError:
             try:
-                x,y,w,h = arg[0][0], arg[0][1], arg[0][2], arg[0][3]
+                x = arg[0][0]
+                y = arg[0][1]
+                w = arg[0][2]
+                h = arg[0][3]
             except (IndexError, TypeError, AttributeError):
                 arg = unpack(arg)
                 try:
-                    x,y,w,h = arg[0], arg[1], arg[2], arg[3]
+                    x = arg[0]
+                    y = arg[1]
+                    w = arg[2]
+                    h = arg[3]
                 except IndexError:
                     if hasattr(arg[0], 'rect'):
                         arg[0] = arg[0].rect
-                    x,y,w,h = arg[0].x, arg[0].y, arg[0].width, arg[0].height
+                    x = arg[0].x
+                    y = arg[0].y
+                    w = arg[0].width
+                    h = arg[0].height
         try:
             Rectangle.__init__(self, x, y, w, h)
         except TypeError:
             Rectangle.__init__(self, int(x), int(y), int(w), int(h))
 
     def __str__(self):
-        return "<rect(%d, %d, %d, %d)>" % (self.x, self.y, self.width, self.height)
+        return "<rect(%d, %d, %d, %d)>" % (self.x,
+                                           self.y,
+                                           self.width,
+                                           self.height)
 
     def __repr__(self):
         return "%s(%s)" % (self.__class__, self.toString())
@@ -127,15 +142,27 @@ class Rect(Rectangle):
 
     def __eq__(self, other):
         try:
-            return self.x==other.x and self.y==other.y and self.width==other.width and self.height==other.height
+            return ( self.x == other.x and
+                     self.y == other.y and
+                     self.width == other.width and
+                     self.height == other.height )
         except AttributeError:
-            return self.x==other[0] and self.y==other[1] and self.width==other[2] and self.height==other[3]
+            return ( self.x == other[0] and
+                     self.y == other[1] and
+                     self.width == other[2] and
+                     self.height == other[3] )
 
     def __ne__(self, other):
         try:
-            return self.x!=other.x or self.y!=other.y or self.width!=other.width or self.height!=other.height
+            return ( self.x != other.x or
+                     self.y != other.y or
+                     self.width != other.width or
+                     self.height != other.height )
         except AttributeError:
-            return self.x!=other[0] or self.y!=other[1] or self.width!=other[2] or self.height!=other[3]
+            return ( self.x != other[0] or
+                     self.y != other[1] or
+                     self.width != other[2] or
+                     self.height != other[3] )
 
     def copy(self):
         """
@@ -192,7 +219,7 @@ class Rect(Rectangle):
         """
         clipRect = self.intersection(rect)
         if clipRect.width > 0 and clipRect.height > 0:
-            return Rect(clipRect.x,clipRect.y,clipRect.width,clipRect.height)
+            return Rect(clipRect.x, clipRect.y, clipRect.width, clipRect.height)
         else:
             return Rect(0,0,0,0)
 
@@ -256,20 +283,20 @@ class Rect(Rectangle):
             if self.x < rect.x:
                 x = rect.x
             elif self.x+self.width > rect.x+rect.width:
-                x = rect.x+rect.width-self.width
+                x = rect.x + rect.width - self.width
             else:
                 x = self.x
         else:
-            x = rect.x - (self.width-rect.width)//2
+            x = rect.x - (self.width - rect.width) // 2
         if self.height < rect.height:
             if self.y < rect.y:
                 y = rect.y
             elif self.y+self.height > rect.y+rect.height:
-                y = rect.y+rect.height-self.height
+                y = rect.y + rect.height - self.height
             else:
                 y = self.y
         else:
-            y = rect.y - (self.height-rect.height)//2
+            y = rect.y - (self.height - rect.height) // 2
         return x, y
 
     def collidepoint(self, *point):
@@ -327,13 +354,13 @@ class Rect(Rectangle):
         return collided
 
     def _get_center(self):
-        return (self.x+(self.width//2), self.y+(self.height//2))
+        return (self.x + (self.width//2), self.y + (self.height//2))
 
     def _get_centerx(self):
-        return self.x+(self.width//2)
+        return self.x + (self.width//2)
 
     def _get_centery(self):
-        return self.y+(self.height//2)
+        return self.y + (self.height//2)
 
     def _get_top(self):
         return self.y
@@ -342,34 +369,34 @@ class Rect(Rectangle):
         return self.x
 
     def _get_bottom(self):
-        return self.y+self.height
+        return self.y + self.height
 
     def _get_right(self):
-        return self.x+self.width
+        return self.x + self.width
 
     def _get_topleft(self):
         return (self.x, self.y)
 
     def _get_bottomleft(self):
-        return (self.x, self.y+self.height)
+        return (self.x, self.y + self.height)
 
     def _get_topright(self):
-        return (self.x+self.width, self.y)
+        return (self.x + self.width, self.y)
 
     def _get_bottomright(self):
-        return (self.x+self.width, self.y+self.height)
+        return (self.x + self.width, self.y + self.height)
 
     def _get_midtop(self):
-        return (self.x+(self.width//2), self.y)
+        return (self.x + (self.width//2), self.y)
 
     def _get_midleft(self):
-        return (self.x, self.y+(self.height//2))
+        return (self.x, self.y + (self.height//2))
 
     def _get_midbottom(self):
-        return (self.x+(self.width//2), self.y+self.height)
+        return (self.x + (self.width//2), self.y + self.height)
 
     def _get_midright(self):
-        return (self.x+self.width, self.y+(self.height//2))
+        return (self.x + self.width, self.y + (self.height//2))
 
     def _get_size(self):
         return (self.width, self.height)
@@ -393,13 +420,13 @@ class Rect(Rectangle):
         self.setSize(self.width, val)
 
     def _set_center(self, val):
-        self.setLocation(val[0]-(self.width//2), val[1]-(self.height//2))
+        self.setLocation(val[0] - (self.width//2), val[1] - (self.height//2))
 
     def _set_centerx(self, val):
-        self.setLocation(val-(self.width//2), self.y)
+        self.setLocation(val - (self.width//2), self.y)
 
     def _set_centery(self, val):
-        self.setLocation(self.x, val-(self.height//2))
+        self.setLocation(self.x, val - (self.height//2))
 
     def _set_top(self, val):
         self.setLocation(self.x, val)
@@ -408,34 +435,34 @@ class Rect(Rectangle):
         self.setLocation(val, self.y)
 
     def _set_bottom(self, val):
-        self.setLocation(self.x, val-self.height)
+        self.setLocation(self.x, val - self.height)
 
     def _set_right(self, val):
-        self.setLocation(val-self.width, self.y)
+        self.setLocation(val - self.width, self.y)
 
     def _set_topleft(self, val):
         self.setLocation(val[0], val[1])
 
     def _set_bottomleft(self, val):
-        self.setLocation(val[0], val[1]-self.height)
+        self.setLocation(val[0], val[1] - self.height)
 
     def _set_topright(self, val):
-        self.setLocation(val[0]-self.width, val[1])
+        self.setLocation(val[0] - self.width, val[1])
 
     def _set_bottomright(self, val):
-        self.setLocation(val[0]-self.width, val[1]-self.height)
+        self.setLocation(val[0] - self.width, val[1] - self.height)
 
     def _set_midtop(self, val):
-        self.setLocation(val[0]-(self.width//2), val[1])
+        self.setLocation(val[0] - (self.width//2), val[1])
 
     def _set_midleft(self, val):
-        self.setLocation(val[0], val[1]-(self.height//2))
+        self.setLocation(val[0], val[1] - (self.height//2))
 
     def _set_midbottom(self, val):
-        self.setLocation(val[0]-(self.width//2), val[1]-self.height)
+        self.setLocation(val[0] - (self.width//2), val[1] - self.height)
 
     def _set_midright(self, val):
-        self.setLocation(val[0]-self.width, val[1]-(self.height//2))
+        self.setLocation(val[0] - self.width, val[1] - (self.height//2))
 
     def _set_size(self, val):
         self.setSize(val[0], val[1])
@@ -488,10 +515,13 @@ class RectPool(ConcurrentLinkedQueue):
         """
         rect = self.poll()
         if rect is not None:
-            rect.x, rect.y, rect.width, rect.height = x, y, width, height
+            rect.x = x
+            rect.y = y
+            rect.width = width
+            rect.height = height
             return rect
         else:
-            return Rect(x,y,width,height)
+            return Rect(x, y, width, height)
 
     def copy(self, r):
         """
@@ -499,10 +529,13 @@ class RectPool(ConcurrentLinkedQueue):
         """
         rect = self.poll()
         if rect is not None:
-            rect.x, rect.y, rect.width, rect.height = r.x, r.y, r.width, r.height
+            rect.x = r.x
+            rect.y = r.y
+            rect.width = r.width
+            rect.height = r.height
             return rect
         else:
-            return Rect(r.x,r.y,r.width,r.height)
+            return Rect(r.x, r.y, r.width, r.height)
 
 rectPool = RectPool()
 

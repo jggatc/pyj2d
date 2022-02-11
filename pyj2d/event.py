@@ -44,8 +44,16 @@ class Event(object):
         self.queueTmp = []
         self.mousePress = {1:False, 2:False, 3:False}
         self._nonimplemented_methods()
-        self.eventName = {MouseEvent.MOUSE_PRESSED:'MouseButtonDown', MouseEvent.MOUSE_RELEASED:'MouseButtonUp', MouseEvent.MOUSE_MOVED:'MouseMotion', KeyEvent.KEY_PRESSED:'KeyDown', KeyEvent.KEY_RELEASED:'KeyUp'}
-        self.eventType = [MouseEvent.MOUSE_PRESSED, MouseEvent.MOUSE_RELEASED, MouseEvent.MOUSE_MOVED, KeyEvent.KEY_PRESSED, KeyEvent.KEY_RELEASED]
+        self.eventName = {MouseEvent.MOUSE_PRESSED: 'MouseButtonDown',
+                          MouseEvent.MOUSE_RELEASED: 'MouseButtonUp',
+                          MouseEvent.MOUSE_MOVED: 'MouseMotion',
+                          KeyEvent.KEY_PRESSED: 'KeyDown',
+                          KeyEvent.KEY_RELEASED: 'KeyUp'}
+        self.eventType = [MouseEvent.MOUSE_PRESSED,
+                          MouseEvent.MOUSE_RELEASED,
+                          MouseEvent.MOUSE_MOVED,
+                          KeyEvent.KEY_PRESSED,
+                          KeyEvent.KEY_RELEASED]
         try:
             self.events = set(self.eventType)
             self.eventTypes = set(self.eventType)
@@ -55,8 +63,12 @@ class Event(object):
             self.events = set(self.eventType)
             self.eventTypes = set(self.eventType)
             self.modKey = set([Const.K_ALT, Const.K_CTRL, Const.K_SHIFT])
-        self.keyPress = {Const.K_ALT:False, Const.K_CTRL:False, Const.K_SHIFT:False}
-        self.keyMod = {Const.K_ALT:{True:Const.KMOD_ALT,False:0}, Const.K_CTRL:{True:Const.KMOD_CTRL,False:0}, Const.K_SHIFT:{True:Const.KMOD_SHIFT,False:0}}
+        self.keyPress = {Const.K_ALT: False,
+                         Const.K_CTRL: False,
+                         Const.K_SHIFT: False}
+        self.keyMod = {Const.K_ALT: {True: Const.KMOD_ALT, False: 0},
+                       Const.K_CTRL: {True: Const.KMOD_CTRL, False: 0},
+                       Const.K_SHIFT: {True: Const.KMOD_SHIFT, False: 0}}
         self.keyRepeat = [0, 0]
         self.keyHeld = {}
         self.Event = UserEvent
@@ -337,10 +349,14 @@ class UserEvent(object):
         env.event._register_event(eventType)
 
     def __str__(self):
-        return "<Event(%s-%s %r)>" % (self.type, self.toString(), self.attr)
+        return "<Event(%s-%s %r)>" % (self.type,
+                                      self.toString(),
+                                      self.attr)
 
     def __repr__(self):
-        return "<Event(%s-%s %r)>" % (self.type, self.toString(), self.attr)
+        return "<Event(%s-%s %r)>" % (self.type,
+                                      self.toString(),
+                                      self.attr)
 
     def __getattr__(self, attr):
         try:
@@ -396,10 +412,14 @@ class JEvent(object):
         object.__setattr__(self, "type", eventType)
 
     def __str__(self):
-        return "<Event(%s-%s %r)>" % (self.type, self.toString(), self._dict())
+        return "<Event(%s-%s %r)>" % (self.type,
+                                      self.toString(),
+                                      self._dict())
 
     def __repr__(self):
-        return "<Event(%s-%s %r)>" % (self.type, self.toString(), self._dict())
+        return "<Event(%s-%s %r)>" % (self.type,
+                                      self.toString(),
+                                      self._dict())
 
     def __getattr__(self, attr):
         try:
@@ -409,7 +429,11 @@ class JEvent(object):
 
     def _dict(self):
         attrDict = {}
-        for attr in {Const.MOUSEBUTTONDOWN:self._mouseEvent, Const.MOUSEBUTTONUP:self._mouseEvent, Const.MOUSEMOTION:self._mouseMotionEvent, Const.KEYDOWN:self._keyEvent, Const.KEYUP:self._keyEvent}[self.type]:
+        for attr in {Const.MOUSEBUTTONDOWN: self._mouseEvent,
+                     Const.MOUSEBUTTONUP: self._mouseEvent,
+                     Const.MOUSEMOTION: self._mouseMotionEvent,
+                     Const.KEYDOWN: self._keyEvent,
+                     Const.KEYUP: self._keyEvent}[self.type]:
             attrDict[attr] = self._attr[attr](self)
         return attrDict
 
@@ -421,16 +445,22 @@ class JEvent(object):
 
     def _getButtons(self):
         mod = self.event.getModifiersEx()
-        return ((mod&MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK, (mod&MouseEvent.BUTTON2_DOWN_MASK) == MouseEvent.BUTTON2_DOWN_MASK, (mod&MouseEvent.BUTTON3_DOWN_MASK) == MouseEvent.BUTTON3_DOWN_MASK)
+        return ((mod&MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK,
+                (mod&MouseEvent.BUTTON2_DOWN_MASK) == MouseEvent.BUTTON2_DOWN_MASK,
+                (mod&MouseEvent.BUTTON3_DOWN_MASK) == MouseEvent.BUTTON3_DOWN_MASK)
 
     def _getRel(self):
         pos =  self.event.getX(), self.event.getY()
-        rel = (pos[0]-self.__class__._mousePos['x'], pos[1]-self.__class__._mousePos['y'])
+        rel = (pos[0] - self.__class__._mousePos['x'],
+               pos[1] - self.__class__._mousePos['y'])
         if rel[0] or rel[1]:
-            self.__class__._mousePos['x'], self.__class__._mousePos['y'] = pos[0], pos[1]
-            self.__class__._mouseRel['x'], self.__class__._mouseRel['y'] = rel[0], rel[1]
+            self.__class__._mousePos['x'] = pos[0]
+            self.__class__._mousePos['y'] = pos[1]
+            self.__class__._mouseRel['x'] = rel[0]
+            self.__class__._mouseRel['y'] = rel[1]
         else:
-            rel = (self.__class__._mouseRel['x'], self.__class__._mouseRel['y'])
+            rel = (self.__class__._mouseRel['x'],
+                   self.__class__._mouseRel['y'])
         return rel
 
     def _getUnicode(self):

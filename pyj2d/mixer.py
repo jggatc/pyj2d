@@ -72,11 +72,18 @@ class Mixer(Runnable):
         For JAR creation include with 'jar uvf App.jar pyj2d/Mixer.class'.
         """
         if not self._initialized:
-            encoding = {True:AudioFormat.Encoding.PCM_SIGNED, False:AudioFormat.Encoding.PCM_UNSIGNED}[size<0]
+            encoding = {True: AudioFormat.Encoding.PCM_SIGNED,
+                        False: AudioFormat.Encoding.PCM_UNSIGNED}[size<0]
             channels = {True:1, False:2}[channels<=1]
             framesize = int((abs(size)/8) * channels)
             isBigEndian = isinstance(size, float)
-            self._audio_format = AudioFormat(encoding, int(frequency), int(abs(size)), channels, framesize, int(frequency), isBigEndian)
+            self._audio_format = AudioFormat(encoding,
+                                             int(frequency),
+                                             int(abs(size)),
+                                             channels,
+                                             framesize,
+                                             int(frequency),
+                                             isBigEndian)
             self._bufferSize = buffer
             try:
                 self._mixer = AudioMixer(self._audio_format, self._bufferSize)
@@ -85,7 +92,9 @@ class Mixer(Runnable):
                 return None
             if not self._mixer.isInitialized():
                 return None
-            self._byteRate = self._audio_format.getSampleRate() * self._audio_format.getChannels() * (self._audio_format.getSampleSizeInBits()/8)
+            self._byteRate = ( self._audio_format.getSampleRate()
+                              * self._audio_format.getChannels()
+                              * (self._audio_format.getSampleSizeInBits()/8) )
             self._bufferSize = self._mixer.getBufferSize()
             self._byteArray = jarray.zeros(self._bufferSize, 'b')
             for id in range(self._channel_max):
@@ -125,7 +134,8 @@ class Mixer(Runnable):
         """
         if self._initialized:
             frequency = int(self._audio_format.sampleRate)
-            format = self._audio_format.sampleSizeInBits * {True:1,False:-1}[self._audio_format.bigEndian]
+            format = ( self._audio_format.sampleSizeInBits
+                      * {True:1,False:-1}[self._audio_format.bigEndian] )
             channels = self._audio_format.channels
             return (frequency, format, channels)
         else:
@@ -396,7 +406,8 @@ class Sound(object):
 
     def _get_sound_file(self, sound_file):
         try:
-            _sound_file = env.japplet.getClass().getResource(sound_file.replace('\\','/'))
+            _sound_file = env.japplet.getClass().getResource(
+                                        sound_file.replace('\\','/'))
             if not _sound_file:
                 raise IOError
         except:
@@ -516,7 +527,8 @@ class _SoundStream(Sound):
             return Sound.get_length(self)
         else:
             stream = self._get_stream()
-            length = stream.getFrameLength() / stream.getFormat().getFrameRate()
+            length = ( stream.getFrameLength()
+                      / stream.getFormat().getFrameRate() )
             stream.close()
             return length
 
@@ -598,7 +610,10 @@ class Channel(object):
         if self._data_len > 0:
             self._data_sum += self._data_len
             if not self._process:
-                return (self._data, self._data_len, self._lvolume*self._sound._volume, self._rvolume*self._sound._volume)
+                return (self._data,
+                        self._data_len,
+                        self._lvolume*self._sound._volume,
+                        self._rvolume*self._sound._volume)
             if self._maxtime:
                 self._dvol = 1.0
                 if self._data_sum > self._maxtime:
@@ -622,7 +637,10 @@ class Channel(object):
                     self._fadeout = 0
                     self._loops = 0
                     self._onended()
-            return (self._data, self._data_len, self._lvolume*self._sound._volume*self._dvol, self._rvolume*self._sound._volume*self._dvol)
+            return (self._data,
+                    self._data_len,
+                    self._lvolume*self._sound._volume*self._dvol,
+                    self._rvolume*self._sound._volume*self._dvol)
         else:
             self._data_sum = 0
             self._onended()
@@ -791,7 +809,8 @@ class Channel(object):
         Without an argument resets endevent to NOEVENT type.
         """
         if eventType is not None:
-            if self._endevent is None or self._endevent.type != eventType:
+            if ( self._endevent is None or
+                 self._endevent.type != eventType ):
                 self._endevent = env.event.Event(eventType)
         else:
             self._endevent = None

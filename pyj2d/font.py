@@ -76,7 +76,8 @@ def get_fonts():
     
     Return fonts available in JVM.
     """
-    return [''.join([c for c in f if c.isalnum()]).lower() for f in GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()]
+    return [''.join([c for c in f if c.isalnum()]).lower() for f in
+        GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()]
 
 
 def match_font(name, *args, **kwargs):
@@ -86,7 +87,8 @@ def match_font(name, *args, **kwargs):
     Argument name is a font name, or comma-delimited string of font names.
     Return font found on system, otherwise return None if none found.
     """
-    font = [''.join([c for c in f if c.isalnum()]).lower() for f in name.split(',')]
+    font = [''.join([c for c in f if c.isalnum()]).lower()
+            for f in name.split(',')]
     fonts = get_fonts()
     for fn in font:
         if fn in fonts:
@@ -116,7 +118,44 @@ class Font(JFont):
 
     _font_default = None
 
-    _font_family = [['arial', 'helvetica', 'liberationsans',  'nimbussansl', 'freesans', 'tahoma', 'sansserif'], ['verdana', 'bitstreamverasans', 'dejavusans', 'sansserif'], ['impact', 'sansserif'], ['comicsansms', 'cursive', 'sansserif'], ['couriernew', 'courier', 'lucidaconsole', 'dejavusansmono', 'monospace'], ['timesnewroman', 'times', 'liberationserif', 'nimbusromanno9l', 'serif'], ['garamond',  'bookantiqua', 'palatino', 'liberationserif', 'nimbusromanno9l', 'serif'], ['georgia', 'bitstreamveraserif', 'lucidaserif', 'liberationserif', 'dejavuserif', 'serif']]
+    _font_family = [['arial',
+                     'helvetica',
+                     'liberationsans',
+                     'nimbussansl',
+                     'freesans',
+                     'tahoma',
+                     'sansserif'],
+                    ['verdana',
+                     'bitstreamverasans',
+                     'dejavusans',
+                     'sansserif'],
+                    ['impact',
+                     'sansserif'],
+                    ['comicsansms',
+                     'cursive',
+                     'sansserif'],
+                    ['couriernew',
+                     'courier',
+                     'lucidaconsole',
+                     'dejavusansmono',
+                     'monospace'],
+                    ['timesnewroman',
+                     'times',
+                     'liberationserif',
+                     'nimbusromanno9l',
+                     'serif'],
+                    ['garamond',
+                     'bookantiqua',
+                     'palatino',
+                     'liberationserif',
+                     'nimbusromanno9l',
+                     'serif'],
+                    ['georgia',
+                     'bitstreamveraserif',
+                     'lucidaserif',
+                     'liberationserif',
+                     'dejavuserif',
+                     'serif']]
 
     def __init__(self, name, size):
         """
@@ -131,9 +170,14 @@ class Font(JFont):
         if not hasattr(self, 'fontstyle'):
             self.fontstyle = JFont.PLAIN
         if not isFile:
-            JFont.__init__(self, self.fontname, self.fontstyle, self.fontsize)
+            JFont.__init__(self,
+                           self.fontname,
+                           self.fontstyle,
+                           self.fontsize)
         else:
-            font = self._getFont(self.fontname, self.fontstyle, self.fontsize)
+            font = self._getFont(self.fontname,
+                                 self.fontstyle,
+                                 self.fontsize)
             JFont.__init__(self, font)
         self.font = self
         _g2d.setFont(self.font)
@@ -154,7 +198,8 @@ class Font(JFont):
         if name.split('.')[-1].lower() == 'ttf':
             isFile = True
             return name, isFile
-        name = [''.join([c for c in f if c.isalnum()]).lower() for f in name.split(',')]
+        name = [''.join([c for c in f if c.isalnum()]).lower()
+                for f in name.split(',')]
         for fn in name:
             if fn in Font._font:
                 return fn, isFile
@@ -173,7 +218,8 @@ class Font(JFont):
         if not env.japplet:
             font = self.createFont(JFont.TRUETYPE_FONT, File(fontpath))
         else:
-            font = self.createFont(JFont.TRUETYPE_FONT, env.japplet.getClass().getResourceAsStream(fontpath))
+            font = self.createFont(JFont.TRUETYPE_FONT,
+                   env.japplet.getClass().getResourceAsStream(fontpath))
             if not font:
                 raise IOError
         return font.deriveFont(style, float(size))
@@ -195,16 +241,20 @@ class Font(JFont):
             g2d.fillRect(0,0,w,h)
         g2d.setFont(self.font)
         if antialias:
-            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
+            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                                 RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
         g2d.setColor(Color(color))
-        y = (h//2)-((self.fontMetrics.getAscent()+self.fontMetrics.getDescent())//2)+self.fontMetrics.getAscent()
+        y = ((h//2)
+             - ((self.fontMetrics.getAscent()+self.fontMetrics.getDescent())//2)
+             + self.fontMetrics.getAscent())
         if not self.underline:
             g2d.drawString(text,0,y)
         else:
             try:
                 text = AttributedString(text)
-                text.addAttribute(TextAttribute.FONT,self.font)
-                text.addAttribute(TextAttribute.UNDERLINE,TextAttribute.UNDERLINE_ON)
+                text.addAttribute(TextAttribute.FONT, self.font)
+                text.addAttribute(TextAttribute.UNDERLINE,
+                                  TextAttribute.UNDERLINE_ON)
                 g2d.drawString(text.getIterator(),0,y)
             except IllegalArgumentException:
                 pass

@@ -41,7 +41,9 @@ class Key(object):
         """
         Return int modifier keys alt|ctrl|shift.
         """
-        return self.keyMod[self.alt][self.keyPress[self.alt]] | self.keyMod[self.ctrl][self.keyPress[self.ctrl]] | self.keyMod[self.shift][self.keyPress[self.shift]]
+        return (self.keyMod[self.alt][self.keyPress[self.alt]] |
+                self.keyMod[self.ctrl][self.keyPress[self.ctrl]] |
+                self.keyMod[self.shift][self.keyPress[self.shift]])
 
     def set_repeat(self, delay=0, interval=0):
         """

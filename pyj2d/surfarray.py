@@ -32,7 +32,8 @@ def array2d(surface):
     if not _initialized:
         _init()
     data = numeric.zeros((surface.width*surface.height), 'i')
-    data = surface.getRGB(0, 0, surface.width, surface.height, data, 0, surface.width)
+    data = surface.getRGB(0, 0, surface.width, surface.height,
+                          data, 0, surface.width)
     array = numeric.reshape(data, (surface.width,surface.height))
     return array
 
@@ -45,8 +46,10 @@ def array3d(surface):
     """
     if not _initialized:
         _init()
-    data = surface.getRGB(0, 0, surface.width, surface.height, None, 0, surface.width)
-    data = numeric.array([(dat>>16 & 0xff, dat>>8 & 0xff, dat & 0xff) for dat in data])
+    data = surface.getRGB(0, 0, surface.width, surface.height,
+                          None, 0, surface.width)
+    data = numeric.array([(dat>>16 & 0xff, dat>>8 & 0xff, dat & 0xff)
+                          for dat in data])
     array = numeric.reshape(data, (surface.width,surface.height,3))
     return array
 
@@ -59,7 +62,8 @@ def array_alpha(surface):
     """
     if not _initialized:
         _init()
-    data = surface.getRGB(0, 0, surface.width, surface.height, None, 0, surface.width)
+    data = surface.getRGB(0, 0, surface.width, surface.height,
+                          None, 0, surface.width)
     data = numeric.array([dat>>24 & 0xff for dat in data], numeric.Int8)
     array = numeric.reshape(data, (surface.width,surface.height))
     return array
@@ -95,10 +99,13 @@ def blit_array(surface, array):
         data = numeric.transpose(data, (1,0))
         data = numeric.ravel(data)
     if not surface.getColorModel().hasAlpha():
-        surface.setRGB(0, 0, surface.width, surface.height, data, 0, surface.width)
+        surface.setRGB(0, 0, surface.width, surface.height,
+                       data, 0, surface.width)
     else:
-        surf = Surface((surface.width,surface.height), BufferedImage.TYPE_INT_RGB)
-        surf.setRGB(0, 0, surface.width, surface.height, data, 0, surface.width)
+        surf = Surface((surface.width,surface.height),
+                       BufferedImage.TYPE_INT_RGB)
+        surf.setRGB(0, 0, surface.width, surface.height,
+                    data, 0, surface.width)
         g2d = surface.createGraphics()
         g2d.drawImage(surf, 0, 0, None)
         g2d.dispose()

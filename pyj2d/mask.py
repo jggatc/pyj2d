@@ -15,7 +15,8 @@ def from_surface(surface, threshold=127):
     Optional argument to set alpha threshold.
     """
     mask = Mask((surface.width, surface.height))
-    pixels = surface.getRGB(0,0,surface.width,surface.height,None,0,surface.width)
+    pixels = surface.getRGB(0, 0, surface.width, surface.height,
+                            None, 0, surface.width)
     i = 0
     for y in range(surface.height):
         for x in range(surface.width):
@@ -33,11 +34,12 @@ def from_threshold(surface, color, threshold=(0,0,0,255)):
     Optional threshold argument to set color range and alpha threshold.
     """
     mask = Mask((surface.width, surface.height))
-    pixels = surface.getRGB(0,0,surface.width,surface.height,None,0,surface.width)
+    pixels = surface.getRGB(0, 0, surface.width, surface.height,
+                            None, 0, surface.width)
     if threshold == (0,0,0,255):
         color = Color(color)
         if color.a != 255:
-            color = Color(color.r,color.g,color.b,255)
+            color = Color(color.r, color.g, color.b, 255)
         icolor = color.getRGB()
         i = 0
         for y in range(surface.height):
@@ -59,7 +61,10 @@ def from_threshold(surface, color, threshold=(0,0,0,255)):
         i = 0
         for y in range(surface.height):
             for x in range(surface.width):
-                if ( col['r1'] < ((pixels[i]>>16) & 0xff) < col['r2'] ) and ( col['g1'] < ((pixels[i]>>8) & 0xff) < col['g2'] ) and ( col['b1'] < ((pixels[i]) & 0xff) < col['b2'] ) and ( ((pixels[i]>>24) & 0xff) > col['a'] ):
+                if ( (col['r1'] < ((pixels[i]>>16) & 0xff) < col['r2']) and
+                     (col['g1'] < ((pixels[i]>>8) & 0xff) < col['g2']) and
+                     (col['b1'] < ((pixels[i]) & 0xff) < col['b2']) and
+                     (((pixels[i]>>24) & 0xff) > col['a']) ):
                     mask.set_at((x,y))
                 i += 1
     return mask
@@ -174,7 +179,8 @@ class Mask(object):
         h = min(self.height-y1, mask.height-y2)
         if w > 0 and h > 0:
             for y in range(h):
-                if self.bit[y1+y].get(x1, x1+w).intersects(mask.bit[y2+y].get(x2, x2+w)):
+                if self.bit[y1+y].get(x1, x1+w).intersects(
+                                        mask.bit[y2+y].get(x2, x2+w)):
                     return True
         return None
 
@@ -187,7 +193,8 @@ class Mask(object):
         cbitset = []
         for bitset in self.bit:
             cbitset.append('\n')
-            cbitset.extend([cbit[bitset.get(i)] for i in range(self.width)])
+            cbitset.extend([cbit[bitset.get(i)]
+                            for i in range(self.width)])
         bitstr = ''.join(cbitset)
         return bitstr
 

@@ -52,7 +52,8 @@ def circle(surface, color, position, radius, width=0):
         g.setColor(color)
     else:
         g.setColor(Color(color))
-    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                       RenderingHints.VALUE_ANTIALIAS_ON)
     if width:
         g.setStroke(BasicStroke(width))
         g.drawOval(rect.x, rect.y, rect.width, rect.height)
@@ -77,7 +78,8 @@ def ellipse(surface, color, rect, width=0):
         g.setColor(color)
     else:
         g.setColor(Color(color))
-    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                       RenderingHints.VALUE_ANTIALIAS_ON)
     ellipse = Ellipse2D.Double(rect.x, rect.y, rect.width, rect.height)
     if width:
         g.draw(ellipse)
@@ -104,12 +106,15 @@ def arc(surface, color, rect, start_angle, stop_angle, width=1):
         g.setColor(color)
     else:
         g.setColor(Color(color))
-    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                       RenderingHints.VALUE_ANTIALIAS_ON)
     if width:
         g.setStroke(BasicStroke(width))
-        g.drawArc(rect.x, rect.y, rect.width-1, rect.height-1, start_angle, stop_angle)
+        g.drawArc(rect.x, rect.y, rect.width-1, rect.height-1,
+                  start_angle, stop_angle)
     else:
-        g.fillArc(rect.x, rect.y, rect.width-1, rect.height-1, start_angle, stop_angle)
+        g.fillArc(rect.x, rect.y, rect.width-1, rect.height-1,
+                  start_angle, stop_angle)
     g.dispose()
     if not _return_rect:
         return None
@@ -127,7 +132,8 @@ def polygon(surface, color, pointlist, width=0):
         g.setColor(color)
     else:
         g.setColor(Color(color))
-    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                       RenderingHints.VALUE_ANTIALIAS_ON)
     xpts = [int(pt[0]) for pt in pointlist]
     ypts = [int(pt[1]) for pt in pointlist]
     npts = len(pointlist)
@@ -158,7 +164,8 @@ def line(surface, color, point1, point2, width=1):
         g.setColor(color)
     else:
         g.setColor(Color(color))
-    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                       RenderingHints.VALUE_ANTIALIAS_ON)
     g.setStroke(BasicStroke(width))
     g.drawLine(int(point1[0]),int(point1[1]),int(point2[0]),int(point2[1]))
     g.dispose()
@@ -192,7 +199,8 @@ def lines(surface, color, closed, pointlist, width=1):
         g.setColor(color)
     else:
         g.setColor(Color(color))
-    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                       RenderingHints.VALUE_ANTIALIAS_ON)
     g.setStroke(BasicStroke(width))
     g.drawPolyline(xpoints, ypoints, npoints)
     g.dispose()
