@@ -70,7 +70,8 @@ class Vector2(object):
         return '[%g, %g]' % (self._x, self._y)
 
     def __repr__(self):
-        return '<%s(%g, %g)>' % (self.__class__.__name__, self._x, self._y)
+        return '<%s(%g, %g)>' % (self.__class__.__name__,
+                                 self._x, self._y)
 
     def __getitem__(self, index):
         if index in (0, -2):
@@ -104,7 +105,8 @@ class Vector2(object):
             raise IndexError
 
     def __delitem__(self, index):
-        raise TypeError('Deletion of vector components is not supported')
+        raise TypeError(
+            'Deletion of vector components is not supported')
 
     def __getslice__(self, start, stop):
         return [self._x, self._y][start:stop]
@@ -140,7 +142,7 @@ class Vector2(object):
         """
         Return cross product with other vector.
         """
-        return (self._x * vector[1]) - (self._y * vector[0]) 
+        return (self._x * vector[1]) - (self._y * vector[0])
 
     def magnitude(self):
         """
@@ -152,7 +154,7 @@ class Vector2(object):
         """
         Return squared magnitude of vector.
         """
-        return ((self._x**2) + (self._y**2)) 
+        return ((self._x**2) + (self._y**2))
 
     def length(self):
         """
@@ -164,7 +166,7 @@ class Vector2(object):
         """
         Return squared length of vector.
         """
-        return ((self._x**2) + (self._y**2)) 
+        return ((self._x**2) + (self._y**2))
 
     def normalize(self):
         """
@@ -173,7 +175,7 @@ class Vector2(object):
         mag = self.magnitude()
         if mag == 0:
             raise ValueError('Cannot normalize vector of zero length')
-        return Vector2(self._x/mag, self._y/mag)
+        return Vector2(self._x / mag, self._y / mag)
 
     def normalize_ip(self):
         """
@@ -199,8 +201,8 @@ class Vector2(object):
         mag = self.magnitude()
         if mag == 0:
             raise ValueError('Cannot scale vector of zero length')
-        self._x = (self._x/mag) * length
-        self._y = (self._y/mag) * length
+        self._x = (self._x / mag) * length
+        self._y = (self._y / mag) * length
         return None
 
     def reflect(self, vector):
@@ -211,8 +213,9 @@ class Vector2(object):
         nn = (vector[0] * vector[0]) + (vector[1] * vector[1])
         if nn == 0:
             raise ValueError('Cannot reflect from normal of zero length')
-        c = 2 * vn/nn
-        return Vector2(self._x-(vector[0]*c), self._y-(vector[1]*c))
+        c = 2 * vn / nn
+        return Vector2(self._x - (vector[0] * c),
+                       self._y - (vector[1] * c))
 
     def reflect_ip(self, vector):
         """
@@ -222,22 +225,24 @@ class Vector2(object):
         nn = (vector[0] * vector[0]) + (vector[1] * vector[1])
         if nn == 0:
             raise ValueError('Cannot reflect from normal of zero length')
-        c = 2 * vn/nn
-        self._x -= (vector[0]*c)
-        self._y -= (vector[1]*c)
+        c = 2 * vn / nn
+        self._x -= (vector[0] * c)
+        self._y -= (vector[1] * c)
         return None
 
     def distance_to(self, vector):
         """
         Return distance to given vector.
         """
-        return sqrt((self._x-vector[0])**2 + (self._y-vector[1])**2)
+        return sqrt((self._x - vector[0])**2
+                  + (self._y - vector[1])**2)
 
     def distance_squared_to(self, vector):
         """
         Return squared distance to given vector.
         """
-        return (self._x-vector[0])**2 + (self._y-vector[1])**2
+        return ((self._x - vector[0])**2
+              + (self._y - vector[1])**2)
 
     def lerp(self, vector, t):
         """
@@ -245,8 +250,8 @@ class Vector2(object):
         """
         if t < 0.0 or t > 1.0:
             raise ValueError('Argument t must be in range 0 to 1')
-        return Vector2(self._x*(1-t) + vector[0]*t,
-                       self._y*(1-t) + vector[1]*t)
+        return Vector2(self._x * (1-t) + vector[0] * t,
+                       self._y * (1-t) + vector[1] * t)
 
     def slerp(self, vector, t):
         """
@@ -260,29 +265,29 @@ class Vector2(object):
         vmag = sqrt((vector[0]**2) + (vector[1]**2))
         if smag==0 or vmag==0:
             raise ValueError('Cannot use slerp with zero-vector')
-        sx = self._x/smag
-        sy = self._y/smag
-        vx = vector[0]/vmag
-        vy = vector[1]/vmag
+        sx = self._x / smag
+        sy = self._y / smag
+        vx = vector[0] / vmag
+        vy = vector[1] / vmag
         theta = atan2(vy, vx) - atan2(sy, sx)
         _theta = abs(theta)
         if _theta-pi > 0.000001:
-            theta -= (2*pi) * (theta/_theta)
+            theta -= (2*pi) * (theta / _theta)
         elif -0.000001 < _theta-pi < 0.000001:
             raise ValueError('Cannot use slerp on 180 degrees')
         if t < 0.0:
             t = -t
-            theta -= (2*pi) * (theta/abs(theta))
+            theta -= (2*pi) * (theta / abs(theta))
         sin_theta = sin(theta)
         if sin_theta:
-            a = sin((1.0-t)*theta) / sin_theta
-            b = sin(t*theta) / sin_theta
+            a = sin((1.0-t) * theta) / sin_theta
+            b = sin(t * theta) / sin_theta
         else:
             a = 1.0
             b = 0.0
         v = Vector2((sx * a) + (vx * b),
                     (sy * a) + (vy * b))
-        smag = ((1.0-t)*smag) + (t*vmag)
+        smag = ((1.0-t) * smag) + (t * vmag)
         v.x *= smag
         v.y *= smag
         return v
@@ -297,11 +302,11 @@ class Vector2(object):
         """
         Return vector rotated by angle in degrees.
         """
-        rad = angle/180.0*pi
-        c = round(cos(rad),6)
-        s = round(sin(rad),6)
-        return Vector2((c*self._x) - (s*self._y),
-                       (s*self._x) + (c*self._y))
+        rad = angle / 180.0 * pi
+        c = round(cos(rad), 6)
+        s = round(sin(rad), 6)
+        return Vector2((c * self._x) - (s * self._y),
+                       (s * self._x) + (c * self._y))
 
     def rotate_rad(self, angle):
         """
@@ -309,20 +314,20 @@ class Vector2(object):
         """
         c = cos(angle)
         s = sin(angle)
-        return Vector2((c*self._x) - (s*self._y),
-                       (s*self._x) + (c*self._y))
+        return Vector2((c * self._x) - (s * self._y),
+                       (s * self._x) + (c * self._y))
 
     def rotate_ip(self, angle):
         """
         Rotate vector by angle in degrees.
         """
-        r = angle/180.0*pi
-        c = round(cos(r),6)
-        s = round(sin(r),6)
+        r = angle / 180.0 * pi
+        c = round(cos(r), 6)
+        s = round(sin(r), 6)
         x = self._x
         y = self._y
-        self._x = (c*x) - (s*y)
-        self._y = (s*x) + (c*y)
+        self._x = (c * x) - (s * y)
+        self._y = (s * x) + (c * y)
         return None
 
     def rotate_ip_rad(self, angle):
@@ -333,8 +338,8 @@ class Vector2(object):
         s = sin(angle)
         x = self._x
         y = self._y
-        self._x = (c*x) - (s*y)
-        self._y = (s*x) + (c*y)
+        self._x = (c * x) - (s * y)
+        self._y = (s * x) + (c * y)
         return None
 
     def angle_to(self, vector):
@@ -342,14 +347,14 @@ class Vector2(object):
         Return angle to given vector.
         """
         return (atan2(vector[1], vector[0])
-                - atan2(self._y, self._x)) * (180.0/pi)
+                - atan2(self._y, self._x)) * (180.0 / pi)
 
     def as_polar(self):
         """
         Return radial distance and azimuthal angle.
         """
         r = self.magnitude()
-        phi = atan2(self._y, self._x) * (180.0/pi)
+        phi = atan2(self._y, self._x) * (180.0 / pi)
         return (r, phi)
 
     def from_polar(self, coordinate):
@@ -359,7 +364,7 @@ class Vector2(object):
         if len(coordinate) != 2:
             raise TypeError('coodinate must be of length 2')
         r = coordinate[0]
-        phi = coordinate[1] * (pi/180.0)
+        phi = coordinate[1] * (pi / 180.0)
         self._x = round(r * cos(phi), 6)
         self._y = round(r * sin(phi), 6)
         return None
@@ -442,24 +447,24 @@ class Vector2(object):
     def __eq__(self, other):
         if hasattr(other, '__len__'):
             if len(other) == 2:
-                return ( abs(self._x-other[0]) < 0.000001 and 
-                         abs(self._y-other[1]) < 0.000001 )
+                return ( abs(self._x - other[0]) < 0.000001 and
+                         abs(self._y - other[1]) < 0.000001 )
             else:
                 return False
         else:
-            return ( abs(self._x-other) < 0.000001 and
-                     abs(self._y-other) < 0.000001 )
+            return ( abs(self._x - other) < 0.000001 and
+                     abs(self._y - other) < 0.000001 )
 
     def __ne__(self, other):
         if hasattr(other, '__len__'):
             if len(other) == 2:
-                return ( abs(self._x-other[0]) > 0.000001 or 
-                         abs(self._y-other[1]) > 0.000001 )
+                return ( abs(self._x - other[0]) > 0.000001 or
+                         abs(self._y - other[1]) > 0.000001 )
             else:
                 return True
         else:
-            return ( abs(self._x-other) > 0.000001 or
-                     abs(self._y-other) > 0.000001 )
+            return ( abs(self._x - other) > 0.000001 or
+                     abs(self._y - other) > 0.000001 )
 
     def __gt__(self, other):
         if not isinstance(other, VectorElementwiseProxy):
@@ -652,64 +657,66 @@ class VectorElementwiseProxy(object):
     def __pow__(self, other):
         if hasattr(other, '__len__'):
             if (other[0]%1 and self._x<0) or (other[1]%1 and self._y<0):
-                raise ValueError('negative number cannot be raised to a fractional power')
-            return Vector2(self._x**other[0], self._y**other[1])
+                raise ValueError(
+                    'negative number cannot be raised to a fractional power')
+            return Vector2(self._x ** other[0], self._y ** other[1])
         else:
             if other%1 and (self._x<0 or self._y<0):
-                raise ValueError('negative number cannot be raised to a fractional power')
-            return Vector2(self._x**other, self._y**other)
+                raise ValueError(
+                    'negative number cannot be raised to a fractional power')
+            return Vector2(self._x ** other, self._y ** other)
 
     def __mod__(self, other):
         if hasattr(other, '__len__'):
-            return Vector2(self._x%other[0], self._y%other[1])
+            return Vector2(self._x % other[0], self._y % other[1])
         else:
-            return Vector2(self._x%other, self._y%other)
+            return Vector2(self._x % other, self._y % other)
 
     def __eq__(self, other):
         if hasattr(other, '__len__'):
             if len(other) == 2:
-                return ( abs(self._x-other[0]) < 0.000001 and 
-                         abs(self._y-other[1]) < 0.000001 )
+                return ( abs(self._x - other[0]) < 0.000001 and
+                         abs(self._y - other[1]) < 0.000001 )
             else:
                 return False
         else:
-            return ( abs(self._x-other) < 0.000001 and
-                     abs(self._y-other) < 0.000001 )
+            return ( abs(self._x - other) < 0.000001 and
+                     abs(self._y - other) < 0.000001 )
 
     def __ne__(self, other):
         if hasattr(other, '__len__'):
             if len(other) == 2:
-                return ( abs(self._x-other[0]) > 0.000001 or 
-                         abs(self._y-other[1]) > 0.000001 )
+                return ( abs(self._x - other[0]) > 0.000001 or
+                         abs(self._y - other[1]) > 0.000001 )
             else:
                 return True
         else:
-            return ( abs(self._x-other) > 0.000001 or
-                     abs(self._y-other) > 0.000001 )
+            return ( abs(self._x - other) > 0.000001 or
+                     abs(self._y - other) > 0.000001 )
 
     def __gt__(self, other):
         if hasattr(other, '__len__'):
-            return bool(self._x>other[0] and self._y>other[1])
+            return bool(self._x > other[0] and self._y > other[1])
         else:
-            return bool(self._x>other and self._y>other)
+            return bool(self._x > other and self._y > other)
 
     def __ge__(self, other):
         if hasattr(other, '__len__'):
-            return bool(self._x>=other[0] and self._y>=other[1])
+            return bool(self._x >= other[0] and self._y >= other[1])
         else:
-            return bool(self._x>=other and self._y>=other)
+            return bool(self._x >= other and self._y >= other)
 
     def __lt__(self, other):
         if hasattr(other, '__len__'):
-            return bool(self._x<other[0] and self._y<other[1])
+            return bool(self._x < other[0] and self._y < other[1])
         else:
-            return bool(self._x<other and self._y<other)
+            return bool(self._x < other and self._y < other)
 
     def __le__(self, other):
         if hasattr(other, '__len__'):
-            return bool(self._x<=other[0] and self._y<=other[1])
+            return bool(self._x <= other[0] and self._y <= other[1])
         else:
-            return bool(self._x<=other and self._y<=other)
+            return bool(self._x <= other and self._y <= other)
 
     def __radd__(self, other):
         if hasattr(other, '__len__'):
@@ -750,16 +757,18 @@ class VectorElementwiseProxy(object):
     def __rpow__(self, other):
         if hasattr(other, '__len__'):
             if (other[0]<0 and self._x%1) or (other[1]<0 and self._y%1):
-                raise ValueError('negative number cannot be raised to a fractional power')
-            return Vector2(other[0]**self._x, other[1]**self._y)
+                raise ValueError(
+                    'negative number cannot be raised to a fractional power')
+            return Vector2(other[0] ** self._x, other[1] ** self._y)
         else:
             if other<0 and (self._x%1 or self._y%1):
-                raise ValueError('negative number cannot be raised to a fractional power')
-            return Vector2(other**self._x, other**self._y)
+                raise ValueError(
+                    'negative number cannot be raised to a fractional power')
+            return Vector2(other ** self._x, other ** self._y)
 
     def __rmod__(self, other):
         if hasattr(other, '__len__'):
-            return Vector2(other[0]%self._x, other[1]%self._y)
+            return Vector2(other[0] % self._x, other[1] % self._y)
         else:
-            return Vector2(other%self._x, other%self._y)
+            return Vector2(other % self._x, other % self._y)
 
