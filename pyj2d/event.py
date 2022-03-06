@@ -288,7 +288,7 @@ class Event(object):
 
     def set_allowed(self, eventType):
         """
-        Set allowed event type(s) on queue. 
+        Set allowed event type(s) on queue.
         """
         if eventType is not None:
             try:

@@ -131,7 +131,7 @@ class Time(object):
 
         Post event on queue at time (ms) intervals.
         Optional argument once set no timer repeat, defaults to False.
-        Disable timer with time of 0. 
+        Disable timer with time of 0.
         """
         if hasattr(event, 'type'):
             eventType = event.type

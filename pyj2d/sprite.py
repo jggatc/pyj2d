@@ -480,7 +480,7 @@ class LayeredUpdates(OrderedUpdates):
     def add(self, *sprites, **kwargs):
         """
         Add sprite(s) to group, maintaining order based on layer of sprite,
-        derived from sprite _layer attribute or if absent default layer. 
+        derived from sprite _layer attribute or if absent default layer.
         If layer keyword argument is provided it is used.
         """
         if 'layer' in kwargs:

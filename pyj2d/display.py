@@ -164,7 +164,7 @@ class Display(Runnable):
         """
         Initialize Display module.
 
-        Module initialization creates pyj2d.display instance.        
+        Module initialization creates pyj2d.display instance.
         """
         self._initialized = False
         self.init()
