@@ -27,6 +27,8 @@ class Clock(object):
         self._time_init = self._time
         self._time_diff = [33 for i in range(10)]
         self._pos = 0
+        self._framerate = 0
+        self._frametime = 0
         self._thread = Thread()
 
     def get_time(self):
@@ -48,8 +50,10 @@ class Clock(object):
                 break
         self._time = System.nanoTime() // 1000000
         if framerate:
-            time_pause = ( (1000 // framerate)
-                           - (self._time - self._time_init) )
+            if framerate != self._framerate:
+                self._framerate = framerate
+                self._frametime = int(1000 / framerate)
+            time_pause = self._frametime - (self._time-self._time_init)
             if time_pause > 0:
                 try:
                     self._thread.sleep(time_pause)
