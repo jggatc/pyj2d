@@ -23,6 +23,8 @@ class Surface(BufferedImage):
     * Surface.get_height
     * Surface.get_rect
     * Surface.copy
+    * Surface.convert
+    * Surface.convert_alpha
     * Surface.subsurface
     * Surface.blit
     * Surface.set_colorkey
@@ -141,6 +143,30 @@ class Surface(BufferedImage):
             g2d.drawImage(self, 0, 0, None)
             g2d.dispose()
             surface._colorkey = self._colorkey
+        return surface
+
+    def convert(self):
+        """
+        Convert surface without pixel alpha, return converted surface.
+        """
+        surface = Surface((self.width, self.height),
+                          BufferedImage.TYPE_INT_RGB)
+        g2d = surface.createGraphics()
+        g2d.drawImage(self, 0, 0, None)
+        g2d.dispose()
+        surface._colorkey = self._colorkey
+        return surface
+
+    def convert_alpha(self):
+        """
+        Convert surface with pixel alpha, return converted surface.
+        """
+        surface = Surface((self.width, self.height),
+                          BufferedImage.TYPE_INT_ARGB)
+        g2d = surface.createGraphics()
+        g2d.drawImage(self, 0, 0, None)
+        g2d.dispose()
+        surface._colorkey = self._colorkey
         return surface
 
     def subsurface(self, rect):
@@ -308,8 +334,6 @@ class Surface(BufferedImage):
         return self._offset
 
     def _nonimplemented_methods(self):
-        self.convert = lambda *arg: self
-        self.convert_alpha = lambda *arg: self
         self.set_alpha = lambda *arg: None
         self.get_alpha = lambda *arg: None
         self.lock = lambda *arg: None
