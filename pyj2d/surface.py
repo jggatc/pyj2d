@@ -197,26 +197,28 @@ class Surface(BufferedImage):
         Draw given surface on this surface at position.
         Optional area delimitates the region of given surface to draw.
         """
-        if not _return_rect:
-            g2d = self.createGraphics()
-            if not area:
-                g2d.drawImage(surface, position[0], position[1], None)
-            else:
-                g2d.drawImage(surface,
-                    position[0],position[1],position[0]+area[2],position[1]+area[3],
-                    area[0],area[1],area[0]+area[2],area[1]+area[3], None)
-            g2d.dispose()
-            return None
         g2d = self.createGraphics()
         if not area:
-            rect = Rect(position[0],position[1],surface.width,surface.height)
-            g2d.drawImage(surface, rect.x, rect.y, None)
-        else:
-            rect = Rect(position[0],position[1],area[2],area[3])
             g2d.drawImage(surface,
-                          rect.x,rect.y,rect.x+area[2],rect.y+area[3],
-                          area[0],area[1],area[0]+area[2],area[1]+area[3], None)
-        g2d.dispose()
+                          position[0], position[1], None)
+            g2d.dispose()
+            if _return_rect:
+                rect = Rect(position[0], position[1],
+                            surface.width, surface.height)
+            else:
+                return None
+        else:
+            g2d.drawImage(surface,
+                    position[0], position[1],
+                    position[0]+area[2], position[1]+area[3],
+                    area[0], area[1],
+                    area[0]+area[2], area[1]+area[3], None)
+            g2d.dispose()
+            if _return_rect:
+                rect = Rect(position[0], position[1],
+                            area[2], area[3])
+            else:
+                return None
         return self.get_rect().clip(rect)
 
     def _blits(self, surfaces):
