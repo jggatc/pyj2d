@@ -2,6 +2,7 @@
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
 from java.awt.image import BufferedImage, RasterFormatException
+from java.awt import AlphaComposite
 from java.lang import ArrayIndexOutOfBoundsException
 from java.util import Hashtable
 from pyj2d.rect import Rect
@@ -27,6 +28,8 @@ class Surface(BufferedImage):
     * Surface.convert_alpha
     * Surface.subsurface
     * Surface.blit
+    * Surface.set_alpha
+    * Surface.get_alpha
     * Surface.set_colorkey
     * Surface.get_colorkey
     * Surface.replace_color
@@ -36,6 +39,10 @@ class Surface(BufferedImage):
     * Surface.get_parent
     * Surface.get_offset
     """
+
+    _alpha_composite = {
+        1.0: AlphaComposite.getInstance(
+                AlphaComposite.SRC_OVER, 1.0)}
 
     def __init__(self, *arg):
         """
@@ -82,6 +89,8 @@ class Surface(BufferedImage):
         self._super_surface = None
         self._offset = (0,0)
         self._colorkey = None
+        self._alpha = 1.0
+        self._has_alpha = False
         self._nonimplemented_methods()
 
     def __str__(self):
@@ -135,14 +144,15 @@ class Surface(BufferedImage):
                               self.isAlphaPremultiplied(),
                               img_properties
                              )
-            surface._colorkey = self._colorkey
         else:
             surface = Surface((self.width, self.height),
                               BufferedImage.TYPE_INT_ARGB)
             g2d = surface.createGraphics()
             g2d.drawImage(self, 0, 0, None)
             g2d.dispose()
-            surface._colorkey = self._colorkey
+        surface._colorkey = self._colorkey
+        surface._alpha = self._alpha
+        surface._has_alpha = self._has_alpha
         return surface
 
     def convert(self):
@@ -155,6 +165,8 @@ class Surface(BufferedImage):
         g2d.drawImage(self, 0, 0, None)
         g2d.dispose()
         surface._colorkey = self._colorkey
+        surface._alpha = self._alpha
+        surface._has_alpha = self._has_alpha
         return surface
 
     def convert_alpha(self):
@@ -167,6 +179,8 @@ class Surface(BufferedImage):
         g2d.drawImage(self, 0, 0, None)
         g2d.dispose()
         surface._colorkey = self._colorkey
+        surface._alpha = self._alpha
+        surface._has_alpha = self._has_alpha
         return surface
 
     def subsurface(self, rect):
@@ -190,6 +204,8 @@ class Surface(BufferedImage):
         surface._super_surface = self
         surface._offset = (rect.x,rect.y)
         surface._colorkey = self._colorkey
+        surface._alpha = self._alpha
+        surface._has_alpha = self._has_alpha
         return surface
 
     def blit(self, surface, position, area=None):
@@ -198,6 +214,7 @@ class Surface(BufferedImage):
         Optional area delimitates the region of given surface to draw.
         """
         g2d = self.createGraphics()
+        g2d.setComposite(self._alpha_composite[surface._alpha])
         if not area:
             g2d.drawImage(surface,
                           position[0], position[1], None)
@@ -224,16 +241,47 @@ class Surface(BufferedImage):
     def _blits(self, surfaces):
         g2d = self.createGraphics()
         for surface, rect in surfaces:
+            g2d.setComposite(self._alpha_composite[surface._alpha])
             g2d.drawImage(surface, rect.x, rect.y, None)
         g2d.dispose()
 
     def _blit_clear(self, surface, rect_list):
         g2d = self.createGraphics()
+        g2d.setComposite(self._alpha_composite[surface._alpha])
         for r in rect_list:
             g2d.drawImage(surface,
                           r.x, r.y, r.x+r.width, r.y+r.height,
                           r.x, r.y, r.x+r.width, r.y+r.height, None)
         g2d.dispose()
+
+    def set_alpha(self, alpha):
+        """
+        Set surface alpha (0-255), disabled by passing None.
+        """
+        if alpha is not None:
+            alpha = alpha/255.0
+            if alpha < 0.0:
+                alpha = 0.0
+            elif alpha > 255.0:
+                alpha = 255.0
+            self._alpha = alpha
+            self._has_alpha = True
+            if self._alpha not in self._alpha_composite:
+                composite = AlphaComposite.getInstance(
+                    AlphaComposite.SRC_OVER, self._alpha)
+                self._alpha_composite[self._alpha] = composite
+        else:
+            self._alpha = 1.0
+            self._has_alpha = False
+
+    def get_alpha(self):
+        """
+        Get surface alpha value.
+        """
+        if self._has_alpha:
+            return int(self._alpha*255)
+        else:
+            return None
 
     def set_colorkey(self, color, flags=None):
         """
@@ -336,8 +384,6 @@ class Surface(BufferedImage):
         return self._offset
 
     def _nonimplemented_methods(self):
-        self.set_alpha = lambda *arg: None
-        self.get_alpha = lambda *arg: None
         self.lock = lambda *arg: None
         self.unlock = lambda *arg: None
         self.mustlock = lambda *arg: False
