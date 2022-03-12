@@ -28,6 +28,7 @@ class Surface(BufferedImage):
     * Surface.convert_alpha
     * Surface.subsurface
     * Surface.blit
+    * Surface.blits
     * Surface.set_alpha
     * Surface.get_alpha
     * Surface.set_colorkey
@@ -237,6 +238,44 @@ class Surface(BufferedImage):
             else:
                 return None
         return self.get_rect().clip(rect)
+
+    def blits(self, blit_sequence, doreturn=True):
+        """
+        Draw a sequence of surfaces on this surface.
+        Argument blit_sequence of (source, dest) or (source, dest, area).
+        Optional doreturn (defaults to True) to return list of rects.
+        """
+        g2d = self.createGraphics()
+        if doreturn:
+            rects = []
+        else:
+            rects = None
+        for blit in blit_sequence:
+            surface = blit[0]
+            position = blit[1]
+            if len(blit) > 2:
+                area = blit[2]
+            else:
+                area = None
+            g2d.setComposite(self._alpha_composite[surface._alpha])
+            if not area:
+                g2d.drawImage(surface, position[0], position[1], None)
+                if doreturn:
+                    rect = Rect(position[0], position[1],
+                                surface.width, surface.height)
+                    rects.append(self.get_rect().clip(rect))
+            else:
+                g2d.drawImage(surface,
+                        position[0], position[1],
+                        position[0]+area[2], position[1]+area[3],
+                        area[0], area[1],
+                        area[0]+area[2], area[1]+area[3], None)
+                if doreturn:
+                    rect = Rect(position[0], position[1],
+                                area[2], area[3])
+                    rects.append(self.get_rect().clip(rect))
+        g2d.dispose()
+        return rects
 
     def _blits(self, surfaces):
         g2d = self.createGraphics()
