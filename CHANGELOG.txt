@@ -1,6 +1,10 @@
-0.31-dev
+0.32 2022-04-17
 -add key set_repeat method.
 -update surface blit with optional rect return.
+-revise time tick framerate handling.
+-add surface convert methods.
+-add surface alpha methods.
+-add surface blits method.
 
 0.31    2021-11-07
 -revise sprite orderedupdates.

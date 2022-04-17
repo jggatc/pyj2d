@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #THE SOFTWARE.
 #
-#PyJ2D version 0.31
+#PyJ2D version 0.32
 #Project Site: https://gatc.ca/
 
 
