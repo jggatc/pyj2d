@@ -18,10 +18,8 @@
 #LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #THE SOFTWARE.
-#
-#PyJ2D version 0.32
-#Project Site: https://gatc.ca/
 
+__version__ = '0.32'
 
 from pyj2d import env
 from pyj2d import util
@@ -44,6 +42,7 @@ from pyj2d import mask
 from pyj2d import font
 from pyj2d import sprite
 from pyj2d import cursors
+from pyj2d import version
 from pyj2d.constants import *
 
 
