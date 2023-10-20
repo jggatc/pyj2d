@@ -1,3 +1,6 @@
+0.32_dev
+-revise surface alpha.
+
 0.32    2022-04-17
 -add key set_repeat method.
 -update surface blit with optional rect return.

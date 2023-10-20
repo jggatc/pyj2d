@@ -91,7 +91,6 @@ class Surface(BufferedImage):
         self._offset = (0,0)
         self._colorkey = None
         self._alpha = 1.0
-        self._has_alpha = False
         self._nonimplemented_methods()
 
     def __str__(self):
@@ -153,7 +152,6 @@ class Surface(BufferedImage):
             g2d.dispose()
         surface._colorkey = self._colorkey
         surface._alpha = self._alpha
-        surface._has_alpha = self._has_alpha
         return surface
 
     def convert(self):
@@ -167,7 +165,6 @@ class Surface(BufferedImage):
         g2d.dispose()
         surface._colorkey = self._colorkey
         surface._alpha = self._alpha
-        surface._has_alpha = self._has_alpha
         return surface
 
     def convert_alpha(self):
@@ -181,7 +178,6 @@ class Surface(BufferedImage):
         g2d.dispose()
         surface._colorkey = self._colorkey
         surface._alpha = self._alpha
-        surface._has_alpha = self._has_alpha
         return surface
 
     def subsurface(self, rect):
@@ -206,7 +202,6 @@ class Surface(BufferedImage):
         surface._offset = (rect.x,rect.y)
         surface._colorkey = self._colorkey
         surface._alpha = self._alpha
-        surface._has_alpha = self._has_alpha
         return surface
 
     def blit(self, surface, position, area=None):
@@ -301,26 +296,21 @@ class Surface(BufferedImage):
             alpha = alpha/255.0
             if alpha < 0.0:
                 alpha = 0.0
-            elif alpha > 255.0:
-                alpha = 255.0
+            elif alpha > 1.0:
+                alpha = 1.0
             self._alpha = alpha
-            self._has_alpha = True
             if self._alpha not in self._alpha_composite:
                 composite = AlphaComposite.getInstance(
                     AlphaComposite.SRC_OVER, self._alpha)
                 self._alpha_composite[self._alpha] = composite
         else:
             self._alpha = 1.0
-            self._has_alpha = False
 
     def get_alpha(self):
         """
         Get surface alpha value.
         """
-        if self._has_alpha:
-            return int(self._alpha*255)
-        else:
-            return None
+        return int(self._alpha*255)
 
     def set_colorkey(self, color, flags=None):
         """
