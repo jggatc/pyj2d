@@ -40,6 +40,8 @@ def rotate(surface, angle):
     g2d.drawImage(surface, -width_i//2, -height_i//2, None)
     g2d.setTransform(ot)
     g2d.dispose()
+    surf._colorkey = surface._colorkey
+    surf._alpha = surface._alpha
     return surf
 
 
@@ -74,6 +76,8 @@ def rotozoom(surface, angle, size):
     g2d.drawImage(surface, -width_i//2, -height_i//2, width_i, height_i, None)
     g2d.setTransform(ot)
     g2d.dispose()
+    surf._colorkey = surface._colorkey
+    surf._alpha = surface._alpha
     return surf
 
 
@@ -91,6 +95,8 @@ def scale(surface, size, dest=None):
                          RenderingHints.VALUE_INTERPOLATION_BILINEAR)
     g2d.drawImage(surface, 0, 0, size[0], size[1], None)
     g2d.dispose()
+    surf._colorkey = surface._colorkey
+    surf._alpha = surface._alpha
     return surf
 
 
@@ -129,5 +135,7 @@ def flip(surface, xbool=True, ybool=False):
     op = AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR)
     bimage = op.filter(surface, None)
     surf = Surface(bimage)
+    surf._colorkey = surface._colorkey
+    surf._alpha = surface._alpha
     return surf
 
