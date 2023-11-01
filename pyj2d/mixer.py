@@ -183,18 +183,20 @@ class Mixer(Runnable):
         Argument channel count.
         """
         if count >= self._channel_max:
-            for id in range(self._channel_max, count):
+            current = self._channel_max
+            self._channel_max = count
+            for id in range(current, count):
                 self._get_channel(id)
                 self._channel_available.add(id)
-            self._channel_max = count
         elif count >= 0:
-            for id in range(count, self._channel_max):
+            current = self._channel_max
+            self._channel_max = count
+            for id in range(count, current):
                 if id in self._channels:
                     if self._channels[id] is not None:
                         self._channels[id].stop()
                     del self._channels[id]
                 self._channel_available.remove(id)
-            self._channel_max = count
         return None
 
     def get_num_channels(self):
@@ -373,7 +375,7 @@ class Mixer(Runnable):
         if id < self._channel_max:
             self._channels[id] = channel
         else:
-            raise AttributeError("Channel not available.")
+            raise IndexError('invalid channel index')
 
 
 class Sound(object):
