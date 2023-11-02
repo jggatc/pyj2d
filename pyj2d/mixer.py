@@ -590,20 +590,6 @@ class Channel(object):
         self._sound = sound
         self._stream = sound._get_stream()
 
-    def _reset_sound(self):
-        self._active.set(False)
-        restart = not self._pause
-        if not self._sound:
-            return
-        try:
-            sound = self._sound
-            self._stream.close()
-            self._set_sound(self._sound)
-        except AttributeError:
-            restart = False
-        if restart:
-            self._active.set(True)
-
     def _get(self):
         try:
             self._data_len = self._stream.read(self._data, 0, self._len)
@@ -888,8 +874,18 @@ class Music(object):
         """
         Rewind music.
         """
-        if self._channel.get_busy():
-            self._channel._reset_sound()
+        if not self._channel._sound or not self._channel.get_busy():
+            return None
+        self._channel._active.set(False)
+        restart = not self._channel._pause
+        try:
+            self._channel._stream.close()
+            self._channel._set_sound(self._channel._sound)
+        except AttributeError:
+            restart = False
+        if restart:
+            self._channel._active.set(True)
+        return None
 
     def stop(self):
         """
