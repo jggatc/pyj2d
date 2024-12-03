@@ -4,6 +4,7 @@
 -add vector copy method.
 -revise mixer set_num_channels method.
 -refactor mixer music rewind method.
+-revise surface convert.
 
 0.32    2022-04-17
 -add key set_repeat method.
