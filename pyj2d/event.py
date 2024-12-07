@@ -2,7 +2,10 @@
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
 from java.lang import Thread
-from java.awt.event import MouseEvent, KeyEvent
+from java.awt.event import MouseEvent
+from java.awt.event import KeyEvent
+from java.awt.event import FocusEvent
+from java.awt.event import WindowEvent
 from pyj2d import env
 from pyj2d import constants as Const
 
@@ -48,12 +51,14 @@ class Event(object):
                           MouseEvent.MOUSE_RELEASED: 'MouseButtonUp',
                           MouseEvent.MOUSE_MOVED: 'MouseMotion',
                           KeyEvent.KEY_PRESSED: 'KeyDown',
-                          KeyEvent.KEY_RELEASED: 'KeyUp'}
+                          KeyEvent.KEY_RELEASED: 'KeyUp',
+                          Const.ACTIVEEVENT: 'ActiveEvent'}
         self.eventType = [MouseEvent.MOUSE_PRESSED,
                           MouseEvent.MOUSE_RELEASED,
                           MouseEvent.MOUSE_MOVED,
                           KeyEvent.KEY_PRESSED,
-                          KeyEvent.KEY_RELEASED]
+                          KeyEvent.KEY_RELEASED,
+                          Const.ACTIVEEVENT]
         try:
             self.events = set(self.eventType)
             self.eventTypes = set(self.eventType)
@@ -377,12 +382,14 @@ class JEvent(object):
     _attr = {
             'button': lambda self: self._getButton(),
             'buttons': lambda self: self._getButtons(),
-            'pos': lambda self: ( self.event.getX(),self.event.getY() ),
+            'pos': lambda self: (self.event.getX(),self.event.getY()),
             'rel': lambda self: self._getRel(),
             'key': lambda self: self.event.getKeyCode(),
             'unicode': lambda self: self._getUnicode(),
             'mod': lambda self: self.event.getModifiers(),
-            'loc': lambda self: self.event.getKeyLocation()
+            'loc': lambda self: self.event.getKeyLocation(),
+            'state': lambda self: self._activeState[self.event.getID()],
+            'gain': lambda self: self._activeGain[self.event.getID()]
             }
     _mouseEvent = ('button', 'pos')
     _mouseMotionEvent = ('buttons', 'pos', 'rel')
@@ -391,6 +398,19 @@ class JEvent(object):
     _mouseRel = {'x':0, 'y':0}
     _mouseButton = {1:1, 2:2, 3:3, 4:6, 5:7, 6:8, 7:9}
     _mouseWheelButton = {-1:4, 1:5}
+    _activeEvent = ('state', 'gain')
+    _activeState = {FocusEvent.FOCUS_GAINED: Const.APPINPUTFOCUS,
+                    FocusEvent.FOCUS_LOST: Const.APPINPUTFOCUS,
+                    MouseEvent.MOUSE_ENTERED: Const.APPMOUSEFOCUS,
+                    MouseEvent.MOUSE_EXITED: Const.APPMOUSEFOCUS,
+                    WindowEvent.WINDOW_ICONIFIED: Const.APPACTIVE,
+                    WindowEvent.WINDOW_DEICONIFIED: Const.APPACTIVE}
+    _activeGain = {FocusEvent.FOCUS_GAINED: 1,
+                   FocusEvent.FOCUS_LOST: 0,
+                   MouseEvent.MOUSE_ENTERED: 1,
+                   MouseEvent.MOUSE_EXITED: 0,
+                   WindowEvent.WINDOW_ICONIFIED: 0,
+                   WindowEvent.WINDOW_DEICONIFIED: 1}
 
     def __init__(self, event, eventType):
         """
@@ -398,7 +418,8 @@ class JEvent(object):
         
         Event object attributes:
         
-        * type: MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, KEYDOWN, KEYUP
+        * type: MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION,
+                KEYDOWN, KEYUP, ACTIVEEVENT
         * button: mouse button pressed (1-9)
         * buttons: mouse buttons pressed (1,2,3)
         * pos: mouse position (x,y)
@@ -407,6 +428,8 @@ class JEvent(object):
         * unicode: char pressed ('a'-'z'...)
         * mod: modifier pressed (KMOD_ALT | KMOD_CTRL | KMOD_SHIFT | KMOD_META)
         * loc: key location (KEY_LOCATION_LEFT | KEY_LOCATION_RIGHT)
+        * state: focus state (APPFOCUSMOUSE | APPINPUTFOCUS | APPACTIVE)
+        * gain: focus gain (0,1)
         """
         object.__setattr__(self, "event", event)
         object.__setattr__(self, "type", eventType)
@@ -433,7 +456,8 @@ class JEvent(object):
                      Const.MOUSEBUTTONUP: self._mouseEvent,
                      Const.MOUSEMOTION: self._mouseMotionEvent,
                      Const.KEYDOWN: self._keyEvent,
-                     Const.KEYUP: self._keyEvent}[self.type]:
+                     Const.KEYUP: self._keyEvent,
+                     Const.ACTIVEEVENT: self._activeEvent}[self.type]:
             attrDict[attr] = self._attr[attr](self)
         return attrDict
 

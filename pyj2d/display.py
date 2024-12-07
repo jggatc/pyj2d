@@ -9,6 +9,10 @@ from java.awt.event import MouseMotionListener
 from java.awt.event import MouseWheelListener
 from java.awt.event import KeyListener
 from java.awt.event import MouseEvent, KeyEvent
+from java.awt.event import FocusEvent
+from java.awt.event import FocusListener
+from java.awt.event import WindowEvent
+from java.awt.event import WindowListener
 from java.lang import System
 from java.lang import Thread, Runnable, InterruptedException
 from javax.swing import SwingUtilities
@@ -17,11 +21,12 @@ from pyj2d.rect import Rect
 from pyj2d.time import Clock
 from pyj2d.sprite import Sprite, Group, RenderUpdates, OrderedUpdates
 from pyj2d import env
+from pyj2d import constants as Const
 
 __docformat__ = 'restructuredtext'
 
 
-class Frame(JFrame):
+class Frame(JFrame, WindowListener):
 
     def __init__(self, title, size):
         JFrame.__init__(self, title)
@@ -30,9 +35,32 @@ class Frame(JFrame):
         self.setSize(size[0],size[1])
         self.setDefaultLookAndFeelDecorated(True)
         self.setBackground(Color.BLACK)
+        self.addWindowListener(self)
+        self.event = env.event
         self.jpanel = Panel(size)
         self.getContentPane().add(self.jpanel)
         self.pack()
+
+    def windowIconified(self, event):
+        self.event._updateQueue(event, Const.ACTIVEEVENT)
+
+    def windowDeiconified(self, event):
+        self.event._updateQueue(event, Const.ACTIVEEVENT)
+
+    def windowOpened(self, event):
+        pass
+
+    def windowActivated(self, event):
+        pass
+
+    def windowDeactivated(self, event):
+        pass
+
+    def windowClosing(self, event):
+        pass
+
+    def windowClosed(self, event):
+        pass
 
     def stop(self):
         self.dispose()
@@ -41,7 +69,8 @@ class Frame(JFrame):
 class Panel(JPanel, MouseListener,
                     MouseMotionListener,
                     MouseWheelListener,
-                    KeyListener):
+                    KeyListener,
+                    FocusListener):
 
     def __init__(self, size):
         JPanel.__init__(self)
@@ -52,6 +81,7 @@ class Panel(JPanel, MouseListener,
         self.addMouseMotionListener(self)
         self.addMouseWheelListener(self)
         self.addKeyListener(self)
+        self.addFocusListener(self)
         self.setFocusable(True)
         self.requestFocusInWindow()
         self.event = env.event
@@ -69,7 +99,7 @@ class Panel(JPanel, MouseListener,
         self.event._updateQueue(event, MouseEvent.MOUSE_RELEASED)
 
     def mouseEntered(self, event):
-        pass
+        self.event._updateQueue(event, Const.ACTIVEEVENT)
 
     def mouseExited(self, event):
         self.event.mousePress[1] = False
@@ -78,6 +108,7 @@ class Panel(JPanel, MouseListener,
         for keycode in self.modKey:
             if self.event.keyPress[keycode]:
                 self.event.keyPress[keycode] = False
+        self.event._updateQueue(event, Const.ACTIVEEVENT)
 
     def mouseClicked(self, event):
         pass
@@ -102,6 +133,12 @@ class Panel(JPanel, MouseListener,
             self.event.keyPress[event.keyCode] = False
         self.keyHeld[event.keyCode]['pressed'] = False
         self.event._updateQueue(event, KeyEvent.KEY_RELEASED)
+
+    def focusGained(self, event):
+        self.event._updateQueue(event, Const.ACTIVEEVENT)
+
+    def focusLost(self, event):
+        self.event._updateQueue(event, Const.ACTIVEEVENT)
 
     def _isPaused(self, keycode):
         if keycode not in self.keyHeld:
