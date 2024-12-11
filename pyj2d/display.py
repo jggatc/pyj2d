@@ -30,7 +30,7 @@ class Frame(JFrame, WindowListener):
 
     def __init__(self, title, size):
         JFrame.__init__(self, title)
-        self.setDefaultCloseOperation(self.EXIT_ON_CLOSE)
+        self.setDefaultCloseOperation(self.DO_NOTHING_ON_CLOSE)
         self.setResizable(False)
         self.setSize(size[0],size[1])
         self.setDefaultLookAndFeelDecorated(True)
@@ -57,7 +57,7 @@ class Frame(JFrame, WindowListener):
         pass
 
     def windowClosing(self, event):
-        pass
+        self.event._updateQueue(event, Const.QUIT)
 
     def windowClosed(self, event):
         pass
