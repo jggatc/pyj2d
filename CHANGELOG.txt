@@ -7,6 +7,7 @@
 -revise surface convert.
 -add activeevent.
 -add closeevent.
+-update color object.
 
 0.32    2022-04-17
 -add key set_repeat method.
