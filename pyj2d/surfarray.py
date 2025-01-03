@@ -111,6 +111,3 @@ def blit_array(surface, array):
         g2d.dispose()
     return None
 
-
-use_arraytype = lambda *arg: None
-
