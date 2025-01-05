@@ -36,9 +36,9 @@ class Event(object):
         
         Module initialization creates pyj2d.event instance.
         """
-        self.eventQueue = [None] * 256      #max 256
+        self.eventQueue = [None] * 256
         self.eventNum = 0
-        self.eventQueueTmp = [None] * 256   #used when main queue is locked
+        self.eventQueueTmp = [None] * 256
         self.eventNumTmp = 0
         self.queueLock = False
         self.queueAccess = False
@@ -81,9 +81,9 @@ class Event(object):
         self.Event = UserEvent
 
     def _lock(self):
-        self.queueLock = True   #block next event access
-        while self.queueAccess:      #complete current event access
-            Thread.sleep(1)       #~should be via separate Java event thread
+        self.queueLock = True
+        while self.queueAccess:
+            Thread.sleep(1)
 
     def _unlock(self):
         self.queueLock = False
@@ -275,6 +275,7 @@ class Event(object):
     def set_blocked(self, eventType):
         """
         Block specified event type(s) from queue.
+        If None is argument, all event types are blocked.
         """
         if eventType is not None:
             try:
@@ -289,13 +290,13 @@ class Event(object):
                 except KeyError:
                     pass
         else:
-            for event in self.eventType:
-                self.events.add(event)
+            self.events.clear()
         return None
 
     def set_allowed(self, eventType):
         """
         Set allowed event type(s) on queue.
+        If None is argument, all event types are allowed.
         """
         if eventType is not None:
             try:
@@ -304,7 +305,8 @@ class Event(object):
             except TypeError:
                 self.events.add(eventType)
         else:
-            self.events.clear()
+            for event in self.eventType:
+                self.events.add(event)
         return None
 
     def get_blocked(self, eventType):
