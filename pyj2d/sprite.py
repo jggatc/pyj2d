@@ -71,7 +71,7 @@ class Sprite(object):
         """
         Remove sprite from all member groups.
         """
-        for group in list(self._groups.values()):
+        for group in self._groups.values():
             group.remove(self)
         return None
 
@@ -247,7 +247,7 @@ class Group(object):
         """
         Update sprites in group by calling sprite.update.
         """
-        for sprite in list(self._sprites.values()):
+        for sprite in self._sprites.values():
             sprite.update(*args)
         return None
 
@@ -287,13 +287,6 @@ class GroupSingle(Group):
         else:
             Group.__init__(self)
 
-    def __getattr__(self, attr):
-        if attr == 'sprite':
-            if self._sprites:
-                return list(self._sprites.values())[0]
-            else:
-                return None
-
     def add(self, sprite):
         """
         Add sprite to group, replacing existing sprite.
@@ -303,13 +296,19 @@ class GroupSingle(Group):
         sprite._groups[id(self)] = self
         return None
 
-    def update(self, *args):
-        """
-        Update sprite by calling Sprite.update.
-        """
+    def _get_sprite(self):
         if self._sprites:
-            list(self._sprites.values())[0].update(*args)
-        return None
+            return list(self._sprites.values())[0]
+        else:
+            return None
+
+    def _set_sprite(self, sprite):
+        self.add(sprite)
+
+    def _del_sprite(self):
+        raise TypeError('Cannot delete the sprite attribute')
+
+    sprite = property(_get_sprite, _set_sprite, _del_sprite)
 
 
 class RenderUpdates(Group):
