@@ -9,6 +9,7 @@
 -add closeevent.
 -update color object.
 -revise sprite to optimize.
+-revise vector elementwise object.
 
 0.32    2022-04-17
 -add key set_repeat method.
