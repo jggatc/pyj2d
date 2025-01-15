@@ -54,8 +54,7 @@ class Vector2(object):
         return '[%g, %g]' % (self._x, self._y)
 
     def __repr__(self):
-        return '<%s(%g, %g)>' % (self.__class__.__name__,
-                                 self._x, self._y)
+        return '<%s(%g, %g)>' % (self.__class__.__name__, self._x, self._y)
 
     def __getitem__(self, index):
         if index in (0, -2):
@@ -159,7 +158,7 @@ class Vector2(object):
         mag = self.magnitude()
         if mag == 0:
             raise ValueError('Cannot normalize vector of zero length')
-        return Vector2(self._x / mag, self._y / mag)
+        return self.__class__(self._x / mag, self._y / mag)
 
     def normalize_ip(self):
         """
@@ -198,8 +197,8 @@ class Vector2(object):
         if nn == 0:
             raise ValueError('Cannot reflect from normal of zero length')
         c = 2 * vn / nn
-        return Vector2(self._x - (vector[0] * c),
-                       self._y - (vector[1] * c))
+        return self.__class__(self._x - (vector[0] * c),
+                              self._y - (vector[1] * c))
 
     def reflect_ip(self, vector):
         """
@@ -234,8 +233,8 @@ class Vector2(object):
         """
         if t < 0.0 or t > 1.0:
             raise ValueError('Argument t must be in range 0 to 1')
-        return Vector2(self._x * (1-t) + vector[0] * t,
-                       self._y * (1-t) + vector[1] * t)
+        return self.__class__(self._x * (1-t) + vector[0] * t,
+                              self._y * (1-t) + vector[1] * t)
 
     def slerp(self, vector, t):
         """
@@ -269,8 +268,8 @@ class Vector2(object):
         else:
             a = 1.0
             b = 0.0
-        v = Vector2((sx * a) + (vx * b),
-                    (sy * a) + (vy * b))
+        v = self.__class__((sx * a) + (vx * b),
+                           (sy * a) + (vy * b))
         smag = ((1.0-t) * smag) + (t * vmag)
         v.x *= smag
         v.y *= smag
@@ -289,8 +288,8 @@ class Vector2(object):
         rad = angle / 180.0 * pi
         c = round(cos(rad), 6)
         s = round(sin(rad), 6)
-        return Vector2((c * self._x) - (s * self._y),
-                       (s * self._x) + (c * self._y))
+        return self.__class__((c * self._x) - (s * self._y),
+                              (s * self._x) + (c * self._y))
 
     def rotate_rad(self, angle):
         """
@@ -298,8 +297,8 @@ class Vector2(object):
         """
         c = cos(angle)
         s = sin(angle)
-        return Vector2((c * self._x) - (s * self._y),
-                       (s * self._x) + (c * self._y))
+        return self.__class__((c * self._x) - (s * self._y),
+                              (s * self._x) + (c * self._y))
 
     def rotate_ip(self, angle):
         """
@@ -357,7 +356,7 @@ class Vector2(object):
         """
         Return copy of vector.
         """
-        return Vector2(self._x, self._y)
+        return self.__class__(self._x, self._y)
 
     def update(self, x=None, y=None):
         """
@@ -374,20 +373,20 @@ class Vector2(object):
             self._y = 0.0
 
     def __pos__(self):
-        return Vector2(self._x, self._y)
+        return self.__class__(self._x, self._y)
 
     def __neg__(self):
-        return Vector2(-self._x, -self._y)
+        return self.__class__(-self._x, -self._y)
 
     def __add__(self, other):
         if hasattr(other, '__iter__'):
-            return Vector2(self._x + other[0], self._y + other[1])
+            return self.__class__(self._x + other[0], self._y + other[1])
         else:
             raise TypeError('unsupported operand')
 
     def __sub__(self, other):
         if hasattr(other, '__iter__'):
-            return Vector2(self._x - other[0], self._y - other[1])
+            return self.__class__(self._x - other[0], self._y - other[1])
         else:
             raise TypeError('unsupported operand')
 
@@ -396,36 +395,36 @@ class Vector2(object):
             if not hasattr(other, '_v'):
                 return (self._x * other[0]) + (self._y * other[1])
             else:
-                return Vector2(self._x * other[0], self._y * other[1])
+                return self.__class__(self._x * other[0], self._y * other[1])
         else:
-            return Vector2(self._x * other, self._y * other)
+            return self.__class__(self._x * other, self._y * other)
 
     def __div__(self, other):
         if hasattr(other, '__iter__'):
             if not hasattr(other, '_v'):
                 raise TypeError('unsupported operand')
             else:
-                return Vector2(self._x / other[0], self._y / other[1])
+                return self.__class__(self._x / other[0], self._y / other[1])
         else:
-            return Vector2(self._x / other, self._y / other)
+            return self.__class__(self._x / other, self._y / other)
 
     def __truediv__(self, other):
         if hasattr(other, '__iter__'):
             if not hasattr(other, '_v'):
                 raise TypeError('unsupported operand')
             else:
-                return Vector2(self._x / other[0], self._y / other[1])
+                return self.__class__(self._x / other[0], self._y / other[1])
         else:
-            return Vector2(self._x / other, self._y / other)
+            return self.__class__(self._x / other, self._y / other)
 
     def __floordiv__(self, other):
         if hasattr(other, '__iter__'):
             if not hasattr(other, '_v'):
                 raise TypeError('unsupported operand')
             else:
-                return Vector2(self._x // other[0], self._y // other[1])
+                return self.__class__(self._x // other[0], self._y // other[1])
         else:
-            return Vector2(self._x // other, self._y // other)
+            return self.__class__(self._x // other, self._y // other)
 
     def __eq__(self, other):
         if hasattr(other, '__iter__'):
@@ -463,13 +462,13 @@ class Vector2(object):
 
     def __radd__(self, other):
         if hasattr(other, '__iter__'):
-            return Vector2(self._x + other[0], self._y + other[1])
+            return self.__class__(self._x + other[0], self._y + other[1])
         else:
             raise TypeError('unsupported operand')
 
     def __rsub__(self, other):
         if hasattr(other, '__iter__'):
-            return Vector2(other[0] - self._x, other[1] - self._y)
+            return self.__class__(other[0] - self._x, other[1] - self._y)
         else:
             raise TypeError('unsupported operand')
 
@@ -477,25 +476,25 @@ class Vector2(object):
         if hasattr(other, '__iter__'):
             return (self._x * other[0]) + (self._y * other[1])
         else:
-            return Vector2(self._x * other, self._y * other)
+            return self.__class__(self._x * other, self._y * other)
 
     def __rdiv__(self, other):
         if not hasattr(other, '_v'):
             raise TypeError('unsupported operand')
         else:
-            return Vector2(other[0] / self._x, other[1] / self._y)
+            return self.__class__(other[0] / self._x, other[1] / self._y)
 
     def __rtruediv__(self, other):
         if not hasattr(other, '_v'):
             raise TypeError('unsupported operand')
         else:
-            return Vector2(other[0] / self._x, other[1] / self._y)
+            return self.__class__(other[0] / self._x, other[1] / self._y)
 
     def __rfloordiv__(self, other):
         if not hasattr(other, '_v'):
             raise TypeError('unsupported operand')
         else:
-            return Vector2(other[0] // self._x, other[1] // self._y)
+            return self.__class__(other[0] // self._x, other[1] // self._y)
 
     def __iadd__(self, other):
         if hasattr(other, '__iter__'):
@@ -587,67 +586,67 @@ class VectorElementwiseProxy(object):
         return bool(self._v._x or self._v._y)
 
     def __pos__(self):
-        return Vector2(self._v._x, self._v._y)
+        return self._v.__class__(self._v._x, self._v._y)
 
     def __neg__(self):
-        return Vector2(-self._v._x, -self._v._y)
+        return self._v.__class__(-self._v._x, -self._v._y)
 
     def __abs__(self):
         return (abs(self._v._x), abs(self._v._y))
 
     def __add__(self, other):
         if hasattr(other, '__iter__'):
-            return Vector2(self._v._x + other[0], self._v._y + other[1])
+            return self._v.__class__(self._v._x + other[0], self._v._y + other[1])
         else:
-            return Vector2(self._v._x + other, self._v._y + other)
+            return self._v.__class__(self._v._x + other, self._v._y + other)
 
     def __sub__(self, other):
         if hasattr(other, '__iter__'):
-            return Vector2(self._v._x - other[0], self._v._y - other[1])
+            return self._v.__class__(self._v._x - other[0], self._v._y - other[1])
         else:
-            return Vector2(self._v._x - other, self._v._y - other)
+            return self._v.__class__(self._v._x - other, self._v._y - other)
 
     def __mul__(self, other):
         if hasattr(other, '__iter__'):
-            return Vector2(self._v._x * other[0], self._v._y * other[1])
+            return self._v.__class__(self._v._x * other[0], self._v._y * other[1])
         else:
-            return Vector2(self._v._x * other, self._v._y * other)
+            return self._v.__class__(self._v._x * other, self._v._y * other)
 
     def __div__(self, other):
         if hasattr(other, '__iter__'):
-            return Vector2(self._v._x / other[0], self._v._y / other[1])
+            return self._v.__class__(self._v._x / other[0], self._v._y / other[1])
         else:
-            return Vector2(self._v._x / other, self._v._y / other)
+            return self._v.__class__(self._v._x / other, self._v._y / other)
 
     def __truediv__(self, other):
         if hasattr(other, '__iter__'):
-            return Vector2(self._v._x / other[0], self._v._y / other[1])
+            return self._v.__class__(self._v._x / other[0], self._v._y / other[1])
         else:
-            return Vector2(self._v._x / other, self._v._y / other)
+            return self._v.__class__(self._v._x / other, self._v._y / other)
 
     def __floordiv__(self, other):
         if hasattr(other, '__iter__'):
-            return Vector2(self._v._x // other[0], self._v._y // other[1])
+            return self._v.__class__(self._v._x // other[0], self._v._y // other[1])
         else:
-            return Vector2(self._v._x // other, self._v._y // other)
+            return self._v.__class__(self._v._x // other, self._v._y // other)
 
     def __pow__(self, other):
         if hasattr(other, '__iter__'):
             if (other[0]%1 and self._v._x<0) or (other[1]%1 and self._v._y<0):
                 raise ValueError(
                     'negative number cannot be raised to a fractional power')
-            return Vector2(self._v._x ** other[0], self._v._y ** other[1])
+            return self._v.__class__(self._v._x ** other[0], self._v._y ** other[1])
         else:
             if other%1 and (self._v._x<0 or self._v._y<0):
                 raise ValueError(
                     'negative number cannot be raised to a fractional power')
-            return Vector2(self._v._x ** other, self._v._y ** other)
+            return self._v.__class__(self._v._x ** other, self._v._y ** other)
 
     def __mod__(self, other):
         if hasattr(other, '__iter__'):
-            return Vector2(self._v._x % other[0], self._v._y % other[1])
+            return self._v.__class__(self._v._x % other[0], self._v._y % other[1])
         else:
-            return Vector2(self._v._x % other, self._v._y % other)
+            return self._v.__class__(self._v._x % other, self._v._y % other)
 
     def __eq__(self, other):
         if hasattr(other, '__iter__'):
@@ -689,55 +688,55 @@ class VectorElementwiseProxy(object):
 
     def __radd__(self, other):
         if hasattr(other, '__iter__'):
-            return Vector2(self._v._x + other[0], self._v._y + other[1])
+            return self._v.__class__(self._v._x + other[0], self._v._y + other[1])
         else:
-            return Vector2(self._v._x + other, self._v._y + other)
+            return self._v.__class__(self._v._x + other, self._v._y + other)
 
     def __rsub__(self, other):
         if hasattr(other, '__iter__'):
-            return Vector2(other[0] - self._v._x, other[1] - self._v._y)
+            return self._v.__class__(other[0] - self._v._x, other[1] - self._v._y)
         else:
-            return Vector2(other - self._v._x, other - self._v._y)
+            return self._v.__class__(other - self._v._x, other - self._v._y)
 
     def __rmul__(self, other):
         if hasattr(other, '__iter__'):
-            return Vector2(self._v._x * other[0], self._v._y * other[1])
+            return self._v.__class__(self._v._x * other[0], self._v._y * other[1])
         else:
-            return Vector2(self._v._x * other, self._v._y * other)
+            return self._v.__class__(self._v._x * other, self._v._y * other)
 
     def __rdiv__(self, other):
         if hasattr(other, '__iter__'):
-            return Vector2(other[0] / self._v._x, other[1] / self._v._y)
+            return self._v.__class__(other[0] / self._v._x, other[1] / self._v._y)
         else:
-            return Vector2(other / self._v._x, other / self._v._y)
+            return self._v.__class__(other / self._v._x, other / self._v._y)
 
     def __rtruediv__(self, other):
         if hasattr(other, '__iter__'):
-            return Vector2(other[0] / self._v._x, other[1] / self._v._y)
+            return self._v.__class__(other[0] / self._v._x, other[1] / self._v._y)
         else:
-            return Vector2(other / self._v._x, other / self._v._y)
+            return self._v.__class__(other / self._v._x, other / self._v._y)
 
     def __rfloordiv__(self, other):
         if hasattr(other, '__iter__'):
-            return Vector2(other[0] // self._v._x, other[1] // self._v._y)
+            return self._v.__class__(other[0] // self._v._x, other[1] // self._v._y)
         else:
-            return Vector2(other // self._v._x, other // self._v._y)
+            return self._v.__class__(other // self._v._x, other // self._v._y)
 
     def __rpow__(self, other):
         if hasattr(other, '__iter__'):
             if (other[0]<0 and self._v._x%1) or (other[1]<0 and self._v._y%1):
                 raise ValueError(
                     'negative number cannot be raised to a fractional power')
-            return Vector2(other[0] ** self._v._x, other[1] ** self._v._y)
+            return self._v.__class__(other[0] ** self._v._x, other[1] ** self._v._y)
         else:
             if other<0 and (self._v._x%1 or self._v._y%1):
                 raise ValueError(
                     'negative number cannot be raised to a fractional power')
-            return Vector2(other ** self._v._x, other ** self._v._y)
+            return self._v.__class__(other ** self._v._x, other ** self._v._y)
 
     def __rmod__(self, other):
         if hasattr(other, '__iter__'):
-            return Vector2(other[0] % self._v._x, other[1] % self._v._y)
+            return self._v.__class__(other[0] % self._v._x, other[1] % self._v._y)
         else:
-            return Vector2(other % self._v._x, other % self._v._y)
+            return self._v.__class__(other % self._v._x, other % self._v._y)
 
