@@ -71,7 +71,7 @@ class Sprite(object):
         """
         Remove sprite from all member groups.
         """
-        for group in self._groups.values():
+        for group in list(self._groups.values()):
             group.remove(self)
         return None
 
@@ -247,7 +247,7 @@ class Group(object):
         """
         Update sprites in group by calling sprite.update.
         """
-        for sprite in self._sprites.values():
+        for sprite in list(self._sprites.values()):
             sprite.update(*args)
         return None
 
