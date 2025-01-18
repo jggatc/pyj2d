@@ -2,9 +2,6 @@ env = None
 pg = None
 
 
-# __pragma__ ('opov')
-
-
 def init(environ):
     global env, pg
     env = environ
@@ -19,7 +16,7 @@ def test_mask():
     surface = pg.Surface((15,10),pg.SRCALPHA)
     pg.draw.rect(surface, (10,20,30), (0,0,4,3))
     mask = pg.mask.from_surface(surface)
-    assert mask.get_size() == (15,10)
+    assert mask.get_size() == (15,10)    # __:opov
     assert mask.count() == 12
     assert mask.get_at((0,0)) == 1
     assert mask.get_at((4,0)) == 0

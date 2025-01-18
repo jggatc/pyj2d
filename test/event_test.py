@@ -2,9 +2,6 @@ env = None
 pg = None
 
 
-# __pragma__ ('opov')
-
-
 def init(environ):
     global env, pg
     env = environ
@@ -25,23 +22,23 @@ def test_event_get():
     for evt in events:
         event_obj[evt] = pg.event.Event(evt)
     pg.event.clear()
-    assert pg.event.get() == []
+    assert pg.event.get() == []    # __:opov
     for evt in events:
         pg.event.post(event_obj[evt])
     evts = pg.event.get()
-    assert [e.type for e in evts] == events
+    assert [e.type for e in evts] == events    # __:opov
     for evt in events:
         pg.event.post(event_obj[evt])
     evts = pg.event.get(events[0])
-    assert [e.type for e in evts] == events[:1]
+    assert [e.type for e in evts] == events[:1]    # __:opov
     evts = pg.event.get()
-    assert [e.type for e in evts] == events[1:]
+    assert [e.type for e in evts] == events[1:]    # __:opov
     for evt in events:
         pg.event.post(event_obj[evt])
     evts = pg.event.get([events[1],events[2]])
-    assert [e.type for e in evts] == events[1:]
+    assert [e.type for e in evts] == events[1:]    # __:opov
     evts = pg.event.get()
-    assert [e.type for e in evts] == events[:1]
+    assert [e.type for e in evts] == events[:1]    # __:opov
 
 
 def test_event_poll():
@@ -54,6 +51,7 @@ def test_event_poll():
     for evt in events:
         pg.event.post(event_obj[evt])
     evts = [pg.event.poll() for i in range(len(events))]
+    assert [e.type for e in evts] == events    # __:opov
 
 
 def test_event_wait():
@@ -65,8 +63,8 @@ def test_event_wait():
     for evt in events:
         pg.event.post(event_obj[evt])
     evts = [pg.event.wait() for i in range(len(events))]
-    assert [e.type for e in evts] == events
-    assert pg.event.get() == []
+    assert [e.type for e in evts] == events    # __:opov
+    assert pg.event.get() == []    # __:opov
     if env['platform'] != 'js':    #waiting not implemented
         pg.time.set_timer(events[0], 30)
         evt = pg.event.wait()
@@ -95,17 +93,17 @@ def test_event_clear():
     for evt in events:
         pg.event.post(event_obj[evt])
     pg.event.clear()
-    assert pg.event.get() == []
+    assert pg.event.get() == []    # __:opov
     for evt in events:
         pg.event.post(event_obj[evt])
     pg.event.clear(events[0])
     evts = pg.event.get()
-    assert [e.type for e in evts] == events[1:]
+    assert [e.type for e in evts] == events[1:]    # __:opov
     for evt in events:
         pg.event.post(event_obj[evt])
     pg.event.clear((events[0], events[1]))
     evts = pg.event.get()
-    assert [e.type for e in evts] == events[2:]
+    assert [e.type for e in evts] == events[2:]    # __:opov
 
 
 def test_event_block():
@@ -120,16 +118,13 @@ def test_event_block():
     for evt in events:
         pg.event.post(event_obj[evt])
     evts = pg.event.get()
-    assert [e.type for e in evts] == events[:2]
-    if env['platform'] not in ('jvm','js'):    #changed in pg2
-        pg.event.set_allowed(None)
-    else:
-        pg.event.set_blocked(None)
+    assert [e.type for e in evts] == events[:2]    # __:opov
+    pg.event.set_allowed(None)
     pg.event.clear()
     for evt in events:
         pg.event.post(event_obj[evt])
     evts = pg.event.get()
-    assert [e.type for e in evts] == events
+    assert [e.type for e in evts] == events    # __:opov
 
 
 def test_event_post():
@@ -141,7 +136,7 @@ def test_event_post():
     for evt in events:
         pg.event.post(event_obj[evt])
     evts = pg.event.get()
-    assert [e.type for e in evts if e.type in events] == events
+    assert [e.type for e in evts if e.type in events] == events    # __:opov
     evt_obj = pg.event.Event(pg.USEREVENT,{'x':1,'y':2,'z':3})
     pg.event.post(evt_obj)
     evts = pg.event.get()

@@ -2,9 +2,6 @@ env = None
 pg = None
 
 
-# __pragma__ ('opov')
-
-
 def init(environ):
     global env, pg
     env = environ
@@ -34,10 +31,6 @@ def test_cursor():
         cc2 = cursor_surf.get_at((0,1))
         c1 = pg.Color(255,255,255,255)
         c2 = pg.Color(0,0,0,0)
-        if not env['pyjs_opt']:
-            assert cc1 == c1
-            assert cc2 == c2
-        else:   #pyjs -O __eq__ ignored
-            assert cc1.r==c1.r and cc1.g==c1.g and cc1.b==c1.b and cc1.a==c1.a
-            assert cc2.r==c2.r and cc2.g==c2.g and cc2.b==c2.b and cc2.a==c2.a
+        assert cc1 == c1    # __:opov
+        assert cc2 == c2    # __:opov
 

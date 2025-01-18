@@ -22,11 +22,6 @@ elif os.name == 'java':
     platform = 'jvm'
     executor = 'jython'
     library = 'pyj2d'
-else:
-    import pyjsdl as pg
-    platform = 'js'
-    executor = 'pyjs'
-    library = 'pyjsdl'
 
 # __pragma__ ('noskip')
 
@@ -50,7 +45,7 @@ from test import time_test
 from test import vector_test
 
 
-if executor in ('python', 'jython', 'pyjs'):
+if executor in ('python', 'jython'):
     has_assert = True
     if hasattr('', 'format'):
         _name = lambda f: f.__name__
@@ -67,19 +62,6 @@ elif executor == 'transcrypt':
     # __pragma__ ('noalias', 'name')
     _name = lambda f: f.name
     _str = lambda n, t, r: 'Test {}  {} {}'.format(n, _name(t), r)
-
-
-def set_pyjsmode():
-    #pyjsbuild -S: opt=False/attr=True
-    #pyjsbuild -O: opt=True/attr=False
-    #pyjsbuild -O descriptor-proto/operator-funcs: opt=True/attr=True
-    if executor == 'pyjs':
-        pyjs_opt = pg.env.pyjs_mode.optimized
-        pyjs_attr = pg.env.pyjs_mode.getattr_call
-    else:
-        pyjs_opt = False
-        pyjs_attr = True
-    return pyjs_opt, pyjs_attr
 
 
 class Log:
@@ -154,15 +136,12 @@ def tests_init():
     width, height = 20,20
     display = pg.display.set_mode((width, height))
     surface = pg.Surface((width, height))
-    pyjs_opt, pyjs_attr = set_pyjsmode()
     log = Log()
     env['pg'] = pg
     env['platform'] = platform
     env['executor'] = executor
     env['library'] = library
     env['log'] = log
-    env['pyjs_opt'] = pyjs_opt
-    env['pyjs_attr'] = pyjs_attr
     env['display'] = display
     env['surface'] = surface
     env['width'] = width

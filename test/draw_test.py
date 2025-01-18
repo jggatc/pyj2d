@@ -3,9 +3,6 @@ pg = None
 surface = None
 
 
-# __pragma__ ('opov')
-
-
 def init(environ):
     global env, pg, surface
     env = environ
@@ -29,7 +26,7 @@ def test_draw_rect():
         c = surface.get_at(pos[0])
         c = {True:1,False:0}[c.r>0]
         assert c == pos[1]
-    assert (rect.x,rect.y,rect.width,rect.height) == data[1]
+    assert (rect.x,rect.y,rect.width,rect.height) == data[1]    # __:opov
     data = [((10,6),0), ((10,8),1), ((10,10),0)], (5,8,10,5)
     surface.fill((0,0,0))
     rect = pg.draw.rect(surface, (255,0,0,255), pg.Rect((5,8,10,5)), 1)
@@ -37,7 +34,7 @@ def test_draw_rect():
         c = surface.get_at(pos[0])
         c = {True:1,False:0}[c.r>0]
         assert c == pos[1]
-    assert (rect.x,rect.y,rect.width,rect.height) == data[1]
+    assert (rect.x,rect.y,rect.width,rect.height) == data[1]    # __:opov
     data = [((3,0),1), ((3,2),1), ((3,4),0)], (0,0,5,3)
     surface.fill((0,0,0))
     rect = pg.draw.rect(surface, (255,0,0), (-5,-2,10,5))
@@ -45,7 +42,7 @@ def test_draw_rect():
         c = surface.get_at(pos[0])
         c = {True:1,False:0}[c.r>0]
         assert c == pos[1]
-    assert (rect.x,rect.y,rect.width,rect.height) == data[1]
+    assert (rect.x,rect.y,rect.width,rect.height) == data[1]    # __:opov
 
 
 def test_draw_circle():
@@ -59,7 +56,7 @@ def test_draw_circle():
         c = surface.get_at(pos[0])
         c = {True:1,False:0}[c.r>0]
         assert c == pos[1]
-    assert (rect.x,rect.y,rect.width,rect.height) == data[1]
+    assert (rect.x,rect.y,rect.width,rect.height) == data[1]    # __:opov
 
 
 def test_draw_ellipse():
@@ -70,7 +67,7 @@ def test_draw_ellipse():
         c = surface.get_at(pos[0])
         c = {True:1,False:0}[c.r>0]
         assert c == pos[1]
-    assert (rect.x,rect.y,rect.width,rect.height) == data[1]
+    assert (rect.x,rect.y,rect.width,rect.height) == data[1]    # __:opov
 
 
 def test_draw_arc():
@@ -82,12 +79,9 @@ def test_draw_arc():
         c = {True:1,False:0}[c.r>0]
         assert c == pos[1]
     if env['platform'] not in ('jvm','js'):
-        try:
-            assert (rect.x,rect.y,rect.width,rect.height) == data[1]
-        except AssertionError:      #pg1.9.6
-            assert (rect.x,rect.y,rect.width,rect.height) == (5,5,10,10)
+        assert (rect.x,rect.y,rect.width,rect.height) == data[1]    # __:opov
     else:   #update to new boundary process
-        assert (rect.x,rect.y,rect.width,rect.height) == (5,5,10,10)
+        assert (rect.x,rect.y,rect.width,rect.height) == (5,5,10,10)    # __:opov
 
 
 def test_draw_polygon():
@@ -98,7 +92,7 @@ def test_draw_polygon():
         c = surface.get_at(pos[0])
         c = {True:1,False:0}[c.r>0]
         assert c == pos[1]
-    assert (rect.x,rect.y,rect.width,rect.height) == data[1]
+    assert (rect.x,rect.y,rect.width,rect.height) == data[1]    # __:opov
 
 
 def test_draw_line():
@@ -109,7 +103,7 @@ def test_draw_line():
         c = surface.get_at(pos[0])
         c = {True:1,False:0}[c.r>0]
         assert c == pos[1]
-    assert (rect.x,rect.y,rect.width,rect.height) == data[1]
+    assert (rect.x,rect.y,rect.width,rect.height) == data[1]    # __:opov
 
 
 def test_draw_lines():
@@ -120,5 +114,5 @@ def test_draw_lines():
         c = surface.get_at(pos[0])
         c = {True:1,False:0}[c.r>0]
         assert c == pos[1]
-    assert (rect.x,rect.y,rect.width,rect.height) == data[1]
+    assert (rect.x,rect.y,rect.width,rect.height) == data[1]    # __:opov
 
