@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #THE SOFTWARE.
 
-__version__ = '0.32'
+__version__ = '0.33'
 
 from pyj2d import env
 from pyj2d import util
