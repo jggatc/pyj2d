@@ -18,6 +18,7 @@ class Mouse(object):
     * pyj2d.mouse.get_pos
     * pyj2d.mouse.get_rel
     * pyj2d.mouse.set_visible
+    * pyj2d.mouse.get_focused
     * pyj2d.mouse.set_cursor
     * pyj2d.mouse.get_cursor
     """
@@ -91,6 +92,12 @@ class Mouse(object):
             self._cursorVisible = False
         return visible_pre
 
+    def get_focused(self):
+        """
+        Check if mouse has focus.
+        """
+        return self.mousePos['x'] != -1
+
     def set_cursor(self, *cursor):
         """
         Set mouse cursor.
@@ -143,5 +150,4 @@ class Mouse(object):
 
     def _nonimplemented_methods(self):
         self.set_pos = lambda *arg: None
-        self.get_focused = lambda *arg: True
 
