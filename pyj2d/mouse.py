@@ -28,8 +28,8 @@ class Mouse(object):
         
         Module initialization creates pyj2d.mouse instance.
         """
+        self.mousePos = env.event.mousePos
         self.mousePress = env.event.mousePress
-        self.mousePos = {'x':0, 'y':0}
         self._cursorVisible = True
         self._cursorBlank = None
         self._cursor = None
@@ -47,9 +47,9 @@ class Mouse(object):
         If the pointer is not in frame, returns -1,-1.
         """
         pos = env.jframe.jpanel.getMousePosition()
-        try:
+        if pos is not None:
             return (pos.x, pos.y)
-        except AttributeError:
+        else:
             return (-1,-1)
 
     def get_rel(self):
@@ -60,10 +60,11 @@ class Mouse(object):
         if pos:
             rel = pos.x-self.mousePos['x'], pos.y-self.mousePos['y']
             if rel[0] or rel[1]:
-                self.mousePos['x'], self.mousePos['y'] = pos.x, pos.y
+                self.mousePos['x'] = pos.x
+                self.mousePos['y'] = pos.y
+            return rel
         else:
-            rel = (0,0)
-        return rel
+            return (0,0)
 
     def set_visible(self, visible):
         """

@@ -45,6 +45,7 @@ class Event(object):
         self.queue = []
         self.queueNil = []
         self.queueTmp = []
+        self.mousePos = {'x':-1, 'y':-1}
         self.mousePress = {1:False, 2:False, 3:False}
         self._nonimplemented_methods()
         self.eventName = {MouseEvent.MOUSE_PRESSED: 'MouseButtonDown',
@@ -399,7 +400,6 @@ class JEvent(object):
     _mouseMotionEvent = ('buttons', 'pos', 'rel')
     _keyEvent = ('key', 'unicode', 'mod', 'loc')
     _mousePos = {'x':0, 'y':0}
-    _mouseRel = {'x':0, 'y':0}
     _mouseButton = {1:1, 2:2, 3:3, 4:6, 5:7, 6:8, 7:9}
     _mouseWheelButton = {-1:4, 1:5}
     _activeEvent = ('state', 'gain')
@@ -486,11 +486,6 @@ class JEvent(object):
         if rel[0] or rel[1]:
             self.__class__._mousePos['x'] = pos[0]
             self.__class__._mousePos['y'] = pos[1]
-            self.__class__._mouseRel['x'] = rel[0]
-            self.__class__._mouseRel['y'] = rel[1]
-        else:
-            rel = (self.__class__._mouseRel['x'],
-                   self.__class__._mouseRel['y'])
         return rel
 
     def _getUnicode(self):

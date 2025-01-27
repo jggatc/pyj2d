@@ -20,6 +20,7 @@ from pyj2d.surface import Surface
 from pyj2d.rect import Rect
 from pyj2d.time import Clock
 from pyj2d.sprite import Sprite, Group, RenderUpdates, OrderedUpdates
+from pyj2d.event import JEvent
 from pyj2d import env
 from pyj2d import constants as Const
 
@@ -99,9 +100,17 @@ class Panel(JPanel, MouseListener,
         self.event._updateQueue(event, MouseEvent.MOUSE_RELEASED)
 
     def mouseEntered(self, event):
+        pos = env.jframe.jpanel.getMousePosition()
+        if pos:
+            self.event.mousePos['x'] = pos.x
+            self.event.mousePos['y'] = pos.y
+            JEvent._mousePos['x'] = pos.x
+            JEvent._mousePos['y'] = pos.y
         self.event._updateQueue(event, Const.ACTIVEEVENT)
 
     def mouseExited(self, event):
+        self.event.mousePos['x'] = -1
+        self.event.mousePos['y'] = -1
         self.event.mousePress[1] = False
         self.event.mousePress[2] = False
         self.event.mousePress[3] = False
