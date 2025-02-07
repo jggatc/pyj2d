@@ -84,7 +84,6 @@ class Surface(BufferedImage):
                 cm, raster, isRasterPremultiplied, properties = arg
             BufferedImage.__init__(self, cm, raster,
                                    isRasterPremultiplied, properties)
-        self._display = None    #display surface
         self._super_surface = None
         self._offset = (0,0)
         self._colorkey = None

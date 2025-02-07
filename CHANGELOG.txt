@@ -1,6 +1,7 @@
 0.33_dev
 -refactor mouse positioning.
 -add mouse get_focused method.
+-refactor display surface.
 
 0.33    2025-01-18
 -revise surface alpha.

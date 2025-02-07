@@ -77,6 +77,8 @@ class Panel(JPanel, MouseListener,
         JPanel.__init__(self)
         self.setPreferredSize(Dimension(size[0],size[1]))
         self.surface = Surface(size, BufferedImage.TYPE_INT_RGB)
+        self.canvas = Canvas(self.surface)
+        self.display = None
         self.setBackground(Color.BLACK)
         self.addMouseListener(self)
         self.addMouseMotionListener(self)
@@ -188,6 +190,27 @@ class Panel(JPanel, MouseListener,
         self._repainting.set(False)
 
 
+class Canvas(object):
+
+    def __init__(self, surface):
+        self._surface = surface
+
+    def _set_surface(self, surface):
+        self._surface = surface
+
+    def __getattr__(self, name):
+        return getattr(self._surface, name)
+
+    def __str__(self):
+        return self._surface.__str__()
+
+    def __repr__(self):
+        return self._surface.__repr__()
+
+    def __dir__(self):
+        return dir(self._surface)
+
+
 class Display(Runnable):
     """
     **pyj2d.display**
@@ -224,7 +247,7 @@ class Display(Runnable):
             self.icon = None
             self.jframe = None
             self.jpanel = None
-            self.surface = None
+            self.canvas = None
             self._initialized = True
 
     def set_mode(self, size, *args, **kwargs):
@@ -240,21 +263,21 @@ class Display(Runnable):
                 self.jframe.setIconImage(self.icon)
         env.jframe = self.jframe
         self.jpanel = self.jframe.jpanel
-        self.surface = self.jpanel.surface
-        self.surface._display = self
-        self._surfaceRect = self.surface.get_rect()
+        self.canvas = self.jpanel.canvas
+        self.jpanel.display = self
+        self._surfaceRect = self.canvas.get_rect()
         self._surface_rect = [self._surfaceRect]
         self._rect_list = None
         self.jframe.setLocationRelativeTo(None)
         self.jframe.setVisible(True)
         self._warmup()
-        return self.surface
+        return self.canvas
 
     def get_surface(self):
         """
         Return display Surface.
         """
-        return self.surface
+        return self.canvas
 
     def get_frame(self):
         """
