@@ -1,6 +1,12 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Cursors module**
+
+The module provides access to mouse cursors.
+"""
+
 from java.awt import Cursor
 from pyj2d.surface import Surface
 from pyj2d.color import Color
@@ -24,13 +30,14 @@ WAIT_CURSOR = Cursor.WAIT_CURSOR
 CUSTOM_CURSOR = Cursor.CUSTOM_CURSOR
 
 
-#cursors not implemented
 arrow = diamond = broken_x = tri_left = tri_right = ()
+"Unimplemented variables."
 
 
 def compile(strings, black='X', white='.', xor='o'):
     """
     Compile binary data from cursor string.
+
     Arguments cursor string, and optional symbols representing colors.
     Data represents black and white pixels, xor color defaulting to black.
     Data should be a string list of width divisible by 8.
@@ -61,6 +68,7 @@ def compile(strings, black='X', white='.', xor='o'):
 def create_cursor(size, data, mask):
     """
     Create cursor image from binary data.
+
     Arguments cursor size and its binary data and mask.
     Return surface, can be used with mouse.set_cursor.
     """
@@ -85,7 +93,9 @@ def create_cursor(size, data, mask):
 def get_cursor_types():
     #https://docs.oracle.com/javase/8/docs/api/java/awt/Cursor.html
     """
-    Return list of cursor type names from java.awt.Cursor API.
+    Return list of cursor type names.
+
+    Cursor types from java.awt.Cursor API.
     """
     types = ['DEFAULT_CURSOR',
              'CROSSHAIR_CURSOR',
