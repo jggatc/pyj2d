@@ -114,7 +114,7 @@ class Mask(object):
         """
         Set bit for given pos.
 
-        Optional value to set bit, eith 1 or 0, defaults to 1.
+        Optional value to set bit, either 1 or 0, defaults to 1.
         """
         if value:
             self.bit[pos[1]].set(pos[0])
