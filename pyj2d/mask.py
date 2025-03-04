@@ -1,15 +1,19 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Mask module**
+
+The module provides surface mask functionality.
+"""
+
 from java.util import BitSet
 from pyj2d.color import Color
-
-__docformat__ = 'restructuredtext'
 
 
 def from_surface(surface, threshold=127):
     """
-    **pyj2d.mask.from_surface**
+    Mask from surface.
     
     Return Mask derived from surface using alpha transparency.
     Optional argument to set alpha threshold.
@@ -28,7 +32,7 @@ def from_surface(surface, threshold=127):
 
 def from_threshold(surface, color, threshold=(0,0,0,255)):
     """
-    **pyj2d.mask.from_threshold**
+    Mask from surface.
     
     Return Mask from surface using a given color.
     Optional threshold argument to set color range and alpha threshold.
@@ -72,22 +76,13 @@ def from_threshold(surface, color, threshold=(0,0,0,255)):
 
 class Mask(object):
     """
-    **pyj2d.mask.Mask**
-    
-    * Mask.get_size
-    * Mask.get_at
-    * Mask.set_at
-    * Mask.fill
-    * Mask.clear
-    * Mask.invert
-    * Mask.count
-    * Mask.overlap
-    * Mask.toString
+    Mask object.
     """
 
     def __init__(self, size):
         """
-        Return a Mask object.
+        Initiate Mask object.
+
         The size argument is (width, height) of the mask.
         The mask is represented by a list of java.util.BitSet.
         """
@@ -118,6 +113,7 @@ class Mask(object):
     def set_at(self, pos, value=1):
         """
         Set bit for given pos.
+
         Optional value to set bit, eith 1 or 0, defaults to 1.
         """
         if value:
@@ -187,6 +183,7 @@ class Mask(object):
     def toString(self, bit=('1','0')):
         """
         Return string representation of mask.
+
         Optional bit argument specify bit character.
         """
         cbit = {True:bit[0], False:bit[1]}

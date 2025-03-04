@@ -1,6 +1,12 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Display module**
+
+The module controls display surface updates and registers interaction events.
+"""
+
 from javax.swing import JFrame, JPanel
 from java.awt import Color, Dimension, Toolkit
 from java.awt.image import BufferedImage
@@ -23,8 +29,6 @@ from pyj2d.sprite import Sprite, Group, RenderUpdates, OrderedUpdates
 from pyj2d.event import JEvent
 from pyj2d import env
 from pyj2d import constants as Const
-
-__docformat__ = 'restructuredtext'
 
 
 class Frame(JFrame, WindowListener):
@@ -213,20 +217,7 @@ class Canvas(object):
 
 class Display(Runnable):
     """
-    **pyj2d.display**
-
-    * pyj2d.display.init
-    * pyj2d.display.set_mode
-    * pyj2d.display.get_surface
-    * pyj2d.display.get_frame
-    * pyj2d.display.get_panel
-    * pyj2d.display.quit
-    * pyj2d.display.get_init
-    * pyj2d.display.get_active
-    * pyj2d.display.set_caption
-    * pyj2d.display.set_icon
-    * pyj2d.display.flip
-    * pyj2d.display.update
+    Display object.
     """
 
     def __init__(self):
@@ -240,7 +231,7 @@ class Display(Runnable):
 
     def init(self):
         """
-        Initialize display.
+        Initialize display module.
         """
         if not self._initialized:
             self.caption = ''
@@ -253,7 +244,8 @@ class Display(Runnable):
     def set_mode(self, size, *args, **kwargs):
         """
         Return a display Surface.
-        Argument: size (x,y) of surface.
+
+        Argument: size (width, height) of surface.
         """
         if env.japplet:
             self.jframe = env.japplet
@@ -317,7 +309,7 @@ class Display(Runnable):
 
     def get_init(self):
         """
-        Check that display module is initialized.
+        Check if display is initialized.
         """
         return self._initialized
 
@@ -336,6 +328,7 @@ class Display(Runnable):
     def set_caption(self, caption, *args):
         """
         Set display caption.
+
         Argument: caption for JFrame title.
         """
         self.caption = caption
@@ -348,6 +341,7 @@ class Display(Runnable):
     def set_icon(self, surface):
         """
         Set display icon.
+
         Argument: Surface for JFrame icon.
         """
         self.icon = surface
@@ -370,6 +364,7 @@ class Display(Runnable):
     def update(self, rect_list=None):
         """
         Repaint display.
+
         Optional rect or rect list to specify regions to repaint.
         """
         if isinstance(rect_list, list):

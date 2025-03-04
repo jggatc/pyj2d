@@ -1,6 +1,12 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Event module**
+
+The module manages events.
+"""
+
 from java.lang import Thread
 from java.awt.event import MouseEvent
 from java.awt.event import KeyEvent
@@ -9,31 +15,17 @@ from java.awt.event import WindowEvent
 from pyj2d import env
 from pyj2d import constants as Const
 
-__docformat__ = 'restructuredtext'
-
 
 class Event(object):
     """
-    **pyj2d.event**
-    
-    * pyj2d.event.pump
-    * pyj2d.event.get
-    * pyj2d.event.poll
-    * pyj2d.event.wait
-    * pyj2d.event.peek
-    * pyj2d.event.clear
-    * pyj2d.event.event_name
-    * pyj2d.event.set_blocked
-    * pyj2d.event.set_allowed
-    * pyj2d.event.get_blocked
-    * pyj2d.event.post
-    * pyj2d.event.Event
+    Event processing construct.
     """
 
     def __init__(self):
         """
+        Initialize Event object.
+
         Maintain events received from JVM.
-        
         Module initialization creates pyj2d.event instance.
         """
         self.eventQueue = [None] * 256
@@ -125,7 +117,9 @@ class Event(object):
 
     def pump(self):
         """
-        Process events to reduce queue overflow, unnecessary if processing with other methods.
+        Process event queue.
+
+        Process to reduce queue overflow, unnecessary if processing with other methods.
         """
         if self.eventNum > 250:
             self._lock()
@@ -142,6 +136,7 @@ class Event(object):
     def get(self, eventType=None):
         """
         Return list of events, and queue is reset.
+
         Optional eventType argument of single or list of event type(s) to return.
         """
         if not self.eventNum:
@@ -178,7 +173,9 @@ class Event(object):
 
     def poll(self):
         """
-        Return an event from the queue, or event type NOEVENT if none present.
+        Return an event from the queue.
+
+        Return event type NOEVENT if none present.
         """
         self._lock()
         if self.eventNum:
@@ -194,7 +191,9 @@ class Event(object):
 
     def wait(self):
         """
-        Return an event from the queue, or wait for an event if none present.
+        Return an event from the queue.
+
+        Wait for an event if none present.
         """
         while True:
             if self.eventNum:
@@ -213,6 +212,7 @@ class Event(object):
     def peek(self, eventType=None):
         """
         Check if an event of given type is present.
+
         Optional eventType argument specifies event type or list, which defaults to all.
         """
         if not self.eventNum:
@@ -236,6 +236,7 @@ class Event(object):
     def clear(self, eventType=None):
         """
         Remove events of a given type from queue.
+
         Optional eventType argument specifies event type or list, which defaults to all.
         """
         if not self.eventNum:
@@ -276,6 +277,7 @@ class Event(object):
     def set_blocked(self, eventType):
         """
         Block specified event type(s) from queue.
+
         If None is argument, all event types are blocked.
         """
         if eventType is not None:
@@ -297,6 +299,7 @@ class Event(object):
     def set_allowed(self, eventType):
         """
         Set allowed event type(s) on queue.
+
         If None is argument, all event types are allowed.
         """
         if eventType is not None:
@@ -341,14 +344,19 @@ class Event(object):
 
 
 class UserEvent(object):
+    """
+    UserEvent object.
+    """
 
     __slots__ = ['type', 'attr']
 
     def __init__(self, eventType, *args, **kwargs):
         """
-        Return user event.
+        UserEvent event object.
+
         Argument includes eventType (USEREVENT+num).
         Optional attribute argument as dictionary ({str:val}) or keyword arg(s).
+        Return user event.
         """
         if args:
             attr = args[0]
@@ -382,6 +390,9 @@ class UserEvent(object):
 
 
 class JEvent(object):
+    """
+    JEvent object.
+    """
 
     __slots__ = ['event', 'type']
     _attr = {

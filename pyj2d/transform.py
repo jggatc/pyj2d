@@ -1,15 +1,17 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Transform module**
+
+The module provides surface transformation functionality.
+"""
+
 from math import pi as _pi, fabs as _fabs, sin as _sin, cos as _cos, ceil as _ceil
 from java.awt.image import BufferedImage, AffineTransformOp
 from java.awt import RenderingHints
 from java.awt.geom import AffineTransform
 from pyj2d.surface import Surface
-
-__docformat__ = 'restructuredtext'
-
-__doc__ = 'Surface transformation'
 
 
 _deg_rad = _pi/180.0
@@ -84,6 +86,7 @@ def rotozoom(surface, angle, size):
 def scale(surface, size, dest=None):
     """
     Return Surface resized by the given size.
+
     An optional destination surface can be provided.
     """
     if not dest:
@@ -103,7 +106,9 @@ def scale(surface, size, dest=None):
 def smoothscale(surface, size, dest=None):
     """
     Return Surface resized by the given size.
+
     An optional destination surface can be provided.
+    Calls scale().
     """
     return scale(surface, size, dest)
 
@@ -111,6 +116,7 @@ def smoothscale(surface, size, dest=None):
 def scale2x(surface, dest=None):
     """
     Return Surface resized to twice its size.
+
     An optional destination surface can be provided.
     """
     return scale(surface,

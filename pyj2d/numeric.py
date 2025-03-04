@@ -2,6 +2,8 @@
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
 """
+**Numeric module**
+
 JNumeric module is required for Numeric functionality.
 Obtain JNumeric:
 https://central.sonatype.com/artifact/com.github.tbekolay.jnumeric/jnumeric
@@ -45,6 +47,7 @@ if not numeric:
 def set_numeric_module(module):
     """
     Set numeric module.
+
     The argument is module path or imported module.
     """
     global numeric
@@ -61,6 +64,7 @@ def set_numeric_module(module):
 def get_numeric_module():
     """
     Get numeric module.
+
     Return None if module not present.
     """
     return numeric

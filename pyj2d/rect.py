@@ -1,42 +1,28 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Rect module**
+
+The module provides rect object to store coordinates.
+"""
+
 from java.awt import Rectangle
 from java.util.concurrent import ConcurrentLinkedQueue
-
-__docformat__ = 'restructuredtext'
 
 
 class Rect(Rectangle):
     """
-    **pyj2d.Rect**
-    
-    * Rect.copy
-    * Rect.move
-    * Rect.move_ip
-    * Rect.inflate
-    * Rect.inflate_ip
-    * Rect.contains
-    * Rect.union
-    * Rect.union_ip
-    * Rect.unionall
-    * Rect.unionall_ip
-    * Rect.clamp
-    * Rect.clamp_ip
-    * Rect.clip
-    * Rect.collidepoint
-    * Rect.colliderect
-    * Rect.collidelist
-    * Rect.collidelistall
-    * Rect.collidedict
-    * Rect.collidedictall
+    Rect object.
     """
 
     def __init__(self, *arg):
         """
+        Initialize Rect object.
+
         Return Rect that is subclassed from java.awt.Rectangle.
         
-        Alternative arguments:
+        Alternative arguments::
         
         * x, y, width, height
         * (x, y), (width, height)
@@ -53,7 +39,7 @@ class Rect(Rectangle):
         center, centerx, centery
         size, w, h
         
-        Module initialization places pyj2d.Rect in module's namespace.
+        Module initialization places Rect in module's namespace.
         """
         def unpack(arg, lst=[]):
             for x in arg:
@@ -215,7 +201,7 @@ class Rect(Rectangle):
 
     def clip(self, rect):
         """
-        Return Rect representing the intersection of rect and this rect.
+        Return Rect representing this rect clipped by rect.
         """
         clipRect = self.intersection(rect)
         if clipRect.width > 0 and clipRect.height > 0:
@@ -495,17 +481,15 @@ class Rect(Rectangle):
 
 class RectPool(ConcurrentLinkedQueue):
     """
-    **pyj2d.rect.rectPool**
-    
-    * rectPool.append
-    * rectPool.extend
-    * rectPool.get
-    * rectPool.copy
-
-    Rect pool accessed by rectPool instance through append method to add Rect, extend method to add Rect list, get method to return Rect set with x,y,width,height attributes, and copy method to return copy of a given Rect. If pool is empty, return is a new Rect.
+    RectPool object.
     """
 
     def __init__(self):
+        """
+        Initialize RectPool object.
+
+        Rect pool accessed by rectPool instance through append method to add Rect, extend method to add Rect list, get method to return Rect set with x,y,width,height attributes, and copy method to return copy of a given Rect. If pool is empty, return is a new Rect.
+        """
         self.append = self.add
         self.extend = self.addAll
 
@@ -537,5 +521,7 @@ class RectPool(ConcurrentLinkedQueue):
         else:
             return Rect(r.x, r.y, r.width, r.height)
 
+
 rectPool = RectPool()
+"Module RectPool instance."
 

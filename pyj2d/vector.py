@@ -1,18 +1,27 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Vector module**
+
+The module provides vector object functionality.
+"""
+
 from __future__ import generators
 from math import sqrt, sin, cos, atan2, pi
 
 
 class Vector2(object):
     """
-    Vector2 - 2-dimensional vector.
+    Vector2 object.
     """
 
     __slots__ = ['_x', '_y']
 
     def __init__(self, x=None, y=None):
+        """
+        Initialize Vector2 object.
+        """
         if y is not None:
             self._x = float(x)
             self._y = float(y)

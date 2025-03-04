@@ -19,6 +19,10 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #THE SOFTWARE.
 
+"""
+**PyJ2D - Jython Java2D Library**
+"""
+
 __version__ = '0.33'
 
 from pyj2d import env
@@ -46,11 +50,14 @@ from pyj2d import version
 from pyj2d.constants import *
 
 
+__docformat__ = 'restructuredtext'
+
+
 def init():
     """
     Initialize module.
     """
-    global time, display, image, event, key, mouse, mixer, error, initialized
+    global time, display, image, event, key, mouse, mixer, initialized
     try:
         if initialized:
             return
@@ -64,7 +71,6 @@ def init():
     key = Key()
     mouse = Mouse()
     mixer = Mixer()
-    error = None
     return
 
 init()
@@ -90,8 +96,17 @@ def quit():
         env.jframe.stop()
 
 
+class error(Exception):
+    """
+    Exception object.
+    """
+    pass
+
+
 def bounding_rect_return(setting):
     """
+    Bounding rect return.
+
     Set whether blit/draw return bounding Rect.
     Setting (bool) defaults to True on module initialization.
     """

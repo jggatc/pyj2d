@@ -1,7 +1,11 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
-#Module constants defined as in Pygame/SDL and Java events.
+"""
+**Constants**
+
+Constants are defined as in Pygame/SDL and Java events. Examine constants.py for information on the constants. The constant variables are imported into the PyJ2D module namespace.
+"""
 
 from java.awt.event import MouseEvent, KeyEvent
 
@@ -172,8 +176,8 @@ KEY_LOCATION_STANDARD = KeyEvent.KEY_LOCATION_STANDARD
 KEY_LOCATION_NUMPAD = KeyEvent.KEY_LOCATION_NUMPAD
 KEY_LOCATION_UNKNOWN = KeyEvent.KEY_LOCATION_UNKNOWN
 ACTIVEEVENT = 32768
-APPFOCUSMOUSE = 0    #Pygame
-APPMOUSEFOCUS = 0    #SDL
+APPFOCUSMOUSE = 0
+APPMOUSEFOCUS = 0
 APPINPUTFOCUS = 1
 APPACTIVE = 2
 DOUBLEBUF = 1073741824

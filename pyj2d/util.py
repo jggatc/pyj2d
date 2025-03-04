@@ -1,16 +1,26 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Util module**
+
+The module provides profiling functionality.
+"""
+
 from java.lang import System
 
 
 class Timer(object):
     """
     Simple profiling timer.
-    Output log directed to console.
+
+    Output log to terminal.
     """
 
-    def __init__(self, log='console'):
+    def __init__(self):
+        """
+        Initialize timer object.
+        """
         self.time_i = self.get_time()
         self.dtime = []
         self.number = 0
@@ -31,7 +41,9 @@ class Timer(object):
     def lap_time(self, time_i=None, time_f=None, number=100, print_result=True):
         """
         Time lapsed since previous set_time.
-        Optional arguments time_i and time_f, number of calls to average, and print_results to output result.
+
+        Optional arguments time_i and time_f, number of calls to average, and print results to output.
+        Return lapsed time on completion.
         """
         if time_i is None:
             time_i = self.time_i
@@ -48,12 +60,6 @@ class Timer(object):
                 entry = "Time %d: %0.2f" % (self.log_num, t_ave)
                 print(entry)
             return t_ave
-
-    def print_log(self, text):
-        """
-        Print text to output.
-        """
-        print(text)
 
 
 class _dict(dict):

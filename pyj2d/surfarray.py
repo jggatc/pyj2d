@@ -1,12 +1,14 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Surfarray module**
+
+The module provides array access to surface pixel data. The functionality requires the JNumeric module as specified in the numeric module.
+"""
+
 from java.awt.image import BufferedImage
 from pyj2d.surface import Surface
-
-__docformat__ = 'restructuredtext'
-
-__doc__ = 'Surface pixel manipulation'
 
 
 _initialized = False
@@ -26,8 +28,8 @@ def _init():
 def array2d(surface):
     """
     Return data array of the Surface argument.
+
     Array consists of pixel data arranged by [x,y] in integer color format.
-    JNumeric required as specified in numeric module.
     """
     if not _initialized:
         _init()
@@ -41,8 +43,8 @@ def array2d(surface):
 def array3d(surface):
     """
     Return data array of the Surface argument.
+
     Array consists of pixel data arranged by [x,y] in RGB format.
-    JNumeric required as specified in numeric module.
     """
     if not _initialized:
         _init()
@@ -57,8 +59,8 @@ def array3d(surface):
 def array_alpha(surface):
     """
     Return data array of the Surface argument.
+
     Array consists of pixel data arranged by [x,y] of pixel alpha value.
-    JNumeric required as specified in numeric module.
     """
     if not _initialized:
         _init()
@@ -72,9 +74,9 @@ def array_alpha(surface):
 def make_surface(array):
     """
     Generates image pixels from array data.
+
     Argument array containing image data.
     Return Surface generated from array.
-    JNumeric required as specified in numeric module.
     """
     if not _initialized:
         _init()
@@ -85,9 +87,9 @@ def make_surface(array):
 
 def blit_array(surface, array):
     """
-    Generates image pixels from a JNumeric array.
+    Generates image pixels from array data.
+
     Arguments include destination Surface and array of integer colors.
-    JNumeric required as specified in numeric module.
     """
     if not _initialized:
         _init()

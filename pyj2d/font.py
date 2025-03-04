@@ -1,6 +1,12 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Font module**
+
+The module provides font access and rendering on a surface.
+"""
+
 import os
 from java.awt import Font as JFont
 from java.awt import BasicStroke, RenderingHints, GraphicsEnvironment
@@ -13,8 +19,6 @@ from pyj2d.surface import Surface
 from pyj2d.color import Color
 from pyj2d import env
 
-__docformat__ = 'restructuredtext'
-
 
 _initialized = False
 _surf = None
@@ -23,8 +27,6 @@ _g2d = None
 
 def init():
     """
-    **pyj2d.font.init**
-    
     Initialize font module.
     """
     global _surf, _g2d, _initialized, match_font
@@ -36,8 +38,6 @@ init()
 
 def quit():
     """
-    **pyj2d.font.quit**
-    
     Unintialize font module.
     """
     global _surf, _g2d, _initialized
@@ -49,8 +49,6 @@ def quit():
 
 def get_init():
     """
-    **pyj2d.font.get_init**
-    
     Check if font module is intialized.
     """
     return _initialized
@@ -58,8 +56,6 @@ def get_init():
 
 def get_default_font():
     """
-    **pyj2d.font.get_default_font**
-    
     Return default font.
     """
     fonts = get_fonts()
@@ -72,8 +68,6 @@ def get_default_font():
 
 def get_fonts():
     """
-    **pyj2d.font.get_fonts**
-    
     Return fonts available in JVM.
     """
     return [''.join([c for c in f if c.isalnum()]).lower() for f in
@@ -82,7 +76,7 @@ def get_fonts():
 
 def match_font(name, *args, **kwargs):
     """
-    **pyj2d.font.match_font**
+    Find system font.
     
     Argument name is a font name, or comma-delimited string of font names.
     Return font found on system, otherwise return None if none found.
@@ -98,20 +92,7 @@ def match_font(name, *args, **kwargs):
 
 class Font(JFont):
     """
-    **pyj2d.font.Font**
-    
-    * Font.render
-    * Font.size
-    * Font.set_underline
-    * Font.get_underline
-    * Font.set_bold
-    * Font.get_bold
-    * Font.set_italic
-    * Font.get_italic
-    * Font.get_height
-    * Font.get_linesize
-    * Font.get_ascent
-    * Font.get_descent
+    Font object.
     """
 
     _font = None
@@ -135,7 +116,8 @@ class Font(JFont):
     def __init__(self, name, size):
         """
         Return Font subclassed of java.awt.Font.
-        Arguments include name of a system font and size of font. The name argument can be a string of comma-delimited names to specify fallbacks and use a default font if none found, or specify a font file (eg. 'resource/font.ttf') with a exception if file not found.
+
+        Arguments include name of a system font and size of font. The name argument can be a string of comma-delimited names to specify fallbacks and use a default font if none found, or specify a font file (eg. 'resource/font.ttf') with exception if file not found.
         """
         if not Font._font:
             Font._font = get_fonts()
@@ -202,11 +184,8 @@ class Font(JFont):
     def render(self, text, antialias, color, background=None):
         """
         Render text onto surface.
-        Arguments:
-        text to render (string)
-        antialias of text (bool)
-        color of text (R,G,B)
-        background color (R,G,B)
+
+        Arguments are text to render, and optional antialias, RGB color of text, RGB color of background.
         """
         w,h = self.size(text)
         surf = Surface((w,h), BufferedImage.TYPE_INT_ARGB)
@@ -249,6 +228,7 @@ class Font(JFont):
     def set_underline(self, setting=True):
         """
         Set font underline style.
+
         Optional setting, default to True.
         """
         self.underline = setting
@@ -262,6 +242,7 @@ class Font(JFont):
     def set_bold(self, setting=True):
         """
         Set font bold style.
+
         Optional setting, default to True.
         """
         if setting:
@@ -286,6 +267,7 @@ class Font(JFont):
     def set_italic(self, setting=True):
         """
         Set font italic style.
+
         Optional setting, default to True.
         """
         if setting:
@@ -337,14 +319,13 @@ class Font(JFont):
 
 class SysFont(Font):
     """
-    **pyj2d.font.SysFont**
-    
-    * Font subclass
+    Font subclass.
     """
 
     def __init__(self, name, size, bold=False, italic=False):
         """
         Return SysFont subclassed of Font.
+
         Arguments include name of a system font and size of font, with optional bold and italic style. The name argument can be a string of comma-delimited names to specify fallbacks and use a default font if none found.
         """
         self.fontstyle = JFont.PLAIN

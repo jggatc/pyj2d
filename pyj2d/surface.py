@@ -1,6 +1,12 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Surface module**
+
+The module provides surface object.
+"""
+
 from java.awt.image import BufferedImage, RasterFormatException
 from java.awt import AlphaComposite
 from java.lang import ArrayIndexOutOfBoundsException
@@ -9,34 +15,13 @@ from pyj2d.rect import Rect
 from pyj2d.color import Color
 from pyj2d import constants as Const
 
-__docformat__ = 'restructuredtext'
-
 
 _return_rect = True
 
 
 class Surface(BufferedImage):
     """
-    **pyj2d.Surface**
-    
-    * Surface.get_size
-    * Surface.get_width
-    * Surface.get_height
-    * Surface.get_rect
-    * Surface.copy
-    * Surface.subsurface
-    * Surface.blit
-    * Surface.blits
-    * Surface.set_alpha
-    * Surface.get_alpha
-    * Surface.set_colorkey
-    * Surface.get_colorkey
-    * Surface.replace_color
-    * Surface.get_at
-    * Surface.set_at
-    * Surface.fill
-    * Surface.get_parent
-    * Surface.get_offset
+    Surface object.
     """
 
     _alpha_composite = {
@@ -45,14 +30,16 @@ class Surface(BufferedImage):
 
     def __init__(self, *arg):
         """
-        Return Surface that is subclassed from java.awt.image.BufferedImage.
+        Initialize Surface object.
+
+        Surface object is subclassed from java.awt.image.BufferedImage.
         
         Alternative arguments:
         
-        * Size (w,h) of surface, optional second argument of flags (SRCALPHA)
+        * Size (width, height) of surface, optional argument of flags (SRCALPHA)
         * Bufferedimage to convert to Surface
         
-        Module initialization places pyj2d.Surface in module's namespace.
+        Module initialization places Surface in module's namespace.
         """
         try:
             width, height = arg[0]
@@ -118,6 +105,7 @@ class Surface(BufferedImage):
     def get_rect(self, **attr):
         """
         Return rect of the surface.
+
         An optional keyword argument of the rect position.
         """
         rect = Rect(0, 0, self.width, self.height)
@@ -153,7 +141,9 @@ class Surface(BufferedImage):
 
     def subsurface(self, rect):
         """
-        Return Surface that represents a subsurface that shares data with this surface.
+        Return subsurface.
+
+        Subsurface shares data with this surface.
         The rect argument is the area of the subsurface.
         """
         try:
@@ -178,6 +168,7 @@ class Surface(BufferedImage):
     def blit(self, surface, position, area=None):
         """
         Draw given surface on this surface at position.
+
         Optional area delimitates the region of given surface to draw.
         """
         g2d = self.createGraphics()
@@ -208,6 +199,7 @@ class Surface(BufferedImage):
     def blits(self, blit_sequence, doreturn=True):
         """
         Draw a sequence of surfaces on this surface.
+
         Argument blit_sequence of (source, dest) or (source, dest, area).
         Optional doreturn (defaults to True) to return list of rects.
         """
@@ -261,7 +253,9 @@ class Surface(BufferedImage):
 
     def set_alpha(self, alpha):
         """
-        Set surface alpha (0-255), disabled by passing None.
+        Set surface alpha.
+
+        Surface alpha can have values of 0 to 255, disabled by passing None.
         """
         if alpha is not None:
             alpha = alpha/255.0
@@ -336,7 +330,8 @@ class Surface(BufferedImage):
 
     def get_at(self, pos):
         """
-        Return color of a surface pixel.
+        Get color of a surface pixel.
+
         The pos argument represents x,y position of pixel.
         """
         try:
@@ -347,6 +342,7 @@ class Surface(BufferedImage):
     def set_at(self, pos, color):
         """
         Set color of a surface pixel.
+
         The arguments represent position x,y and color of pixel.
         """
         color = Color(color)
@@ -395,6 +391,8 @@ class Surface(BufferedImage):
 
 def bounding_rect_return(setting):
     """
+    Bounding rect return.
+
     Set whether surface blit function returns bounding Rect.
     Setting (bool) defaults to True on module initialization.
     """

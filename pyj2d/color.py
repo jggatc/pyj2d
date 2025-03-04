@@ -1,32 +1,41 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Color module**
+
+The module provides a color object.
+"""
+
 from java.awt import Color as _Color
 from java.lang import IllegalArgumentException
 
-__docformat__ = 'restructuredtext'
-
 
 class Color(_Color):
+    """
+    Color object.
+    """
 
     def __init__(self, *color):
         """
-        Return Color object.
+        Initialize Color object.
         
-        Alternative arguments:
+        Alternative arguments::
         
         * r,g,b,a
         * r,g,b
         * (r,g,b,a)
         * (r,g,b)
         * integer argb
+        * html string '#rrggbb[aa]'
+        * hex string '0xrrggbb[aa]'
         * Color
 
         Color has the attributes::
         
             r, g, b, a
 
-        Module initialization places pyj2d.Color in module's namespace.
+        Module initialization places Color in module's namespace.
         """
         ln = len(color)
         if ln == 1:

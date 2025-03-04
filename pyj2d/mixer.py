@@ -1,6 +1,12 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Mixer module**
+
+The module provides function to load sounds and mixer to play sounds.
+"""
+
 from javax.sound.sampled import AudioSystem, AudioFormat
 from javax.sound.sampled import LineUnavailableException
 from java.io import ByteArrayInputStream
@@ -18,28 +24,10 @@ try:
 except ImportError:
     AudioMixer = None
 
-__docformat__ = 'restructuredtext'
-
 
 class Mixer(Runnable):
     """
-    **pyj2d.mixer**
-    
-    * pyj2d.mixer.init
-    * pyj2d.mixer.quit
-    * pyj2d.mixer.get_init
-    * pyj2d.mixer.stop
-    * pyj2d.mixer.pause
-    * pyj2d.mixer.unpause
-    * pyj2d.mixer.fadeout
-    * pyj2d.mixer.set_num_channels
-    * pyj2d.mixer.get_num_channels
-    * pyj2d.mixer.set_reserved
-    * pyj2d.mixer.find_channel
-    * pyj2d.mixer.get_busy
-    * pyj2d.mixer.Sound
-    * pyj2d.mixer.Channel
-    * pyj2d.mixer.music
+    Mixer object.
     """
 
     def __init__(self):
@@ -64,6 +52,7 @@ class Mixer(Runnable):
     def init(self, frequency=22050, size=-16, channels=2, buffer=4096):
         """
         Mixer initialization.
+
         Argument sampled frequency, bit size, channels, and buffer.
         Currently implements PCM 16-bit audio.
         Plays WAV, AIFF, and AU sampled audio.
@@ -180,6 +169,7 @@ class Mixer(Runnable):
     def set_num_channels(self, count):
         """
         Set maximum mixer channels.
+
         Argument channel count.
         """
         if count >= self._channel_max:
@@ -208,6 +198,7 @@ class Mixer(Runnable):
     def set_reserved(self, count):
         """
         Reserve channel.
+
         Argument reserved channel count.
         """
         if count > self._channel_max:
@@ -224,6 +215,7 @@ class Mixer(Runnable):
     def find_channel(self, force=False):
         """
         Get an inactive mixer channel.
+
         Optional force attribute return longest running channel if all active.
         """
         try:
@@ -380,22 +372,18 @@ class Mixer(Runnable):
 
 class Sound(object):
     """
-    **pyj2d.mixer.Sound**
-    
-    * Sound.play
-    * Sound.stop
-    * Sound.fadeout
-    * Sound.set_volume
-    * Sound.get_volume
-    * Sound.get_num_channels
-    * Sound.get_length
-    * Sound.get_raw
+    Sound object
     """
 
     _id = 0
     _mixer = None
 
     def __init__(self, sound_file):
+        """
+        Initialize sound object.
+
+        Argument sound_file is sound file.
+        """
         self._id = Sound._id
         Sound._id += 1
         if isinstance(sound_file, str):
@@ -429,6 +417,7 @@ class Sound(object):
     def play(self, loops=0, maxtime=0, fade_ms=0):
         """
         Play sound on mixer channel.
+
         Argument loops is repeat number or -1 for continuous,
         maxtime is maximum play time, and fade_ms is fade-in time.
         """
@@ -470,6 +459,7 @@ class Sound(object):
     def set_volume(self, volume):
         """
         Set sound volume.
+
         Argument volume of value 0.0 to 1.0.
         """
         if volume < 0.0:
@@ -543,26 +533,17 @@ class _SoundStream(Sound):
 
 class Channel(object):
     """
-    **pyj2d.mixer.Channel**
-    
-    * Channel.play
-    * Channel.stop
-    * Channel.pause
-    * Channel.unpause
-    * Channel.fadeout
-    * Channel.set_volume
-    * Channel.get_volume
-    * Channel.get_busy
-    * Channel.get_sound
-    * Channel.queue
-    * Channel.get_queue
-    * Channel.set_endevent
-    * Channel.get_endevent
+    Channel object.
     """
 
     _mixer = None
 
     def __init__(self, id):
+        """
+        Initialize channel object.
+
+        Argument id specifies channel, value between 0 and maximum mixer channels.
+        """
         self._id = id
         self._sound = None
         self._stream = None
@@ -649,6 +630,7 @@ class Channel(object):
     def play(self, sound, loops=0, maxtime=0, fade_ms=0):
         """
         Play sound on channel.
+
         Argument sound to play, loops is repeat number or -1 for continuous,
         maxtime is maximum play time, and fade_ms is fade-in time.
         """
@@ -739,6 +721,7 @@ class Channel(object):
     def set_volume(self, volume, volume2=None):
         """
         Set channel volume of sound playing.
+
         Argument volume of value 0.0 to 1.0, setting for both speakers when single, stereo l/r speakers with second value.
         """
         if volume < 0.0:
@@ -793,6 +776,7 @@ class Channel(object):
     def set_endevent(self, eventType=None):
         """
         Set endevent for sound channel.
+
         Argument eventType is event type (eg. USEREVENT+num).
         Without an argument resets endevent to NOEVENT type.
         """
@@ -815,25 +799,13 @@ class Channel(object):
 
 class Music(object):
     """
-    **pyj2d.mixer.music**
-
-    * music.load
-    * music.unload
-    * music.play
-    * music.rewind
-    * music.stop
-    * music.pause
-    * music.unpause
-    * music.fadeout
-    * music.set_volume
-    * music.get_volume
-    * music.get_busy
-    * music.queue
-    * music.set_endevent
-    * music.get_endevent
+    Music object.
     """
 
     def __init__(self):
+        """
+        Initialize music channel.
+        """
         self._channel = Channel(-1)
         self._sound = None
         self._queue = None
@@ -859,6 +831,7 @@ class Music(object):
     def play(self, loops=0, maxtime=0, fade_ms=0):
         """
         Play music.
+
         Argument loops is repeat number or -1 for continuous,
         maxtime is maximum play time, and fade_ms is fade-in time.
         """
@@ -918,6 +891,7 @@ class Music(object):
     def set_volume(self, volume):
         """
         Set music volume.
+
         Argument volume of value 0.0 to 1.0.
         """
         if volume < 0.0:
@@ -956,6 +930,7 @@ class Music(object):
     def set_endevent(self, eventType=None):
         """
         Set endevent for music channel.
+
         Argument eventType is event type (eg. USEREVENT+num).
         Without an argument resets endevent to NOEVENT type.
         """

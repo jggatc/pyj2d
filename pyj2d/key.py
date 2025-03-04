@@ -1,21 +1,20 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Key module**
+
+The module provides keyboard functionality.
+"""
+
 from java.awt.event import KeyEvent
 from pyj2d import env
 from pyj2d import constants as Const
 
-__docformat__ = 'restructuredtext'
-
 
 class Key(object):
     """
-    **pyj2d.key**
-    
-    * pyj2d.key.name
-    * pyj2d.key.get_mods
-    * pyj2d.key.set_repeat
-    * pyj2d.key.get_repeat
+    Key object.
     """
 
     def __init__(self):
@@ -47,6 +46,8 @@ class Key(object):
 
     def set_repeat(self, delay=0, interval=0):
         """
+        Set key repeat.
+
         Set key repeat delay (ms) and interval (ms) settings.
         Key repeat initially disabled.
         """

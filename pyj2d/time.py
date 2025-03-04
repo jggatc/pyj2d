@@ -1,28 +1,30 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Time module**
+
+The module provides time monitoring functionality.
+"""
+
 from java.lang import Thread, System, InterruptedException
 from javax.swing import Timer
 from java.awt.event import ActionListener
 from java.util.concurrent.atomic import AtomicBoolean
 from pyj2d import env
 
-__docformat__ = 'restructuredtext'
-
 
 class Clock(object):
     """
-    **pyj2d.time.Clock**
-    
-    * Clock.get_time
-    * Clock.tick
-    * Clock.tick_busy_loop
-    * Clock.get_fps
+    Clock object.
     """
 
     _repaint_sync = None
 
     def __init__(self):
+        """
+        Initialize clock object.
+        """
         self._time = System.nanoTime() // 1000000
         self._time_init = self._time
         self._time_diff = [33 for i in range(10)]
@@ -39,8 +41,10 @@ class Clock(object):
 
     def tick(self, framerate=0):
         """
-        Call once per program cycle, returns ms since last call.
+        Call once per program cycle.
+
         An optional framerate will add pause to limit rate.
+        Returns ms since last call.
         """
         while self._repaint_sync.get():
             try:
@@ -70,8 +74,10 @@ class Clock(object):
 
     def tick_busy_loop(self, framerate=0):
         """
-        Call once per program cycle, returns ms since last call.
+        Call once per program cycle.
+
         An optional framerate will add pause to limit rate.
+        Returns ms since last call.
         """
         return self.tick(framerate)
 
@@ -84,17 +90,13 @@ class Clock(object):
 
 class Time(object):
     """
-    **pyj2d.time**
-    
-    * time.get_ticks
-    * time.delay
-    * time.wait
-    * time.set_timer
-    * time.time
-    * time.Clock
+    Time object.
     """
 
     def __init__(self):
+        """
+        Initialize time object.
+        """
         self._time_init = System.nanoTime() // 1000000
         self.Clock = Clock
         self.Clock._repaint_sync = AtomicBoolean(False)
@@ -102,7 +104,7 @@ class Time(object):
 
     def get_ticks(self):
         """
-        **pyj2d.time.get_ticks**
+        Get time ticks.
         
         Return ms since program start.
         """
@@ -110,7 +112,7 @@ class Time(object):
 
     def delay(self, time):
         """
-        **pyj2d.time.delay**
+        Time delay.
         
         Pause for given time (in ms). Return ms paused.
         """
@@ -123,7 +125,7 @@ class Time(object):
 
     def wait(self, time):
         """
-        **pyj2d.time.wait**
+        Wait function.
         
         Pause for given time (in ms). Return ms paused.
         """
@@ -131,7 +133,7 @@ class Time(object):
 
     def set_timer(self, event, time, once=False):
         """
-        **pyj2d.time.set_timer**
+        Set timer.
 
         Post event on queue at time (ms) intervals.
         Optional argument once set no timer repeat, defaults to False.

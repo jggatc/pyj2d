@@ -1,26 +1,22 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Mouse module**
+
+The module provides mouse functionality.
+"""
+
 from java.awt.image import BufferedImage
 from java.awt import Toolkit, Point, AWTError
 from java.awt import Cursor
 from pyj2d import cursors
 from pyj2d import env
 
-__docformat__ = 'restructuredtext'
-
 
 class Mouse(object):
     """
-    **pyj2d.mouse**
-    
-    * pyj2d.mouse.get_pressed
-    * pyj2d.mouse.get_pos
-    * pyj2d.mouse.get_rel
-    * pyj2d.mouse.set_visible
-    * pyj2d.mouse.get_focused
-    * pyj2d.mouse.set_cursor
-    * pyj2d.mouse.get_cursor
+    Mouse object.
     """
 
     def __init__(self):
@@ -45,6 +41,7 @@ class Mouse(object):
     def get_pos(self):
         """
         Return x,y of mouse pointer.
+
         If the pointer is not in frame, returns -1,-1.
         """
         pos = env.jframe.jpanel.getMousePosition()
@@ -70,6 +67,7 @@ class Mouse(object):
     def set_visible(self, visible):
         """
         Set mouse cursor visibility according to visible bool argument.
+
         Return previous cursor visibility state.
         """
         visible_pre = self._cursorVisible
@@ -101,11 +99,12 @@ class Mouse(object):
     def set_cursor(self, *cursor):
         """
         Set mouse cursor.
+
         Alternative arguments:
         * JVM system cursor or cursor object
         * image or surface, hotspot (x,y), and optional name
         * size, hotspot, data, mask, and optional name
-        Refer to pyj2d.cursors for details.
+        Refer to cursors module for details.
         """
         args = len(cursor)
         if len(cursor) == 1:
@@ -142,6 +141,7 @@ class Mouse(object):
     def get_cursor(self):
         """
         Return cursor object.
+
         Cursor type and name accessed with object getType and getName methods.
         """
         if not self._cursor:

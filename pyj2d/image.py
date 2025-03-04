@@ -1,19 +1,21 @@
 #PyJ2D - Copyright (C) 2011 James Garnon <https://gatc.ca/>
 #Released under the MIT License <https://opensource.org/licenses/MIT>
 
+"""
+**Image module**
+
+The module provides function to load images and convert them to surface objects.
+"""
+
 from javax.imageio import ImageIO
 from java.io import File, ByteArrayInputStream
 from pyj2d.surface import Surface
 from pyj2d import env
 
-__docformat__ = 'restructuredtext'
-
 
 class Image(object):
     """
-    **pyj2d.image**
-    
-    * pyj2d.image.load
+    Image object.
     """
 
     def __init__(self):
@@ -26,6 +28,8 @@ class Image(object):
 
     def load(self, img_file, namehint=None):
         """
+        Image load.
+
         Load image from file as a java.awt.image.BufferedImage.
         The img_file can be a filename or file-like object.
         Return the bufferedimage as a Surface.
