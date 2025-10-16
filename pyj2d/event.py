@@ -46,6 +46,8 @@ class Event(object):
                           KeyEvent.KEY_PRESSED: 'KeyDown',
                           KeyEvent.KEY_RELEASED: 'KeyUp',
                           Const.ACTIVEEVENT: 'ActiveEvent',
+                          Const.WINDOWENTER: 'WindowEnter',
+                          Const.WINDOWLEAVE: 'WindowLeave',
                           Const.QUIT: 'Quit'}
         self.eventType = [MouseEvent.MOUSE_PRESSED,
                           MouseEvent.MOUSE_RELEASED,
@@ -53,6 +55,8 @@ class Event(object):
                           KeyEvent.KEY_PRESSED,
                           KeyEvent.KEY_RELEASED,
                           Const.ACTIVEEVENT,
+                          Const.WINDOWENTER,
+                          Const.WINDOWLEAVE,
                           Const.QUIT]
         try:
             self.events = set(self.eventType)
@@ -426,6 +430,8 @@ class JEvent(object):
                    MouseEvent.MOUSE_EXITED: 0,
                    WindowEvent.WINDOW_ICONIFIED: 0,
                    WindowEvent.WINDOW_DEICONIFIED: 1}
+    _enterEvent = ()
+    _leaveEvent = ()
     _closeEvent = ()
 
     def __init__(self, event, eventType):
@@ -434,8 +440,8 @@ class JEvent(object):
         
         Event object attributes:
         
-        * type: MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION,
-                KEYDOWN, KEYUP, ACTIVEEVENT, QUIT
+        * type: MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, KEYDOWN, KEYUP,
+                ACTIVEEVENT, WINDOWENTER, WINDOWLEAVE, QUIT
         * button: mouse button pressed (1-9)
         * buttons: mouse buttons pressed (1,2,3)
         * pos: mouse position (x,y)
@@ -474,6 +480,8 @@ class JEvent(object):
                      Const.KEYDOWN: self._keyEvent,
                      Const.KEYUP: self._keyEvent,
                      Const.ACTIVEEVENT: self._activeEvent,
+                     Const.WINDOWENTER: self._enterEvent,
+                     Const.WINDOWLEAVE: self._leaveEvent,
                      Const.QUIT: self._closeEvent}[self.type]:
             attrDict[attr] = self._attr[attr](self)
         return attrDict

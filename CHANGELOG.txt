@@ -2,6 +2,7 @@
 -refactor mouse positioning.
 -add mouse get_focused method.
 -refactor display surface.
+-add window enter/leave events.
 
 0.33    2025-01-18
 -revise surface alpha.

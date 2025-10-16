@@ -113,6 +113,7 @@ class Panel(JPanel, MouseListener,
             JEvent._mousePos['x'] = pos.x
             JEvent._mousePos['y'] = pos.y
         self.event._updateQueue(event, Const.ACTIVEEVENT)
+        self.event._updateQueue(event, Const.WINDOWENTER)
 
     def mouseExited(self, event):
         self.event.mousePos['x'] = -1
@@ -124,6 +125,7 @@ class Panel(JPanel, MouseListener,
             if self.event.keyPress[keycode]:
                 self.event.keyPress[keycode] = False
         self.event._updateQueue(event, Const.ACTIVEEVENT)
+        self.event._updateQueue(event, Const.WINDOWLEAVE)
 
     def mouseClicked(self, event):
         pass
