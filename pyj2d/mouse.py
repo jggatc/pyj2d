@@ -25,7 +25,7 @@ class Mouse(object):
         
         Module initialization creates pyj2d.mouse instance.
         """
-        self.mousePos = env.event.mousePos
+        self.mouseEvt = env.event.mouseEvt
         self.mousePress = env.event.mousePress
         self._cursorVisible = True
         self._cursorBlank = None
@@ -41,14 +41,12 @@ class Mouse(object):
     def get_pos(self):
         """
         Return x,y of mouse pointer.
-
-        If the pointer is not in frame, returns -1,-1.
         """
         pos = env.jframe.jpanel.getMousePosition()
         if pos is not None:
             return (pos.x, pos.y)
         else:
-            return (-1,-1)
+            return (self.mouseEvt['pos']['x'], self.mouseEvt['pos']['y'])
 
     def get_rel(self):
         """
@@ -56,10 +54,10 @@ class Mouse(object):
         """
         pos = env.jframe.jpanel.getMousePosition()
         if pos:
-            rel = pos.x-self.mousePos['x'], pos.y-self.mousePos['y']
+            rel = pos.x-self.mouseEvt['rel']['x'], pos.y-self.mouseEvt['rel']['y']
             if rel[0] or rel[1]:
-                self.mousePos['x'] = pos.x
-                self.mousePos['y'] = pos.y
+                self.mouseEvt['rel']['x'] = pos.x
+                self.mouseEvt['rel']['y'] = pos.y
             return rel
         else:
             return (0,0)
@@ -94,7 +92,7 @@ class Mouse(object):
         """
         Check if mouse has focus.
         """
-        return self.mousePos['x'] != -1
+        return self.mouseEvt['focus']
 
     def set_cursor(self, *cursor):
         """

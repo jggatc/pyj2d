@@ -37,7 +37,7 @@ class Event(object):
         self.queue = []
         self.queueNil = []
         self.queueTmp = []
-        self.mousePos = {'x':-1, 'y':-1}
+        self.mouseEvt = {'pos':{'x':-1,'y':-1}, 'rel':{'x':-1,'y':-1}, 'focus':False}
         self.mousePress = {1:False, 2:False, 3:False}
         self._nonimplemented_methods()
         self.eventName = {MouseEvent.MOUSE_PRESSED: 'MouseButtonDown',

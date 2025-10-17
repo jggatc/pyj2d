@@ -106,18 +106,18 @@ class Panel(JPanel, MouseListener,
         self.event._updateQueue(event, MouseEvent.MOUSE_RELEASED)
 
     def mouseEntered(self, event):
-        pos = env.jframe.jpanel.getMousePosition()
-        if pos:
-            self.event.mousePos['x'] = pos.x
-            self.event.mousePos['y'] = pos.y
-            JEvent._mousePos['x'] = pos.x
-            JEvent._mousePos['y'] = pos.y
+        self.event.mouseEvt['pos']['x'] = event.getX()
+        self.event.mouseEvt['pos']['y'] = event.getY()
+        self.event.mouseEvt['rel']['x'] = event.getX()
+        self.event.mouseEvt['rel']['y'] = event.getY()
+        JEvent._mousePos['x'] = event.getX()
+        JEvent._mousePos['y'] = event.getY()
         self.event._updateQueue(event, Const.ACTIVEEVENT)
         self.event._updateQueue(event, Const.WINDOWENTER)
 
     def mouseExited(self, event):
-        self.event.mousePos['x'] = -1
-        self.event.mousePos['y'] = -1
+        self.event.mouseEvt['pos']['x'] = event.getX()
+        self.event.mouseEvt['pos']['y'] = event.getY()
         self.event.mousePress[1] = False
         self.event.mousePress[2] = False
         self.event.mousePress[3] = False
@@ -152,9 +152,11 @@ class Panel(JPanel, MouseListener,
         self.event._updateQueue(event, KeyEvent.KEY_RELEASED)
 
     def focusGained(self, event):
+        self.event.mouseEvt['focus'] = True
         self.event._updateQueue(event, Const.ACTIVEEVENT)
 
     def focusLost(self, event):
+        self.event.mouseEvt['focus'] = False
         self.event._updateQueue(event, Const.ACTIVEEVENT)
 
     def _isPaused(self, keycode):
